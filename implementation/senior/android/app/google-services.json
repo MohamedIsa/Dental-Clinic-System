@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "351146855860",
+    "project_id": "endless-set-314517",
+    "storage_bucket": "endless-set-314517.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:351146855860:android:e15643e3211593ef9276e1",
+        "android_client_info": {
+          "package_name": "com.example.dcss"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuKUvQ9nZXLUF0NqsFDXSdGHwToawxyvQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:351146855860:android:1d460bb507f7170d9276e1",
+        "android_client_info": {
+          "package_name": "com.google.firebase.senior.dem"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuKUvQ9nZXLUF0NqsFDXSdGHwToawxyvQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.6
   flutter_spinkit: ^5.2.1
   google_fonts: ^6.2.1
+  firebase_core: ^2.29.0
 
 dev_dependencies:
   flutter_test:
