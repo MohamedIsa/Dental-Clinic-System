@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:senior/service_card.dart';
+import 'package:senior/login_screen.dart';
+class HomePage extends StatefulWidget {
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
 
-class HomePage extends StatelessWidget {
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -10,7 +15,7 @@ class HomePage extends StatelessWidget {
           children: <Widget>[
         if (MediaQuery.of(context).size.width > 600) 
         SizedBox(width: 40),
-        Text( 'Top Navigation Bar',style: TextStyle(color: Colors.blue, fontSize: 20),),
+        Text( 'Clinic',style: TextStyle(color: Colors.blue, fontSize: 20),),
         ],
         ),
         backgroundColor: Colors.transparent,
@@ -20,6 +25,15 @@ class HomePage extends StatelessWidget {
       drawer: MediaQuery.of(context).size.width <= 600 ? Drawer(
         child: ListView(
           children: <Widget>[
+            ListTile(
+          title: const Text('Home', style: TextStyle(color:Colors.white ),),
+            onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
+            },
+        ),
         ListTile(
           title: const Text('Dental Services', style: TextStyle(color:Colors.white ),),
           onTap: () {},
@@ -34,7 +48,7 @@ class HomePage extends StatelessWidget {
         ),
         ListTile(
           title: const Text('Sign In', style: TextStyle(color:Colors.white ),),
-          onTap: () {},
+          onTap: () {Navigator.push(context,MaterialPageRoute(builder: (context) => LoginScreen()),);},
         ),
           ],
         ),
@@ -61,7 +75,7 @@ class HomePage extends StatelessWidget {
                           TextButton(
                             onPressed: () {},
                             child: Text(
-                              'Menu',
+                              'Home',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20,
@@ -90,7 +104,7 @@ class HomePage extends StatelessWidget {
                             ),
                           ),
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () {Navigator.push(context,MaterialPageRoute(builder: (context) => LoginScreen()),);},
                             child: Text(
                               'Sign In',
                               style: TextStyle(color: Colors.white),
