@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:senior/service_card.dart';
 import 'package:senior/login_screen.dart';
+import 'package:senior/signup_screen.dart';
 class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
@@ -151,7 +152,7 @@ class _HomePageState extends State<HomePage> {
                               textAlign: TextAlign.center,
                             ),
                             ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {Navigator.push(context,MaterialPageRoute(builder: (context) => SignUp()),);},
                               child: Text(
                                 'Sign Up',
                                 style: TextStyle(
@@ -187,7 +188,7 @@ class _HomePageState extends State<HomePage> {
                                   TextStyle(color: Colors.white, fontSize: 20),
                             ),
                             ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {Navigator.push(context,MaterialPageRoute(builder: (context) => SignUp()),);},
                               child: Text(
                                 'Sign Up',
                                 style: TextStyle(
