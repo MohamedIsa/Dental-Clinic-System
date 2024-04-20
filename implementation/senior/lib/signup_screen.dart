@@ -5,6 +5,10 @@ import 'package:senior/app_styles.dart';
 import 'package:senior/login_screen.dart';
 import 'package:senior/responsive_widget.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:senior/reuseable_widget.dart';
+import 'package:senior/dashboard.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({Key? key}) : super(key: key);
@@ -14,14 +18,19 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+  final TextEditingController _passwordTextController = TextEditingController();
+  final TextEditingController _emailTextController = TextEditingController();
+  final TextEditingController _FullnameTextController = TextEditingController();
+  final TextEditingController _cprTextController = TextEditingController();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+ 
     String emailPattern = r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$';
     String CPRPattern = r'^\d{2}(0[1-9]|1[0-2])\d{5}$';
-    String passwordPattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$';
-    String NamePattern = r'^[A-Za-z]+(?:\s+[A-Za-z]+)*\s+[A-Za-z]+$';
+
     return Scaffold(
       backgroundColor: AppColors.backColor,
       body: SizedBox(
@@ -97,7 +106,6 @@ class _SignUpState extends State<SignUp> {
                         ),
                       ),
                       SizedBox(height: height * 0.064),
-
                       Padding(
                         padding: const EdgeInsets.only(left: 16.0),
                         child: Text(
@@ -111,47 +119,14 @@ class _SignUpState extends State<SignUp> {
                       ),
                       const SizedBox(height: 6.0),
                       Container(
-                        height: 50.0,
-                        width: width,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16.0),
                           color: AppColors.whiteColor,
                         ),
-                        child: TextFormField(
-                          style: ralewayStyle.copyWith(
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.blueDarkColor,
-                            fontSize: 12.0,
-                          ),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            prefixIcon: IconButton(
-                              onPressed: () {},
-                              icon: Image.asset(AppIcons.emailIcon),
-                            ),
-                            contentPadding: const EdgeInsets.only(top: 16.0),
-                            hintText: 'Enter Email',
-                            hintStyle: ralewayStyle.copyWith(
-                              fontWeight: FontWeight.w400,
-                              color: AppColors.blueDarkColor.withOpacity(0.5),
-                              fontSize: 12.0,
-                            ),
-                            ),
-                            keyboardType: TextInputType.emailAddress,
-                            validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'Please enter your email';
-                            }
-                            if (!RegExp(emailPattern).hasMatch(value)) {
-                              return 'Please enter a valid email';
-                            }
-                            return null;
-                            },
-                          ),
-                          ),
-
+                        child: reusableTextField('Enter email',
+                            AppIcons.emailIcon, false, _emailTextController),
+                      ),
                       SizedBox(height: height * 0.014),
-                      
                       Padding(
                         padding: const EdgeInsets.only(left: 16.0),
                         child: Text(
@@ -165,45 +140,14 @@ class _SignUpState extends State<SignUp> {
                       ),
                       const SizedBox(height: 6.0),
                       Container(
-                        height: 50.0,
-                        width: width,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16.0),
-                          color: AppColors.whiteColor,
-                        ),
-                        child: TextFormField(
-                          style: ralewayStyle.copyWith(
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.blueDarkColor,
-                            fontSize: 12.0,
+                          height: 50.0,
+                          width: width,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16.0),
+                            color: AppColors.whiteColor,
                           ),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            prefixIcon: IconButton(
-                              onPressed: () {},
-                              icon: Image.asset(AppIcons.userIcon),
-                            ),
-                            contentPadding: const EdgeInsets.only(top: 16.0),
-                            hintText: 'Enter Full Name',
-                            hintStyle: ralewayStyle.copyWith(
-                              fontWeight: FontWeight.w400,
-                              color: AppColors.blueDarkColor.withOpacity(0.5),
-                              fontSize: 12.0,
-                            ),
-                            ),
-                            keyboardType: TextInputType.emailAddress,
-                            validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'Please enter your Name';
-                            }
-                            if (!RegExp(NamePattern).hasMatch(value)) {
-                              return 'Please enter Full Name';
-                            }
-                            return null;
-                            },
-                          ),
-                          ),
-                          SizedBox(height: height * 0.014),
+                          child: fullNameTextField(_FullnameTextController)),
+                      SizedBox(height: height * 0.014),
                       Padding(
                         padding: const EdgeInsets.only(left: 16.0),
                         child: Text(
@@ -223,39 +167,8 @@ class _SignUpState extends State<SignUp> {
                           borderRadius: BorderRadius.circular(16.0),
                           color: AppColors.whiteColor,
                         ),
-                        child: TextFormField(
-                          style: ralewayStyle.copyWith(
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.blueDarkColor,
-                          fontSize: 12.0,
-                          ),
-                          decoration: InputDecoration(
-                          border: InputBorder.none,
-                          prefixIcon: Image.asset(AppIcons.idicon),
-                          contentPadding: const EdgeInsets.only(top: 16.0),
-                          hintText: 'Enter CPR',
-                          hintStyle: ralewayStyle.copyWith(
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.blueDarkColor.withOpacity(0.5),
-                            fontSize: 12.0,
-                          ),
-                          ),
-                          keyboardType: TextInputType.text,
-                          validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter your CPR';
-                          }
-                          if (!RegExp(CPRPattern).hasMatch(value)) {
-                            return 'Please enter a valid CPR';
-                          }
-                          return null;
-                          },
-                          onChanged: (value) {
-                          // Handle the text field value change
-                          },
-                        ),
+                        child: cprTextField(_cprTextController),
                       ),
-
                       SizedBox(height: height * 0.014),
                       Padding(
                         padding: const EdgeInsets.only(left: 16.0),
@@ -270,95 +183,14 @@ class _SignUpState extends State<SignUp> {
                       ),
                       const SizedBox(height: 6.0),
                       Container(
-                        height: 50.0,
-                        width: width,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16.0),
                           color: AppColors.whiteColor,
                         ),
-                        child: TextFormField(
-                          style: ralewayStyle.copyWith(
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.blueDarkColor,
-                          fontSize: 12.0,
-                          ),
-                          obscureText: true,
-                          decoration: InputDecoration(
-                          border: InputBorder.none,
-                          suffixIcon: IconButton(
-                            onPressed: () {},
-                            icon: Image.asset(AppIcons.eyeIcon),
-                          ),
-                          prefixIcon: IconButton(
-                            onPressed: () {},
-                            icon: Image.asset(AppIcons.lockIcon),
-                          ),
-                          contentPadding: const EdgeInsets.only(top: 16.0),
-                          hintText: 'Enter Password',
-                          hintStyle: ralewayStyle.copyWith(
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.blueDarkColor.withOpacity(0.5),
-                            fontSize: 12.0,
-                          ),
-                          ),
-                          validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter your password';
-                          }
-                          if (!RegExp(passwordPattern).hasMatch(value)) {
-                            return 'Password must contain at least 8 characters, including uppercase, lowercase, and numbers';
-                          }
-                          return null;
-                          },
-                        ),
+                        child: reusableTextField('Enter password',
+                            AppIcons.lockIcon, true, _passwordTextController),
                       ),
                       SizedBox(height: height * 0.014),
-                       Padding(
-                        padding: const EdgeInsets.only(left: 16.0),
-                        child: Text(
-                          'Confirm Password',
-                          style: ralewayStyle.copyWith(
-                            fontSize: 12.0,
-                            color: AppColors.blueDarkColor,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 6.0),
-                      Container(
-                        height: 50.0,
-                        width: width,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16.0),
-                          color: AppColors.whiteColor,
-                        ),
-                        child: TextFormField(
-                          style: ralewayStyle.copyWith(
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.blueDarkColor,
-                          fontSize: 12.0,
-                          ),
-                          obscureText: true,
-                          decoration: InputDecoration(
-                          border: InputBorder.none,
-                          suffixIcon: IconButton(
-                            onPressed: () {},
-                            icon: Image.asset(AppIcons.eyeIcon),
-                          ),
-                          prefixIcon: IconButton(
-                            onPressed: () {},
-                            icon: Image.asset(AppIcons.lockIcon),
-                          ),
-                          contentPadding: const EdgeInsets.only(top: 16.0),
-                          hintText: 'Confirm Password',
-                          hintStyle: ralewayStyle.copyWith(
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.blueDarkColor.withOpacity(0.5),
-                            fontSize: 12.0,
-                          ),
-                          ),
-                        ),
-                      ),
                       SizedBox(height: height * 0.03),
                       Container(
                         height: 50.0,
@@ -370,12 +202,103 @@ class _SignUpState extends State<SignUp> {
                         child: Material(
                           color: Colors.transparent,
                           child: InkWell(
-                            onTap: () {},
+                           onTap: () async {
+  String email = _emailTextController.text;
+  String fullName = _FullnameTextController.text;
+  String cpr = _cprTextController.text;
+  String password = _passwordTextController.text;
+
+  // Check if email is valid
+  if (!RegExp(emailPattern).hasMatch(email)) {
+    showErrorDialog(context ,'Invalid email format.');
+    return;
+  }
+  QuerySnapshot emailResult = await _firestore.collection('user').where('Email', isEqualTo: email).get();
+  if (emailResult.docs.isNotEmpty) {
+    showErrorDialog(context, 'Email already exists.');
+    return;
+  }
+
+  // Check if full name is not empty
+  if (fullName.isEmpty) {
+    showErrorDialog(context ,'Full name cannot be empty.');
+    return;
+  }
+
+  // Check if CPR is valid
+  if (!RegExp(CPRPattern).hasMatch(cpr)) {
+    showErrorDialog(context ,'Invalid CPR format.');
+    return;
+  }
+  
+  QuerySnapshot result = await _firestore.collection('user').where('CPR', isEqualTo: cpr).get();
+  if (result.docs.isNotEmpty) {
+    showErrorDialog(context, 'CPR already exists.');
+    return;
+  }
+
+  
+  if (password.isNotEmpty) {
+    bool hasUppercase = password.contains(RegExp(r'[A-Z]'));
+    bool hasLowercase = password.contains(RegExp(r'[a-z]'));
+    bool hasDigit = password.contains(RegExp(r'[0-9]'));
+    bool hasMinLength = password.length >= 8;
+
+    if (!hasUppercase) {
+      showErrorDialog(context, 'Password must contain at least one uppercase letter.');
+      return;
+    }
+
+    if (!hasLowercase) {
+      showErrorDialog(context, 'Password must contain at least one lowercase letter.');
+      return;
+    }
+
+    if (!hasDigit) {
+      showErrorDialog(context, 'Password must contain at least one digit.');
+      return;
+    }
+
+    if (!hasMinLength) {
+      showErrorDialog(context, 'Password must be at least 8 characters long.');
+      return;
+    }
+  } else {
+    showErrorDialog(context, 'Password cannot be empty.');
+    return;
+  }
+  try {
+    UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+
+    print('User created successfully');
+
+    String uid = userCredential.user!.uid;
+    _firestore.collection('user').doc(uid).set({
+      'Email': email,
+      'FullName': fullName,
+      'CPR': cpr
+    });
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => WelcomePage(),
+      ),
+    );
+  } catch (e) {
+    print('Failed to create user: $e');
+    showErrorDialog( context ,e.toString());
+  }
+},
                             borderRadius: BorderRadius.circular(16.0),
                             child: Ink(
                               padding: EdgeInsets.symmetric(
-                                horizontal: width * 0.1, // Adjust the horizontal padding as needed
-                                vertical: 12.0, // Adjust the vertical padding as needed
+                                horizontal: width *
+                                    0.1, // Adjust the horizontal padding as needed
+                                vertical:
+                                    12.0, // Adjust the vertical padding as needed
                               ),
                               child: Center(
                                 child: Text(
@@ -387,11 +310,11 @@ class _SignUpState extends State<SignUp> {
                                   ),
                                 ),
                               ),
-                            ),
-                          ),
+                            )
+                          )
+                        
                         ),
                       ),
-
                       SizedBox(height: height * 0.02),
                       Align(
                         alignment: Alignment.centerLeft,
@@ -414,7 +337,6 @@ class _SignUpState extends State<SignUp> {
                         ),
                       ),
                       SizedBox(height: height * 0.05),
-
                       Center(
                         child: Text(
                           'Or Sign Up With',
@@ -425,7 +347,6 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ),
                       ),
-
                       SizedBox(height: height * 0.02),
                       SizedBox(height: height * 0.02),
                       Align(
