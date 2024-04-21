@@ -300,29 +300,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               color: AppColors.mainBlueColor,
                               ),
                               child: IconButton(
-                                onPressed: () {
-                                try {
-                                  signInWithGoogle();
-                                } catch (e) {
-                                  showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                    title: Text('Error'),
-                                    content: Text('Failed to sign in with Google'),
-                                    actions: [
-                                      TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Text('OK'),
-                                      ),
-                                    ],
-                                    );
-                                  },
-                                  );
-                                }
-                                },
+                              onPressed: () {
+                             signInWithGoogle();
+                              },
                               icon: SvgPicture.asset(
                               AppIcons.googleIcon,
                                color: AppColors.whiteColor,

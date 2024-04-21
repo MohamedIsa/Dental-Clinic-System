@@ -73,16 +73,20 @@ void showErrorDialog(BuildContext context, String message) {
   }
 }
 
-
 Future<void> signInWithGoogle() async {
-  GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-  GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
-
-  if (googleAuth != null) {
-    AuthCredential credential = GoogleAuthProvider.credential(
+  try {
+    final GoogleSignIn googleSignIn = GoogleSignIn(
+      clientId: "351146855860-pejmdc7vsc20tqrf2t23g05aipm9i6to.apps.googleusercontent.com",
+    );
+    final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+    final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
+    final AuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
     await FirebaseAuth.instance.signInWithCredential(credential);
+  } catch (e) {
+    print(e.toString());
   }
 }
+
