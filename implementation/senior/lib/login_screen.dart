@@ -1,4 +1,3 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:senior/app_colors.dart';
@@ -7,8 +6,9 @@ import 'package:senior/app_styles.dart';
 import 'package:senior/responsive_widget.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:senior/reuseable_widget.dart';
-import 'package:senior/signup_screen.dart'; 
+import 'package:senior/signup_screen.dart';
 import 'package:senior/dashboard.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -20,6 +20,10 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _passwordTextController = TextEditingController();
   TextEditingController _emailTextController = TextEditingController();
+  Future<void> persistUser(String userId) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('userId', userId);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +104,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       SizedBox(height: height * 0.064),
-
                       Padding(
                         padding: const EdgeInsets.only(left: 16.0),
                         child: Text(
@@ -118,10 +121,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: BorderRadius.circular(16.0),
                           color: AppColors.whiteColor,
                         ),
-                       child: reusableTextField('Enter email', AppIcons.emailIcon, false , _emailTextController),
+                        child: reusableTextField('Enter email',
+                            AppIcons.emailIcon, false, _emailTextController),
                       ),
-
-                      SizedBox(height: height * 0.014),
+                      SizedBox(height:20),
                       Padding(
                         padding: const EdgeInsets.only(left: 16.0),
                         child: Text(
@@ -139,9 +142,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: BorderRadius.circular(16.0),
                           color: AppColors.whiteColor,
                         ),
-                        child: reusableTextField('Enter password', AppIcons.lockIcon, true, _passwordTextController),
+                        child: reusableTextField('Enter password',
+                            AppIcons.lockIcon, true, _passwordTextController),
                       ),
-
                       SizedBox(height: height * 0.03),
                       Container(
                         height: 50.0,
@@ -153,45 +156,48 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Material(
                           color: Colors.transparent,
                           child: InkWell(
-                         onTap: () async {
-  try {
-    UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: _emailTextController.text,
-      password: _passwordTextController.text,
-    );
+                            onTap: () async {
+                              try {
+                                UserCredential userCredential =
+                                    await FirebaseAuth.instance
+                                        .signInWithEmailAndPassword(
+                                  email: _emailTextController.text,
+                                  password: _passwordTextController.text,
+                                );
 
-    if (userCredential.user != null) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => WelcomePage(),
-        ),
-      );
-    } 
-  } catch (e) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Error'),
-          content: Text('Email or password does not match'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-},
+                                if (userCredential.user != null) {
+                                  // Persist the user's ID locally.
+                                  await persistUser(userCredential.user!.uid);
+
+                                  // Pass the full name to the WelcomePage.
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => WelcomePage(),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                             if(_emailTextController.text==''||_passwordTextController.text==''){
+                                showErrorDialog(context, 'Please fill all the fields');
+                              }else if(_emailTextController.text!=FirebaseAuth.instance.currentUser!.email){
+                                showErrorDialog(context, 'Invalid email');
+                              }
+                              else if(_passwordTextController.text!=FirebaseAuth.instance.currentUser!.email){
+                                showErrorDialog(context, 'Invalid password');
+                              
+                              }
+                              else{
+                                showErrorDialog(context, 'Unknown error occurred. Please try again.');
+                              }
+                              }
+                            },
                             borderRadius: BorderRadius.circular(16.0),
                             child: Ink(
                               padding: EdgeInsets.symmetric(
-                                horizontal: width * 0.1, // Adjust the horizontal padding as needed
-                                vertical: 12.0, // Adjust the vertical padding as needed
+                                horizontal: width *
+                                    0.1, // Adjust the horizontal padding as needed
+                                vertical:
+                                    12.0, // Adjust the vertical padding as needed
                               ),
                               child: Center(
                                 child: Text(
@@ -207,12 +213,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-                      
                       SizedBox(height: height * 0.02),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/forgotpassword');
+                          },
                           child: Text(
                             'Forgot Password?',
                             style: ralewayStyle.copyWith(
@@ -240,11 +247,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               onTap: () {},
                               child: TextButton(
                                 onPressed: () {
-                                   Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => const SignUp(),
-                              ),
-                            );
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => const SignUp(),
+                                    ),
+                                  );
                                 },
                                 child: Text(
                                   'Sign Up',
@@ -260,35 +267,34 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       SizedBox(height: height * 0.05),
-                    
-                     Center(
-                       child: Text('Or Sign In With', style: ralewayStyle.copyWith(
-                       fontSize: 12.0,
-                       color: AppColors.greyColor,
-                       fontWeight: FontWeight.w600,
-                       )),
-                     ),
-                     
+                      Center(
+                        child: Text('Or Sign In With',
+                            style: ralewayStyle.copyWith(
+                              fontSize: 12.0,
+                              color: AppColors.greyColor,
+                              fontWeight: FontWeight.w600,
+                            )),
+                      ),
                       SizedBox(height: height * 0.02),
-                          SizedBox(height: height * 0.02),
-                          Align(
-                          alignment: Alignment.center,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
+                      SizedBox(height: height * 0.02),
+                      Align(
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
                             Container(
                               height: 50.0,
                               width: 50.0,
                               decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16.0),
-                              color: AppColors.mainBlueColor,
+                                borderRadius: BorderRadius.circular(16.0),
+                                color: AppColors.mainBlueColor,
                               ),
                               child: IconButton(
-                              onPressed: () {},
-                              icon: SvgPicture.asset(AppIcons.facebookIcon,
-                              color: AppColors.whiteColor,
-                              
-                              ),
+                                onPressed: () {},
+                                icon: SvgPicture.asset(
+                                  AppIcons.facebookIcon,
+                                  color: AppColors.whiteColor,
+                                ),
                               ),
                             ),
                             SizedBox(width: 10.0),
@@ -296,24 +302,23 @@ class _LoginScreenState extends State<LoginScreen> {
                               height: 50.0,
                               width: 50.0,
                               decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16.0),
-                              color: AppColors.mainBlueColor,
+                                borderRadius: BorderRadius.circular(16.0),
+                                color: AppColors.mainBlueColor,
                               ),
                               child: IconButton(
-                              onPressed: () {
-                             signInWithGoogle();
-                              },
-                              icon: SvgPicture.asset(
-                              AppIcons.googleIcon,
-                               color: AppColors.whiteColor,
-                              ),
+                                onPressed: () {
+                                  signInWithGoogle();
+                                },
+                                icon: SvgPicture.asset(
+                                  AppIcons.googleIcon,
+                                  color: AppColors.whiteColor,
+                                ),
                               ),
                             ),
-                            ],
-                          ),
-                          ),
-
-                    ], 
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

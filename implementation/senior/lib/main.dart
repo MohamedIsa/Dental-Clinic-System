@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:senior/home_page.dart';
 import 'package:senior/loading.dart';
 import 'package:senior/firebase_options.dart';
-
+import 'package:senior/BookingPage.dart';
+import 'package:senior/appointmenthistory.dart';
+import 'package:senior/resetpassword.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -16,8 +18,11 @@ void main() async {
     debugShowCheckedModeBanner: false,
     initialRoute: '/',
     routes: {
-      '/': (context) => Loading(),
+      '/': (context) => const Loading(),
       '/home': (context) => HomePage(),
+      '/booking': (context) => BookingPage(),
+      '/appointmenthistory': (context) => AppointmentHistory(),
+      /*'fogotpassword': (context) => resetpassword(),*/
     },
   ));
 }

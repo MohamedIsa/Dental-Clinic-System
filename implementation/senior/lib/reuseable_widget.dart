@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:senior/app_icons.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:flutter/widgets.dart';
 import 'package:universal_html/html.dart' as html;
+import 'package:flutter/widgets.dart';
 
-TextField reusableTextField(String hintText, String iconAssetPath, bool isPassword, TextEditingController controller) {
+TextField reusableTextField(String hintText, String iconAssetPath,
+    bool isPassword, TextEditingController controller) {
   bool _obscureText = isPassword;
   return TextField(
     controller: controller,
@@ -18,13 +19,16 @@ TextField reusableTextField(String hintText, String iconAssetPath, bool isPasswo
     ),
     decoration: InputDecoration(
       border: InputBorder.none,
-      prefixIcon: iconAssetPath.isNotEmpty ? ImageIcon(AssetImage(iconAssetPath)) : null, 
-      suffixIcon: isPassword ? IconButton(
-        onPressed: () {
-          _obscureText = !_obscureText;
-        },
-        icon: Icon(_obscureText ? Icons.visibility : Icons.visibility_off),
-      ) : null,
+      prefixIcon: iconAssetPath.isNotEmpty
+          ? ImageIcon(AssetImage(iconAssetPath))
+          : null,
+      suffixIcon: isPassword
+          ? IconButton(
+              onPressed: () {},
+              icon:
+                  Icon(_obscureText ? Icons.visibility : Icons.visibility_off),
+            )
+          : null,
       contentPadding: EdgeInsets.only(top: 16.0),
       hintText: hintText,
       hintStyle: TextStyle(
@@ -43,6 +47,7 @@ TextField fullNameTextField(TextEditingController controller) {
 TextField cprTextField(TextEditingController controller) {
   return reusableTextField('CPR', AppIcons.idicon, false, controller);
 }
+
 void showErrorDialog(BuildContext context, String message) {
   if (kIsWeb) {
     html.window.alert(message);
@@ -76,10 +81,12 @@ void showErrorDialog(BuildContext context, String message) {
 Future<void> signInWithGoogle() async {
   try {
     final GoogleSignIn googleSignIn = GoogleSignIn(
-      clientId: "351146855860-pejmdc7vsc20tqrf2t23g05aipm9i6to.apps.googleusercontent.com",
+      clientId:
+          "351146855860-pejmdc7vsc20tqrf2t23g05aipm9i6to.apps.googleusercontent.com",
     );
     final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser!.authentication;
     final AuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
@@ -89,4 +96,3 @@ Future<void> signInWithGoogle() async {
     print(e.toString());
   }
 }
-

@@ -213,6 +213,7 @@ class _SignUpState extends State<SignUp> {
     showErrorDialog(context ,'Invalid email format.');
     return;
   }
+
   QuerySnapshot emailResult = await _firestore.collection('user').where('Email', isEqualTo: email).get();
   if (emailResult.docs.isNotEmpty) {
     showErrorDialog(context, 'Email already exists.');

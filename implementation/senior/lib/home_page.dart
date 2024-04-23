@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:senior/app_icons.dart';
 import 'package:senior/service_card.dart';
 import 'package:senior/login_screen.dart';
 import 'package:senior/signup_screen.dart';
+
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -10,55 +16,81 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         title: Row(
           children: <Widget>[
-        if (MediaQuery.of(context).size.width > 600) 
-        SizedBox(width: 40),
-        Text( 'Clinic',style: TextStyle(color: Colors.blue, fontSize: 20),),
-        ],
+            if (MediaQuery.of(context).size.width > 600)
+              const SizedBox(width: 40),
+            const Text(
+              'Clinic',
+              style: TextStyle(color: Colors.blue, fontSize: 20),
+            ),
+          ],
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
-
       ),
-      drawer: MediaQuery.of(context).size.width <= 600 ? Drawer(
-        child: ListView(
-          children: <Widget>[
-            ListTile(
-          title: const Text('Home', style: TextStyle(color:Colors.white ),),
-            onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
-            );
-            },
-        ),
-        ListTile(
-          title: const Text('Dental Services', style: TextStyle(color:Colors.white ),),
-          onTap: () {},
-        ),
-        ListTile(
-          title: const Text('Book Appointment', style: TextStyle(color:Colors.white ),),
-          onTap: () {},
-        ),
-        ListTile(
-          title: const Text('About Us', style: TextStyle(color:Colors.white ),),
-          onTap: () {},
-        ),
-        ListTile(
-          title: const Text('Sign In', style: TextStyle(color:Colors.white ),),
-          onTap: () {Navigator.push(context,MaterialPageRoute(builder: (context) => LoginScreen()),);},
-        ),
-          ],
-        ),
-        backgroundColor: Colors.blue,
-      )
-      :null,
+      drawer: MediaQuery.of(context).size.width <= 600
+          ? Drawer(
+              backgroundColor: Colors.blue,
+              child: ListView(
+                children: <Widget>[
+                  ListTile(
+                    title: const Text(
+                      'Home',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const HomePage()),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    title: const Text(
+                      'Dental Services',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onTap: () {},
+                  ),
+                  ListTile(
+                    title: const Text(
+                      'Book Appointment',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onTap: () {},
+                  ),
+                  ListTile(
+                    title: const Text(
+                      'About Us',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onTap: () {},
+                  ),
+                  ListTile(
+                    title: const Text(
+                      'Sign In',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LoginScreen()),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            )
+          : null,
       body: Container(
-        height: MediaQuery.of(context).size.height*1.5,
-        decoration: BoxDecoration(
+        height: MediaQuery.of(context).size.height * 1.5,
+        decoration: const BoxDecoration(
           color: Colors.blue,
         ),
         child: SingleChildScrollView(
@@ -75,7 +107,7 @@ class _HomePageState extends State<HomePage> {
                         children: <Widget>[
                           TextButton(
                             onPressed: () {},
-                            child: Text(
+                            child: const Text(
                               'Home',
                               style: TextStyle(
                                 color: Colors.white,
@@ -85,30 +117,45 @@ class _HomePageState extends State<HomePage> {
                           ),
                           TextButton(
                             onPressed: () {},
-                            child: Text(
+                            child: const Text(
                               'Dental services',
-                              style: TextStyle(color: Colors.white),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                              ),
                             ),
                           ),
                           TextButton(
                             onPressed: () {},
-                            child: Text(
+                            child: const Text(
                               'Book Appointment',
-                              style: TextStyle(color: Colors.white),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                              ),
                             ),
                           ),
                           TextButton(
                             onPressed: () {},
-                            child: Text(
+                            child: const Text(
                               'About Us',
-                              style: TextStyle(color: Colors.white),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                              ),
                             ),
                           ),
                           TextButton(
-                            onPressed: () {Navigator.push(context,MaterialPageRoute(builder: (context) => LoginScreen()),);},
-                            child: Text(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const LoginScreen()),
+                              );
+                            },
+                            child: const Text(
                               'Sign In',
-                              style: TextStyle(color: Colors.white),
+                              style: TextStyle(color: Colors.white,fontSize: 20,),
                             ),
                           ),
                         ],
@@ -119,13 +166,12 @@ class _HomePageState extends State<HomePage> {
               Container(
                 width: double.infinity,
                 height: 1150,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage('assets/Background.png'),
                     fit: BoxFit.cover,
                   ),
                 ),
-                
                 child: Stack(
                   children: [
                     Positioned(
@@ -139,263 +185,408 @@ class _HomePageState extends State<HomePage> {
                     ),
                     if (MediaQuery.of(context).size.width <= 600)
                       Container(
-                        margin: EdgeInsets.only(top: 95, left: 20, right: 20),
-                        padding: EdgeInsets.all(10),
-                        height: 150,
+                        margin:
+                            const EdgeInsets.only(top: 95, left: 20, right: 20),
+                        padding: const EdgeInsets.all(10),
+                        height: 130,
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
+                            const Text(
                               'Welcome to our Dental Clinic\nSign up now to get 20% off on your first visit',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 16),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                               textAlign: TextAlign.center,
                             ),
                             ElevatedButton(
-                              onPressed: () {Navigator.push(context,MaterialPageRoute(builder: (context) => SignUp()),);},
-                              child: Text(
-                                'Sign Up',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 16),
-                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const SignUp()),
+                                );
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
-                                    Color.fromARGB(255, 249, 179, 1),
+                                    const Color.fromARGB(255, 249, 179, 1),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16.0),
                                 ),
                               ),
+                              child: const Text(
+                                'Sign Up',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 16),
+                              ),
                             ),
                           ],
                         ),
-                        color: Colors.blue,
                       ),
                     if (MediaQuery.of(context).size.width > 600)
                       Container(
-                        alignment: Alignment.center,
-                        margin: EdgeInsets.only(top: 95, left: 440),
-                        padding: EdgeInsets.all(20),
+                        margin: EdgeInsets.only(
+                            top: 100,
+                            left: screenWidth * 0.3,
+                            right: screenWidth * 0.3),
+                        padding: const EdgeInsets.all(20),
                         height: MediaQuery.of(context).size.width <= 600
                             ? 300
                             : 200,
-                        width: 450,
+                        width: 430,
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
+                            const Text(
                               'Welcome to our Dental Clinic\nSign up now to get 20% off on your first visit',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 20),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             ElevatedButton(
-                              onPressed: () {Navigator.push(context,MaterialPageRoute(builder: (context) => SignUp()),);},
-                              child: Text(
-                                'Sign Up',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
-                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const SignUp()),
+                                );
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
-                                    Color.fromARGB(255, 249, 179, 1),
+                                    const Color.fromARGB(255, 249, 179, 1),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(32.0),
                                 ),
                               ),
+                              child: const Text(
+                                'Sign Up',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 20),
+                              ),
                             ),
                           ],
                         ),
-                        color: Colors.blue,
                       ),
-                        if (MediaQuery.of(context).size.width > 600)
-                    Container(
-                      margin: EdgeInsets.only(top: 500),
-                      child: Column(
-                        children: [
-                          Text('Our Services',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 50)),
-                          SizedBox(height: 90),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              ServiceCard(
-                                  title: 'Dental Implants',
-                                  imagePath: 'assets/cards/implant.png',
-                                  overlayColor: Colors.white),
-                              ServiceCard(
-                                  title: 'Orthodontics',
-                                  imagePath: 'assets/cards/Orthodontics.png',
-                                  overlayColor: Colors.white),
-                              ServiceCard(
-                                  title: 'Laser Dentistry',
-                                  imagePath: 'assets/cards/laser-beam.png',
-                                  overlayColor: Colors.white),
-                              ServiceCard(
-                                  title: 'Teeth Whitening',
-                                  imagePath: 'assets/cards/whiteing.png',
-                                  overlayColor: Colors.white),
-                            ],
-                          ),
-                          SizedBox(height: 20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              ServiceCard(
-                                  title: 'Root Canal',
-                                  imagePath: 'assets/cards/root-canal.png',
-                                  overlayColor: Colors.white),
-                              ServiceCard(
-                                  title: 'Gum Depigmentation',
-                                  imagePath: 'assets/cards/gum.png',
-                                  overlayColor: Colors.white),
-                              ServiceCard(
-                                  title: 'Dental Fillings',
-                                  imagePath: 'assets/cards/tooth-filling.png',
-                                  overlayColor: Colors.white),
-                              ServiceCard(
-                                  title: 'Crowns & Bridges',
-                                  imagePath: 'assets/cards/bridge.png',
-                                  overlayColor: Colors.white),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  
-                  if (MediaQuery.of(context).size.width <= 600)
-                          Container(
-                            margin: EdgeInsets.only(top: 370),
-                            child: Column(
-                              children: [
-                                Text('Our Services',
-                                    style: TextStyle(color: Colors.white, fontSize: 20)),
-                                SizedBox(height: 20),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    ServiceCard(
-                                        title: 'Dental Implants',
-                                        imagePath: 'assets/cards/implant.png',
-                                        overlayColor: Colors.white),
-                                    ServiceCard(
-                                        title: 'Orthodontics',
-                                        imagePath: 'assets/cards/Orthodontics.png',
-                                        overlayColor: Colors.white),
-                                  ],
-                                ),
-                                SizedBox(height: 20),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    ServiceCard(
-                                        title: 'Laser Dentistry',
-                                        imagePath: 'assets/cards/laser-beam.png',
-                                        overlayColor: Colors.white),
-                                    ServiceCard(
-                                        title: 'Teeth Whitening',
-                                        imagePath: 'assets/cards/whiteing.png',
-                                        overlayColor: Colors.white),
-                                  ],
-                                ),
-                                SizedBox(height: 20),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    ServiceCard(
-                                        title: 'Root Canal',
-                                        imagePath: 'assets/cards/root-canal.png',
-                                        overlayColor: Colors.white),
-                                    ServiceCard(
-                                        title: 'Gum Depigmentation',
-                                        imagePath: 'assets/cards/gum.png',
-                                        overlayColor: Colors.white),
-                                  ],
-                                ),
-                                SizedBox(height: 20),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    ServiceCard(
-                                        title: 'Dental Fillings',
-                                        imagePath: 'assets/cards/tooth-filling.png',
-                                        overlayColor: Colors.white),
-                                    ServiceCard(
-                                        title: 'Crowns & Bridges',
-                                        imagePath: 'assets/cards/bridge.png',
-                                        overlayColor: Colors.white),
-                                  ],
-                                ),
-                              ],
+                    if (MediaQuery.of(context).size.width > 600)
+                      Center(
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              top: BorderSide(color: Colors.blue, width: 2),
+                              bottom: BorderSide(color: Colors.blue, width: 2),
+                              left: BorderSide(color: Colors.blue, width: 2),
+                              right: BorderSide(color: Colors.blue, width: 2),
                             ),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(40.0)),
                           ),
+                          margin: const EdgeInsets.only(top: 300),
+                          child: const Column(
+                            children: [
+                              Text('Our Services',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 30)),
+                              SizedBox(height: 90),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  ServiceCard(
+                                      title: 'Dental Implants',
+                                      imagePath: 'assets/cards/implant.png',
+                                      overlayColor: Colors.white,
+                                      description:
+                                          'Dental implants are titanium tooth roots placed into the jawbone to support replacement teeth. They offer a durable and natural-looking solution for missing teeth, enhancing chewing, speech, and overall oral health'),
+                                  ServiceCard(
+                                    title: 'Orthodontics',
+                                    imagePath: 'assets/cards/Orthodontics.png',
+                                    overlayColor: Colors.white,
+                                    description:
+                                        'Orthodontics is a dental specialty aimed at correcting misaligned teeth and jaws for improved oral health and aesthetics. Treatments involve braces or aligners to gradually align teeth and address issues like overcrowding and bite problems, enhancing both appearance and function',
+                                  ),
+                                  ServiceCard(
+                                    title: 'Laser Dentistry',
+                                    imagePath: 'assets/cards/laser-beam.png',
+                                    overlayColor: Colors.white,
+                                    description:
+                                        'Laser dentistry utilizes laser technology for precise and minimally invasive dental procedures, offering benefits like reduced discomfort, faster healing, and greater precision compared to traditional methods. It encompasses treatments for gum disease, cavity preparation, tooth whitening, and soft tissue procedures, providing patients with a more comfortable and efficient dental experience.',
+                                  ),
+                                  ServiceCard(
+                                    title: 'Teeth Whitening',
+                                    imagePath: 'assets/cards/whiteing.png',
+                                    overlayColor: Colors.white,
+                                    description:
+                                        'Teeth whitening is a cosmetic dental procedure that aims to lighten teeth and remove stains. It can be done using bleaching agents like hydrogen peroxide. This safe and effective treatment enhances smile appearance, though results may vary based on staining severity and oral health.',
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 20),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  ServiceCard(
+                                    title: 'Root Canal',
+                                    imagePath: 'assets/cards/root-canal.png',
+                                    overlayColor: Colors.white,
+                                    description:
+                                        'A root canal is a dental procedure that addresses infected or damaged tooth pulp by removing the affected tissue, cleaning the inside of the tooth, and sealing it to prevent further infection. This treatment alleviates pain, preserves the tooth, and restores its function, often followed by the placement of a crown for added protection and strength.',
+                                  ),
+                                  ServiceCard(
+                                    title: 'Gum Depigmentation',
+                                    imagePath: 'assets/cards/gum.png',
+                                    overlayColor: Colors.white,
+                                    description:
+                                        'Gum depigmentation is a cosmetic dental procedure that reduces dark spots on the gums caused by excess melanin pigmentation. It involves techniques like laser treatment or surgical scraping to remove pigmented tissue, revealing lighter-colored gums underneath. This procedure improves smile aesthetics and is safe and effective for achieving a more uniform gum line.',
+                                  ),
+                                  ServiceCard(
+                                    title: 'Dental Fillings',
+                                    imagePath: 'assets/cards/tooth-filling.png',
+                                    overlayColor: Colors.white,
+                                    description:
+                                        'Dental fillings are materials used to repair teeth damaged by decay, fractures, or wear. Dentists remove the damaged portion of the tooth and fill the space with materials like amalgam or composite resin to restore its strength and function. Fillings prevent further decay, restore appearance, and aid in chewing.',
+                                  ),
+                                  ServiceCard(
+                                    title: 'Crowns & Bridges',
+                                    imagePath: 'assets/cards/bridge.png',
+                                    overlayColor: Colors.white,
+                                    description:
+                                        'Crowns are covers used to repair damaged teeth, while bridges replace missing teeth by bridging the gap between adjacent teeth. Crowns restore the shape, strength, and appearance of a tooth, while bridges restore chewing function and maintain tooth alignment. Both are custom-made restorations that provide long-lasting solutions for dental issues.',
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          height: 600,
+                          width: 1000,
+                        ),
+                      ),
+                    if (MediaQuery.of(context).size.width <= 600)
+                      Center(
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              top: BorderSide(color: Colors.blue, width: 2),
+                              bottom: BorderSide(color: Colors.blue, width: 2),
+                              left: BorderSide(color: Colors.blue, width: 2),
+                              right: BorderSide(color: Colors.blue, width: 2),
+                            ),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(40.0)),
+                          ),
+                          margin: const EdgeInsets.only(top: 350),
+                          child: const Column(
+                            children: [
+                              Text(
+                                'Our Services',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 20),
+                              ),
+                              SizedBox(height: 20),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  ServiceCard(
+                                      title: 'Dental Implants',
+                                      imagePath: 'assets/cards/implant.png',
+                                      overlayColor: Colors.white,
+                                      description:
+                                          'Dental implants are titanium tooth roots placed into the jawbone to support replacement teeth. They offer a durable and natural-looking solution for missing teeth, enhancing chewing, speech, and overall oral health'),
+                                  ServiceCard(
+                                    title: 'Orthodontics',
+                                    imagePath: 'assets/cards/Orthodontics.png',
+                                    overlayColor: Colors.white,
+                                    description:
+                                        'Orthodontics is a dental specialty aimed at correcting misaligned teeth and jaws for improved oral health and aesthetics. Treatments involve braces or aligners to gradually align teeth and address issues like overcrowding and bite problems, enhancing both appearance and function',
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 20),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  ServiceCard(
+                                    title: 'Laser Dentistry',
+                                    imagePath: 'assets/cards/laser-beam.png',
+                                    overlayColor: Colors.white,
+                                    description:
+                                        'Laser dentistry utilizes laser technology for precise and minimally invasive dental procedures, offering benefits like reduced discomfort, faster healing, and greater precision compared to traditional methods. It encompasses treatments for gum disease, cavity preparation, tooth whitening, and soft tissue procedures, providing patients with a more comfortable and efficient dental experience.',
+                                  ),
+                                  ServiceCard(
+                                    title: 'Teeth Whitening',
+                                    imagePath: 'assets/cards/whiteing.png',
+                                    overlayColor: Colors.white,
+                                    description:
+                                        'Teeth whitening is a cosmetic dental procedure that aims to lighten teeth and remove stains. It can be done using bleaching agents like hydrogen peroxide. This safe and effective treatment enhances smile appearance, though results may vary based on staining severity and oral health.',
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 20),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  ServiceCard(
+                                    title: 'Root Canal',
+                                    imagePath: 'assets/cards/root-canal.png',
+                                    overlayColor: Colors.white,
+                                    description:
+                                        'A root canal is a dental procedure that addresses infected or damaged tooth pulp by removing the affected tissue, cleaning the inside of the tooth, and sealing it to prevent further infection. This treatment alleviates pain, preserves the tooth, and restores its function, often followed by the placement of a crown for added protection and strength.',
+                                  ),
+                                  ServiceCard(
+                                    title: 'Gum Depigmentation',
+                                    imagePath: 'assets/cards/gum.png',
+                                    overlayColor: Colors.white,
+                                    description:
+                                        'Gum depigmentation is a cosmetic dental procedure that reduces dark spots on the gums caused by excess melanin pigmentation. It involves techniques like laser treatment or surgical scraping to remove pigmented tissue, revealing lighter-colored gums underneath. This procedure improves smile aesthetics and is safe and effective for achieving a more uniform gum line.',
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 20),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  ServiceCard(
+                                    title: 'Dental Fillings',
+                                    imagePath: 'assets/cards/tooth-filling.png',
+                                    overlayColor: Colors.white,
+                                    description:
+                                        'Dental fillings are materials used to repair teeth damaged by decay, fractures, or wear. Dentists remove the damaged portion of the tooth and fill the space with materials like amalgam or composite resin to restore its strength and function. Fillings prevent further decay, restore appearance, and aid in chewing.',
+                                  ),
+                                  ServiceCard(
+                                    title: 'Crowns & Bridges',
+                                    imagePath: 'assets/cards/bridge.png',
+                                    overlayColor: Colors.white,
+                                    description:
+                                        'Crowns are covers used to repair damaged teeth, while bridges replace missing teeth by bridging the gap between adjacent teeth. Crowns restore the shape, strength, and appearance of a tooth, while bridges restore chewing function and maintain tooth alignment. Both are custom-made restorations that provide long-lasting solutions for dental issues.',
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          height: 755,
+                          width: 300,
+                        ),
+                      ),
                   ],
                 ),
               ),
-                     
               if (MediaQuery.of(context).size.width > 600)
                 Container(
-                  height: 200,
+                  height: 150,
                   color: Colors.blue,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         'Follow Us on Social Media',
                         style: TextStyle(color: Colors.white, fontSize: 30),
                       ),
-                      SizedBox(height: 60),
+                      const SizedBox(height: 30),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Image.asset(
-                            'assets/social media/facebook.png',
-                            width: 50,
-                            height: 50,
+                          IconButton(
+                            onPressed: () {},
+                            icon: SvgPicture.asset(
+                              AppIcons.facebook,
+                              color: Colors.white,
+                              width: 50,
+                              height: 50,
+                            ),
                           ),
-                          Image.asset(
-                            'assets/social media/linkedin.png',
-                            width: 50,
-                            height: 50,
+                          SizedBox(
+                            width: 60,
                           ),
-                          Image.asset(
-                            'assets/social media/instagram.png',
-                            width: 50,
-                            height: 50,
+                          IconButton(
+                            onPressed: () {},
+                            icon: SvgPicture.asset(
+                              AppIcons.instagramIcon,
+                              color: Colors.white,
+                              width: 50,
+                              height: 50,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 60,
+                          ),
+                          IconButton(
+                            onPressed: () {
+                            },
+                            icon: SvgPicture.asset(
+                              AppIcons.linkedinIcon,
+                              color: Colors.white,
+                              width: 50,
+                              height: 50,
+                            ),
                           ),
                         ],
                       ),
                     ],
                   ),
                 ),
-                if (MediaQuery.of(context).size.width <= 600)
+              if (MediaQuery.of(context).size.width <= 600)
                 Container(
-                  height: 200,
+                  height: 100,
                   color: Colors.blue,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         'Follow Us on Social Media',
                         style: TextStyle(color: Colors.white, fontSize: 20),
                       ),
-                      SizedBox(height: 60),
+                      const SizedBox(height: 10),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Image.asset(
-                            'assets/social media/facebook.png',
-                            width: 50,
-                            height: 50,
+                          IconButton(
+                            onPressed: () {},
+                            icon: SvgPicture.asset(
+                              AppIcons.facebook,
+                              color: Colors.white,
+                              width: 30,
+                              height: 30,
+                            ),
                           ),
-                          Image.asset(
-                            'assets/social media/linkedin.png',
-                            width: 50,
-                            height: 50,
+                          SizedBox(
+                            width: 20,
                           ),
-                          Image.asset(
-                            'assets/social media/instagram.png',
-                            width: 50,
-                            height: 50,
+                          IconButton(
+                            onPressed: () {},
+                            icon: SvgPicture.asset(
+                              AppIcons.instagramIcon,
+                              color: Colors.white,
+                              width: 30,
+                              height: 30,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          IconButton(
+                            onPressed: () {},
+                            icon: SvgPicture.asset(
+                              AppIcons.linkedinIcon,
+                              color: Colors.white,
+                              width: 30,
+                              height: 30,
+                            ),
                           ),
                         ],
                       ),

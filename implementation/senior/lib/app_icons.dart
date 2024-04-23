@@ -7,6 +7,9 @@ class AppIcons {
   static const String facebookIcon = 'assets/svgs/f_logo.svg';
   static const String idicon ='assets/images/ID.png';
   static const String userIcon ='assets/images/User.png';
+  static const String linkedinIcon ='assets/svgs/Linkedin.svg';
+  static const String instagramIcon ='assets/svgs/instagram.svg';
+  static const String facebook = 'assets/svgs/facebook.svg';
 }
 
 
