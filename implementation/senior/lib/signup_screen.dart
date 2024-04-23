@@ -22,14 +22,19 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _emailTextController = TextEditingController();
   final TextEditingController _FullnameTextController = TextEditingController();
   final TextEditingController _cprTextController = TextEditingController();
+  final TextEditingController _PhoneTextController = TextEditingController();
+  final TextEditingController _confirmpasswordTextController =
+      TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String _selectedGender = 'Male';
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
- 
+
     String emailPattern = r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$';
     String CPRPattern = r'^\d{2}(0[1-9]|1[0-2])\d{5}$';
+    String PhonePattern = r'^(66\d{6}|3[2-9]\d{6})$';
 
     return Scaffold(
       backgroundColor: AppColors.backColor,
@@ -123,7 +128,7 @@ class _SignUpState extends State<SignUp> {
                           borderRadius: BorderRadius.circular(16.0),
                           color: AppColors.whiteColor,
                         ),
-                        child: reusableTextField('Enter email',
+                        child: ReusableTextField('Enter email',
                             AppIcons.emailIcon, false, _emailTextController),
                       ),
                       SizedBox(height: height * 0.014),
@@ -140,13 +145,73 @@ class _SignUpState extends State<SignUp> {
                       ),
                       const SizedBox(height: 6.0),
                       Container(
+                        height: 50.0,
+                        width: width,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16.0),
+                          color: AppColors.whiteColor,
+                        ),
+                        child: ReusableTextField('Enter Full Name',
+                            AppIcons.userIcon, false, _FullnameTextController),
+                      ),
+                      SizedBox(height: height * 0.014),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: Text(
+                          'Phone Number',
+                          style: ralewayStyle.copyWith(
+                            fontSize: 12.0,
+                            color: AppColors.blueDarkColor,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 6.0),
+                      Container(
                           height: 50.0,
                           width: width,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(16.0),
                             color: AppColors.whiteColor,
                           ),
-                          child: fullNameTextField(_FullnameTextController)),
+                          child: ReusableTextField('Enter Your phone number',
+                              AppIcons.phoneIcon, false, _PhoneTextController)),
+                      SizedBox(height: height * 0.014),
+                      Text(
+                        'Gender',
+                        style: ralewayStyle.copyWith(
+                          fontSize: 12.0,
+                          color: AppColors.blueDarkColor,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Radio(
+                            value: 'Male',
+                            groupValue: _selectedGender,
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedGender = value.toString();
+                              });
+                            },
+                          ),
+                          Text('Male'),
+                          SizedBox(
+                            width: width * 0.014,
+                          ),
+                          Radio(
+                            value: 'Female',
+                            groupValue: _selectedGender,
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedGender = value.toString();
+                              });
+                            },
+                          ),
+                          Text('Female'),
+                        ],
+                      ),
                       SizedBox(height: height * 0.014),
                       Padding(
                         padding: const EdgeInsets.only(left: 16.0),
@@ -161,14 +226,14 @@ class _SignUpState extends State<SignUp> {
                       ),
                       const SizedBox(height: 6.0),
                       Container(
-                        height: 50.0,
-                        width: width,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16.0),
-                          color: AppColors.whiteColor,
-                        ),
-                        child: cprTextField(_cprTextController),
-                      ),
+                          height: 50.0,
+                          width: width,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16.0),
+                            color: AppColors.whiteColor,
+                          ),
+                          child: ReusableTextField('Enter CPR', AppIcons.idicon,
+                              false, _cprTextController)),
                       SizedBox(height: height * 0.014),
                       Padding(
                         padding: const EdgeInsets.only(left: 16.0),
@@ -187,10 +252,33 @@ class _SignUpState extends State<SignUp> {
                           borderRadius: BorderRadius.circular(16.0),
                           color: AppColors.whiteColor,
                         ),
-                        child: reusableTextField('Enter password',
+                        child: ReusableTextField('Enter password',
                             AppIcons.lockIcon, true, _passwordTextController),
                       ),
                       SizedBox(height: height * 0.014),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: Text(
+                          'Confirnm Password',
+                          style: ralewayStyle.copyWith(
+                            fontSize: 12.0,
+                            color: AppColors.blueDarkColor,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 6.0),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16.0),
+                          color: AppColors.whiteColor,
+                        ),
+                        child: ReusableTextField(
+                            'Confirm password',
+                            AppIcons.lockIcon,
+                            true,
+                            _confirmpasswordTextController),
+                      ),
                       SizedBox(height: height * 0.03),
                       Container(
                         height: 50.0,
@@ -200,121 +288,153 @@ class _SignUpState extends State<SignUp> {
                           color: AppColors.mainBlueColor,
                         ),
                         child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                           onTap: () async {
-  String email = _emailTextController.text;
-  String fullName = _FullnameTextController.text;
-  String cpr = _cprTextController.text;
-  String password = _passwordTextController.text;
+                            color: Colors.transparent,
+                            child: InkWell(
+                                onTap: () async {
+                                  String email = _emailTextController.text;
+                                  String fullName =
+                                      _FullnameTextController.text;
+                                  String cpr = _cprTextController.text;
+                                  String password =
+                                      _passwordTextController.text;
+                                  String Phone = _PhoneTextController.text;
 
-  // Check if email is valid
-  if (!RegExp(emailPattern).hasMatch(email)) {
-    showErrorDialog(context ,'Invalid email format.');
-    return;
-  }
+                                  // Check if email is valid
+                                  if (!RegExp(emailPattern).hasMatch(email)) {
+                                    showErrorDialog(
+                                        context, 'Invalid email format.');
+                                    return;
+                                  }
 
-  QuerySnapshot emailResult = await _firestore.collection('user').where('Email', isEqualTo: email).get();
-  if (emailResult.docs.isNotEmpty) {
-    showErrorDialog(context, 'Email already exists.');
-    return;
-  }
+                                  QuerySnapshot emailResult = await _firestore
+                                      .collection('user')
+                                      .where('Email', isEqualTo: email)
+                                      .get();
+                                  if (emailResult.docs.isNotEmpty) {
+                                    showErrorDialog(
+                                        context, 'Email already exists.');
+                                    return;
+                                  }
 
-  // Check if full name is not empty
-  if (fullName.isEmpty) {
-    showErrorDialog(context ,'Full name cannot be empty.');
-    return;
-  }
+                                  // Check if full name is not empty
+                                  if (fullName.isEmpty) {
+                                    showErrorDialog(
+                                        context, 'Full name cannot be empty.');
+                                    return;
+                                  }
 
-  // Check if CPR is valid
-  if (!RegExp(CPRPattern).hasMatch(cpr)) {
-    showErrorDialog(context ,'Invalid CPR format.');
-    return;
-  }
-  
-  QuerySnapshot result = await _firestore.collection('user').where('CPR', isEqualTo: cpr).get();
-  if (result.docs.isNotEmpty) {
-    showErrorDialog(context, 'CPR already exists.');
-    return;
-  }
+                                  if (!RegExp(PhonePattern).hasMatch(Phone)) {
+                                    showErrorDialog(
+                                        context, 'Invalid Phone format.');
+                                    return;
+                                  }
+                                  if (!RegExp(CPRPattern).hasMatch(cpr)) {
+                                    showErrorDialog(
+                                        context, 'Invalid CPR format.');
+                                    return;
+                                  }
 
-  
-  if (password.isNotEmpty) {
-    bool hasUppercase = password.contains(RegExp(r'[A-Z]'));
-    bool hasLowercase = password.contains(RegExp(r'[a-z]'));
-    bool hasDigit = password.contains(RegExp(r'[0-9]'));
-    bool hasMinLength = password.length >= 8;
+                                  QuerySnapshot result = await _firestore
+                                      .collection('user')
+                                      .where('CPR', isEqualTo: cpr)
+                                      .get();
+                                  if (result.docs.isNotEmpty) {
+                                    showErrorDialog(
+                                        context, 'CPR already exists.');
+                                    return;
+                                  }
 
-    if (!hasUppercase) {
-      showErrorDialog(context, 'Password must contain at least one uppercase letter.');
-      return;
-    }
+                                  if (password.isNotEmpty) {
+                                    bool hasUppercase =
+                                        password.contains(RegExp(r'[A-Z]'));
+                                    bool hasLowercase =
+                                        password.contains(RegExp(r'[a-z]'));
+                                    bool hasDigit =
+                                        password.contains(RegExp(r'[0-9]'));
+                                    bool hasMinLength = password.length >= 8;
 
-    if (!hasLowercase) {
-      showErrorDialog(context, 'Password must contain at least one lowercase letter.');
-      return;
-    }
+                                    if (!hasUppercase) {
+                                      showErrorDialog(context,
+                                          'Password must contain at least one uppercase letter.');
+                                      return;
+                                    }
 
-    if (!hasDigit) {
-      showErrorDialog(context, 'Password must contain at least one digit.');
-      return;
-    }
+                                    if (!hasLowercase) {
+                                      showErrorDialog(context,
+                                          'Password must contain at least one lowercase letter.');
+                                      return;
+                                    }
 
-    if (!hasMinLength) {
-      showErrorDialog(context, 'Password must be at least 8 characters long.');
-      return;
-    }
-  } else {
-    showErrorDialog(context, 'Password cannot be empty.');
-    return;
-  }
-  try {
-    UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+                                    if (!hasDigit) {
+                                      showErrorDialog(context,
+                                          'Password must contain at least one digit.');
+                                      return;
+                                    }
 
-    print('User created successfully');
+                                    if (!hasMinLength) {
+                                      showErrorDialog(context,
+                                          'Password must be at least 8 characters long.');
+                                      return;
+                                    }
+                                  } else {
+                                    showErrorDialog(
+                                        context, 'Password cannot be empty.');
+                                    return;
+                                  }
+                                  if (password !=
+                                      _confirmpasswordTextController.text) {
+                                    showErrorDialog(
+                                        context, 'Passwords do not match.');
+                                    return;
+                                  }
+                                  try {
+                                    UserCredential userCredential =
+                                        await FirebaseAuth.instance
+                                            .createUserWithEmailAndPassword(
+                                      email: email,
+                                      password: password,
+                                    );
 
-    String uid = userCredential.user!.uid;
-    _firestore.collection('user').doc(uid).set({
-      'Email': email,
-      'FullName': fullName,
-      'CPR': cpr
-    });
+                                    print('User created successfully');
 
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => WelcomePage(),
-      ),
-    );
-  } catch (e) {
-    print('Failed to create user: $e');
-    showErrorDialog( context ,e.toString());
-  }
-},
-                            borderRadius: BorderRadius.circular(16.0),
-                            child: Ink(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: width *
-                                    0.1, // Adjust the horizontal padding as needed
-                                vertical:
-                                    12.0, // Adjust the vertical padding as needed
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'Sign Up',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.whiteColor,
-                                    fontSize: 16.0,
+                                    String uid = userCredential.user!.uid;
+                                    _firestore.collection('user').doc(uid).set({
+                                      'Email': email,
+                                      'FullName': fullName,
+                                      'CPR': cpr,
+                                      'Phone': Phone,
+                                      'Gender': _selectedGender,
+                                    });
+
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => WelcomePage(),
+                                      ),
+                                    );
+                                  } catch (e) {
+                                    print('Failed to create user: $e');
+                                    showErrorDialog(context, e.toString());
+                                  }
+                                },
+                                borderRadius: BorderRadius.circular(16.0),
+                                child: Ink(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: width *
+                                        0.1, // Adjust the horizontal padding as needed
+                                    vertical:
+                                        12.0, // Adjust the vertical padding as needed
                                   ),
-                                ),
-                              ),
-                            )
-                          )
-                        
-                        ),
+                                  child: Center(
+                                    child: Text(
+                                      'Sign Up',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.whiteColor,
+                                        fontSize: 16.0,
+                                      ),
+                                    ),
+                                  ),
+                                ))),
                       ),
                       SizedBox(height: height * 0.02),
                       Align(

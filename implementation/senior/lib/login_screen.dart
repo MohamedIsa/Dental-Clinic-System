@@ -121,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: BorderRadius.circular(16.0),
                           color: AppColors.whiteColor,
                         ),
-                        child: reusableTextField('Enter email',
+                        child: ReusableTextField('Enter email',
                             AppIcons.emailIcon, false, _emailTextController),
                       ),
                       SizedBox(height:20),
@@ -142,8 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: BorderRadius.circular(16.0),
                           color: AppColors.whiteColor,
                         ),
-                        child: reusableTextField('Enter password',
-                            AppIcons.lockIcon, true, _passwordTextController),
+                        child: ReusableTextField('Enter password', AppIcons.lockIcon, true, _passwordTextController)
                       ),
                       SizedBox(height: height * 0.03),
                       Container(
@@ -306,8 +305,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 color: AppColors.mainBlueColor,
                               ),
                               child: IconButton(
-                                onPressed: () {
-                                  signInWithGoogle();
+                                onPressed: () async {
+                                   await signInWithGoogle(context);
                                 },
                                 icon: SvgPicture.asset(
                                   AppIcons.googleIcon,
