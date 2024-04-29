@@ -157,9 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: InkWell(
                             onTap: () async {
                               try {
-                                UserCredential userCredential =
-                                    await FirebaseAuth.instance
-                                        .signInWithEmailAndPassword(
+                                UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
                                   email: _emailTextController.text,
                                   password: _passwordTextController.text,
                                 );
@@ -176,18 +174,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                   );
                                 }
                               } catch (e) {
-                             if(_emailTextController.text==''||_passwordTextController.text==''){
-                                showErrorDialog(context, 'Please fill all the fields');
-                              }else if(_emailTextController.text!=FirebaseAuth.instance.currentUser!.email){
-                                showErrorDialog(context, 'Invalid email');
-                              }
-                              else if(_passwordTextController.text!=FirebaseAuth.instance.currentUser!.email){
-                                showErrorDialog(context, 'Invalid password');
+                                if (_emailTextController.text == '' || _passwordTextController.text == '') {
+                                  showErrorDialog(context, 'Please fill all the fields');
+                                } else if (_emailTextController.text != FirebaseAuth.instance.currentUser!.email) {
+                                  showErrorDialog(context, 'Invalid email');
+                                } else if (_passwordTextController.text != FirebaseAuth.instance.currentUser!.email) {
+                                  showErrorDialog(context, 'Invalid password');
+                                } else {
+                                  showErrorDialog(context, 'Unknown error occurred. Please try again.');
+                                }
                               
-                              }
-                              else{
-                                showErrorDialog(context, 'Unknown error occurred. Please try again.');
-                              }
                               }
                             },
                             borderRadius: BorderRadius.circular(16.0),

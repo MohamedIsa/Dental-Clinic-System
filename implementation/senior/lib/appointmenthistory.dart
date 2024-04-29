@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/widgets.dart';
 
-class AppointmentHistory extends StatelessWidget {
+class AppointmentHistoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Appointment History'),
+        title: const Text('Appointment History'),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('appointments')
-            .where('userId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+            .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
@@ -22,19 +23,46 @@ class AppointmentHistory extends StatelessWidget {
               itemBuilder: (context, index) {
                 final appointment = appointments[index];
                 final dentist = appointment['dentist'];
-                final date = appointment['date'];
-                final time = appointment['time'];
+                final timestamp = appointment['date'];
+                final time = appointment['hour'];
+                final date = DateTime.fromMillisecondsSinceEpoch(
+                        timestamp.millisecondsSinceEpoch)
+                    .toLocal();
 
-                return ListTile(
-                  title: Text('Dentist: $dentist'),
-                  subtitle: Text('Date: $date, Time: $time'),
+                return Container(
+                  padding: const EdgeInsets.only(left: 100),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.blue[400],
+                    border: Border.all(color: Colors.white),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: ListTile(
+                    contentPadding: EdgeInsets.only(left: 200),
+                    titleAlignment: ListTileTitleAlignment.center,
+                    title: Text(
+                      'Dentist: $dentist',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                    subtitle: Text(
+                      'Date: ${date.year}-${date.month}-${date.day} \nTime: $time:00',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                      ),
+
+                    ),
+                  ),
                 );
               },
             );
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
-            return CircularProgressIndicator();
+            return const CircularProgressIndicator();
           }
         },
       ),

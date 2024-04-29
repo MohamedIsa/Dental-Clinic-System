@@ -4,7 +4,7 @@ import 'package:senior/dashboard.dart';
 import 'package:senior/home_page.dart';
 import 'package:senior/loading.dart';
 import 'package:senior/firebase_options.dart';
-import 'package:senior/BookingPage.dart';
+import 'package:senior/bookingpage.dart';
 import 'package:senior/appointmenthistory.dart';
 import 'package:senior/login_screen.dart';
 import 'package:senior/resetpassword.dart';
@@ -28,11 +28,12 @@ void main() async {
       '/': (context) => const Loading(),
       '/home': (context) => const HomePage(),
       '/booking': (context) => BookingPage(),
-      '/appointmenthistory': (context) => AppointmentHistory(),
+      '/appointmenthistory': (context) => AppointmentHistoryPage(),
       '/forgotpassword': (context) => const ResetPasswordPage(),
       '/login': (context)=> const LoginScreen(),
       '/completedetails': (context) => Complete(uid: firebaseUser!.uid),
       '/dashboard': (context) => WelcomePage(),
+      'updateaccount':(context) => Update(),
     },
   ));
 }
