@@ -20,6 +20,7 @@ class _CompleteState extends State<Complete> {
   final TextEditingController _FullnameTextController = TextEditingController();
   final TextEditingController _cprTextController = TextEditingController();
   final TextEditingController _PhoneTextController = TextEditingController();
+  final TextEditingController _DOBTextController = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String _selectedGender = 'Male';
   String CPRPattern = r'^\d{2}(0[1-9]|1[0-2])\d{5}$';
@@ -207,6 +208,28 @@ class _CompleteState extends State<Complete> {
                             AppIcons.idicon, false, _cprTextController),
                       ),
                       SizedBox(height: height * 0.014),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: Text(
+                          'Date of Birth',
+                          style: ralewayStyle.copyWith(
+                            fontSize: 12.0,
+                            color: AppColors.blueDarkColor,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 6.0),
+                      Container(
+                        height: 50.0,
+                        width: width,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16.0),
+                          color: AppColors.whiteColor,
+                        ),
+                        child: ReusableTextField('Enter Your Date of Birth',
+                            AppIcons.birthIcon, false, _DOBTextController),
+                      ),
                       SizedBox(height: height * 0.03),
                       Container(
                         height: 50.0,
@@ -258,20 +281,28 @@ class _CompleteState extends State<Complete> {
                                     // Check if the user is signed in
                                     if (currentUser != null) {
                                       // Update the user document with new fields
-                                      _firestore
+                                      await _firestore
                                           .collection('user')
                                           .doc(currentUser.uid)
                                           .set(
-                                              {
-                                            'Email': currentUser.email,
-                                            'FullName': fullName,
-                                            'CPR': cpr,
-                                            'Phone': Phone,
-                                            'Gender': _selectedGender,
-                                          },
-                                              SetOptions(
-                                                  merge:
-                                                      true)); // Use merge option to avoid overwriting existing data
+                                        {
+                                          'Email': currentUser.email,
+                                          'FullName': fullName,
+                                          'CPR': cpr,
+                                          'Phone': Phone,
+                                          'Gender': _selectedGender,
+                                          'DOB': _DOBTextController.text,
+                                        },
+                                        SetOptions(merge: true),
+                                      );
+
+                                      // Add UID to the 'patient' collection
+                                      await _firestore
+                                          .collection('patient')
+                                          .doc(currentUser.uid)
+                                          .set({
+                                        'UID': currentUser.uid,
+                                      });
 
                                       Navigator.of(context).push(
                                         MaterialPageRoute(

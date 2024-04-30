@@ -3,7 +3,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:senior/app_icons.dart';
 import 'package:senior/service_card.dart';
-import 'package:senior/login_screen.dart';
 import 'package:senior/signup_screen.dart';
 
 class HomePage extends StatefulWidget {
@@ -32,60 +31,64 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      drawer: MediaQuery.of(context).size.width <= 600
-          ? Drawer(
-              backgroundColor: Colors.blue,
-              child: ListView(
-                children: <Widget>[
-                  ListTile(
-                    title: const Text(
-                      'Home',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const HomePage()),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    title: const Text(
-                      'Dental Services',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onTap: () {},
-                  ),
-                  ListTile(
-                    title: const Text(
-                      'Book Appointment',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onTap: () {},
-                  ),
-                  ListTile(
-                    title: const Text(
-                      'About Us',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onTap: () {},
-                  ),
-                  ListTile(
-                    title: const Text(
-                      'Sign In',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginScreen()),
-                      );
-                    },
-                  ),
-                ],
-              ),
+      bottomNavigationBar: MediaQuery.of(context).size.width <= 600
+          ? BottomNavigationBar(
+              selectedItemColor: Colors.blue,
+              unselectedItemColor: Colors.grey,
+              unselectedLabelStyle:const TextStyle(color: Colors.grey),
+              selectedLabelStyle: const TextStyle(color: Colors.blue),
+              showUnselectedLabels: true,
+
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.medical_services),
+                  label: 'Dental Services',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.info),
+                  label: 'About Us',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.login),
+                  label: 'Sign In',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.app_registration),
+                  label: 'Sign Up',
+                ),
+              ],
+              onTap: (index) {
+                switch (index) {
+                  case 0:
+                    Navigator.pushNamed(
+                      context,
+                      '/home',
+                    );
+                    break;
+                  case 1:
+                    // Handle Dental Services tap
+                    break;
+                  case 2:
+                    // Handle About Us tap
+                    break;
+                  case 3:
+                    Navigator.pushNamed(
+                      context,
+                      '/login',
+                    );
+                    break;
+                  case 4:
+                    Navigator.pushNamed(
+                      context,
+                      '/signup',
+                    );
+                    break;
+                }
+              },
             )
           : null,
       body: Container(
@@ -128,16 +131,6 @@ class _HomePageState extends State<HomePage> {
                           TextButton(
                             onPressed: () {},
                             child: const Text(
-                              'Book Appointment',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                              ),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {},
-                            child: const Text(
                               'About Us',
                               style: TextStyle(
                                 color: Colors.white,
@@ -147,15 +140,26 @@ class _HomePageState extends State<HomePage> {
                           ),
                           TextButton(
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const LoginScreen()),
-                              );
+                              Navigator.pushNamed(context, '/login');
                             },
                             child: const Text(
                               'Sign In',
-                              style: TextStyle(color: Colors.white,fontSize: 20,),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/signup');
+                            },
+                            child: const Text(
+                              'Sign Up',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                              ),
                             ),
                           ),
                         ],
@@ -295,7 +299,7 @@ class _HomePageState extends State<HomePage> {
                           margin: const EdgeInsets.only(top: 300),
                           child: const Column(
                             children: [
-                              Text('Our Services',
+                              const Text('Our Services',
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 30)),
                               SizedBox(height: 90),
@@ -510,7 +514,7 @@ class _HomePageState extends State<HomePage> {
                               height: 50,
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 60,
                           ),
                           IconButton(
@@ -522,12 +526,11 @@ class _HomePageState extends State<HomePage> {
                               height: 50,
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 60,
                           ),
                           IconButton(
-                            onPressed: () {
-                            },
+                            onPressed: () {},
                             icon: SvgPicture.asset(
                               AppIcons.linkedinIcon,
                               color: Colors.white,
@@ -564,7 +567,7 @@ class _HomePageState extends State<HomePage> {
                               height: 30,
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 20,
                           ),
                           IconButton(
@@ -576,7 +579,7 @@ class _HomePageState extends State<HomePage> {
                               height: 30,
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 20,
                           ),
                           IconButton(

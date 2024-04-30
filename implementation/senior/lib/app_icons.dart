@@ -11,6 +11,7 @@ class AppIcons {
   static const String instagramIcon ='assets/svgs/instagram.svg';
   static const String facebook = 'assets/svgs/facebook.svg';
   static const String phoneIcon = 'assets/images/Phone.png';
+  static const String birthIcon = 'assets/images/Birth.png';
 }
 
 

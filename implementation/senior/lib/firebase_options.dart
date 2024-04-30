@@ -20,10 +20,6 @@ class DefaultFirebaseOptions {
       return web;
     }
     switch (defaultTargetPlatform) {
-      case TargetPlatform.android:
-        return android;
-      case TargetPlatform.iOS:
-        return ios;
       case TargetPlatform.macOS:
         return macos;
       case TargetPlatform.windows:
@@ -48,23 +44,6 @@ class DefaultFirebaseOptions {
     authDomain: 'endless-set-314517.firebaseapp.com',
     storageBucket: 'endless-set-314517.appspot.com',
     measurementId: 'G-Z479E0VRMN',
-  );
-
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCuKUvQ9nZXLUF0NqsFDXSdGHwToawxyvQ',
-    appId: '1:351146855860:android:1d460bb507f7170d9276e1',
-    messagingSenderId: '351146855860',
-    projectId: 'endless-set-314517',
-    storageBucket: 'endless-set-314517.appspot.com',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCgzOd_FoFxhRVyfiTxdy1_G6AiWUXFwq4',
-    appId: '1:351146855860:ios:cc3ecdd0eeefbc029276e1',
-    messagingSenderId: '351146855860',
-    projectId: 'endless-set-314517',
-    storageBucket: 'endless-set-314517.appspot.com',
-    iosBundleId: 'com.example.senior',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(

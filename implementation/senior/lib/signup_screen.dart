@@ -25,6 +25,7 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _PhoneTextController = TextEditingController();
   final TextEditingController _confirmpasswordTextController =
       TextEditingController();
+  final TextEditingController _dobTextController = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String _selectedGender = 'Male';
   @override
@@ -216,7 +217,7 @@ class _SignUpState extends State<SignUp> {
                       Padding(
                         padding: const EdgeInsets.only(left: 16.0),
                         child: Text(
-                          'CPR',
+                          'Date of Birth',
                           style: ralewayStyle.copyWith(
                             fontSize: 12.0,
                             color: AppColors.blueDarkColor,
@@ -232,8 +233,31 @@ class _SignUpState extends State<SignUp> {
                             borderRadius: BorderRadius.circular(16.0),
                             color: AppColors.whiteColor,
                           ),
-                          child: ReusableTextField('Enter CPR', AppIcons.idicon,
-                              false, _cprTextController)),
+                          child: ReusableTextField('Ente Date of Birth', AppIcons.birthIcon,
+                              false,_dobTextController)),
+                      SizedBox(height: height * 0.014),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: Text(
+                          'CPR',
+                          style: ralewayStyle.copyWith(
+                            fontSize: 12.0,
+                            color: AppColors.blueDarkColor,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 6.0),
+                      Container(
+                        height: 50.0,
+                        width: width,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16.0),
+                          color: AppColors.whiteColor,
+                        ),
+                        child: ReusableTextField('Enter CPR',
+                            AppIcons.idicon, false, _cprTextController),
+                      ),
                       SizedBox(height: height * 0.014),
                       Padding(
                         padding: const EdgeInsets.only(left: 16.0),
@@ -298,6 +322,7 @@ class _SignUpState extends State<SignUp> {
                                   String password =
                                       _passwordTextController.text;
                                   String Phone = _PhoneTextController.text;
+                                
 
                                   // Check if email is valid
                                   if (!RegExp(emailPattern).hasMatch(email)) {
@@ -387,6 +412,7 @@ class _SignUpState extends State<SignUp> {
                                         context, 'Passwords do not match.');
                                     return;
                                   }
+
                                   try {
                                     UserCredential userCredential =
                                         await FirebaseAuth.instance
@@ -398,12 +424,24 @@ class _SignUpState extends State<SignUp> {
                                     print('User created successfully');
 
                                     String uid = userCredential.user!.uid;
-                                    _firestore.collection('user').doc(uid).set({
+
+                                    // Add user details to the 'user' collection
+                                    await _firestore
+                                        .collection('user')
+                                        .doc(uid)
+                                        .set({
                                       'Email': email,
                                       'FullName': fullName,
                                       'CPR': cpr,
                                       'Phone': Phone,
                                       'Gender': _selectedGender,
+                                      'DOB': _dobTextController.text,
+                                    });
+                                    await _firestore
+                                        .collection('admin')
+                                        .doc(uid)
+                                        .set({
+                                      'uid': uid,
                                     });
 
                                     Navigator.of(context).push(

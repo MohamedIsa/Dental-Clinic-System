@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:senior/app_colors.dart';
@@ -166,12 +167,25 @@ class _LoginScreenState extends State<LoginScreen> {
                                   // Persist the user's ID locally.
                                   await persistUser(userCredential.user!.uid);
 
-                                  // Pass the full name to the WelcomePage.
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => WelcomePage(),
-                                    ),
-                                  );
+                                  // Check if the user exists in the patient collection.
+                                  DocumentSnapshot patientSnapshot = await FirebaseFirestore.instance.collection('patients').doc(userCredential.user!.uid).get();
+                                  if (patientSnapshot.exists) {
+                                    // Pass the full name to the WelcomePage.
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => WelcomePage(),
+                                      ),
+                                    );
+                                  } else {
+                                    // Check if the user exists in the admin collection.
+                                    DocumentSnapshot adminSnapshot = await FirebaseFirestore.instance.collection('admin').doc(userCredential.user!.uid).get();
+                                    if (adminSnapshot.exists) {
+                                      // Navigate to the admin page.
+                                     Navigator.pushNamed(context, '/admin');
+                                    } else {
+                                      showErrorDialog(context, 'User not found in patient or admin collection');
+                                    }
+                                  }
                                 }
                               } catch (e) {
                                 if (_emailTextController.text == '' || _passwordTextController.text == '') {
@@ -183,7 +197,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 } else {
                                   showErrorDialog(context, 'Unknown error occurred. Please try again.');
                                 }
-                              
                               }
                             },
                             borderRadius: BorderRadius.circular(16.0),

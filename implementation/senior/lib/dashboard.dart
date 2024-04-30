@@ -1,8 +1,19 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:intl/intl.dart';
+import 'package:senior/responsive_widget.dart';
 
-class WelcomePage extends StatelessWidget {
+class WelcomePage extends StatefulWidget {
+  @override
+  _WelcomePageState createState() => _WelcomePageState();
+}
+
+class _WelcomePageState extends State<WelcomePage> {
+  int _selectedIndex =
+      0; 
+
   Future<String> getFullName() async {
     final User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -17,305 +28,334 @@ class WelcomePage extends StatelessWidget {
     return 'User';
   }
 
-  Future<List<DocumentSnapshot>> getBookings() async {
-    final User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('appointments')
-          .where('userId', isEqualTo: user.uid)
-          .get();
-      return querySnapshot.docs;
+  Future<String> getUpcomingAppointment() async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('appointments')
+        .orderBy('date')
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      DateTime now = DateTime.now();
+      // Define the start and end hours for appointments
+      int startHour = 9;
+      int endHour = 17;
+
+      for (DocumentSnapshot appointment in querySnapshot.docs) {
+        DateTime appointmentDate =
+            (appointment.get('date') as Timestamp).toDate();
+        int appointmentHour = appointment['hour'] ?? 0;
+
+        // Calculate the appointment time in DateTime format
+        DateTime appointmentTime = DateTime(
+          appointmentDate.year,
+          appointmentDate.month,
+          appointmentDate.day,
+          appointmentHour,
+        );
+
+        // Check if the appointment is within the working hours and after the current time
+        if (appointmentHour >= startHour &&
+            appointmentHour <= endHour &&
+            appointmentTime.isAfter(now)) {
+          // Retrieve appointment data
+          String dentist = appointment['dentist'] ?? '';
+
+          // Format the appointment information
+          String formattedDate =
+              DateFormat.yMd().add_jm().format(appointmentTime);
+          String formattedAppointment =
+              '\nDentist: $dentist,\nTime: $formattedDate';
+
+          return formattedAppointment;
+        }
+      }
     }
-    return [];
+    return 'No upcoming appointments';
   }
 
   @override
   Widget build(BuildContext context) {
-   double screenWidth = MediaQuery.of(context).size.width;
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: <Widget>[
-            if (MediaQuery.of(context).size.width > 600)
+    return ResponsiveWidget(
+      largeScreen: Scaffold(
+        appBar: AppBar(
+          title:Row(
+            children: <Widget>[
               const SizedBox(width: 40),
-            const Text(
-              'Clinic',
-              style: TextStyle(color: Colors.blue, fontSize: 20),
+              const Text(
+                'Clinic',
+                style: TextStyle(color: Colors.blue, fontSize: 20),
+              ),
+
+                const SizedBox(width: 800),
+              FutureBuilder<String>(
+                future: getFullName(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Container();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return Text(
+                      'Welcome, ${snapshot.data}!',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.logout),
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.pushNamed(context, '/home');
+              },
             ),
           ],
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
         ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () async {
-              await FirebaseAuth.instance.signOut();
-              Navigator.pushNamed(context, '/home');
-            },
-          ),
-        ],
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-      ),
-      drawer: MediaQuery.of(context).size.width <= 600
-          ? Drawer(
-              backgroundColor: Colors.blue,
-              child: ListView(
-                children: <Widget>[
-                  ListTile(
-                    title: const Text(
-                      'Home',
-                      style: TextStyle(color: Colors.white),
+        bottomNavigationBar: ResponsiveWidget.isSmallScreen(context)
+            ? BottomNavigationBar(
+                selectedItemColor: Colors.blue,
+                unselectedItemColor: Colors.grey,
+                unselectedLabelStyle: TextStyle(color: Colors.grey),
+                selectedLabelStyle: TextStyle(color: Colors.blue),
+                showUnselectedLabels: true,
+                currentIndex: _selectedIndex,
+                items: const <BottomNavigationBarItem>[
+                  BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.home,
                     ),
-                    onTap: () {},
+                    label: 'Home',
                   ),
-                  ListTile(
-                    title: const Text(
-                      'Book Appointment',
-                      style: TextStyle(color: Colors.white),
+                  BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.calendar_today,
                     ),
-                    onTap: () {
-                      Navigator.pushNamed(context, '/booking');
-                    },
+                    label: 'Book Appointment',
                   ),
-                  ListTile(
-                    title: const Text(
-                      'Appointment History',
-                      style: TextStyle(color: Colors.white),
+                  BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.history,
                     ),
-                    onTap: () {
-                      Navigator.pushNamed(context, '/appointmenthistory');
-                    },
+                    label: 'Appointment History',
                   ),
-                  ListTile(
-                    title: const Text(
-                      'Update Account',
-                      style: TextStyle(color: Colors.white),
+                  BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.person,
                     ),
-                    onTap: () {},
+                    label: 'Update Account',
                   ),
-                  ListTile(
-                    title: const Text(
-                      'edit Appointment',
-                      style: TextStyle(color: Colors.white),
+                  BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.edit,
                     ),
-                    onTap: () {},
+                    label: 'Edit Appointment',
                   ),
                 ],
+                onTap: (index) {
+                  setState(() {
+                    _selectedIndex = index;
+                  });
+                  switch (index) {
+                    case 0:
+
+                      break;
+                    case 1:
+                      Navigator.pushNamed(context, '/bookingm');
+                      break;
+                    case 2:
+                      Navigator.pushNamed(context, '/appointmenthistory');
+                      break;
+                    case 3:
+                      // Handle Update Account navigation
+                      break;
+                    case 4:
+                      // Handle Edit Appointment navigation
+                      break;
+                  }
+                },
+              )
+            : null,
+        body: FutureBuilder<String>(
+          future: getFullName(),
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: SpinKitFadingCube(
+                  color: Colors.blue,
+                  size: 50.0,
+                ),
+              );
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+            return Container(
+              height: MediaQuery.of(context).size.height * 1.5,
+              decoration: const BoxDecoration(
+                color: Colors.blue,
               ),
-            )
-          : null,
-      body: FutureBuilder<String>(
-        future: getFullName(),
-        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-          return Container(
-            height: MediaQuery.of(context).size.height * 1.5,
-            decoration: const BoxDecoration(
-              color: Colors.blue,
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  if (MediaQuery.of(context).size.width > 600)
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    if (ResponsiveWidget.isMediumScreen(context) ||
+                        ResponsiveWidget.isLargeScreen(context))
+                      Container(
+                        height: 40,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                TextButton(
+                                  onPressed: () {},
+                                  child: const Text(
+                                    'Home',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(context, '/booking');
+                                  },
+                                  child: const Text(
+                                    'Book Appointment',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                        context, '/appointmenthistory');
+                                  },
+                                  child: const Text(
+                                    'Appointment History',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {},
+                                  child: const Text(
+                                    'Update Account',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {},
+                                  child: const Text(
+                                    'Edit Appointment',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                     Container(
-                      height: 40,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: <Widget>[
-                              TextButton(
-                                onPressed: () {},
-                                child: const Text(
-                                  'Home',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                  ),
+                      width: double.infinity,
+                      height: 1150,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/Background.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            child: Container(
+                              color: Colors.transparent,
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(
+                                top: 100,
+                                left: MediaQuery.of(context).size.width * 0.3,
+                                right: MediaQuery.of(context).size.width * 0.3),
+                            padding: const EdgeInsets.all(20),
+                            height: 230,
+                            width: 400,
+                            decoration: BoxDecoration(
+                              color: Colors.blue,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                FutureBuilder<String>(
+                                  future: getUpcomingAppointment(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return SpinKitFadingCircle(
+                                        color: Colors.white,
+                                        size: 20,
+                                      );
+                                    } else if (snapshot.hasError) {
+                                      return Text(
+                                        'Error loading appointment',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                        ),
+                                      );
+                                    } else {
+                                      return  Text(
+                                        'Upcoming Appointment: ${snapshot.data}',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize:
+                                              ResponsiveWidget.isLargeScreen(
+                                                      context)
+                                                  ? 20
+                                                  : 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      );
+                                    }
+                                  },
                                 ),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pushNamed(context, '/booking');
-                                },
-                                child: const Text(
-                                  'Book Appointment',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pushNamed(context, '/appointmenthistory');
-                                },
-                                child: const Text(
-                                  'Appointment History',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () {},
-                                child: const Text(
-                                  'Update Account',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () {},
-                                child: const Text(
-                                  'Edit Appointment',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ],
                       ),
                     ),
-                  Container(
-                    width: double.infinity,
-                    height: 1150,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/Background.png'),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          bottom: 0,
-                          child: Container(
-                            color: Colors.transparent,
-                          ),
-                        ),
-                        if (MediaQuery.of(context).size.width <= 600)
-                          Container(
-                            margin: const EdgeInsets.only(
-                                top: 95, left: 20, right: 20),
-                            padding: const EdgeInsets.all(10),
-                            height: 130,
-                            decoration: BoxDecoration(
-                              color: Colors.blue,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Welcome to our Dental Clinic\n ${snapshot.data} !',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          ),
-                        if (MediaQuery.of(context).size.width > 600)
-                          Container(
-                           margin: EdgeInsets.only(
-                            top: 100,
-                            left: screenWidth * 0.3,
-                            right: screenWidth * 0.3),
-                        padding: const EdgeInsets.all(20),
-                            height: 130,
-                            decoration: BoxDecoration(
-                              color: Colors.blue,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Welcome to our Dental Clinic\n ${snapshot.data} !',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
 }
-
-
-
-              /*
-              FutureBuilder<List<DocumentSnapshot>>(
-        future: getBookings(),
-        builder: (BuildContext context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else {
-            List<Widget> bookingWidgets = [];
-            if (snapshot.data!.isEmpty) {
-              bookingWidgets.add(Text('No bookings found.'));
-            } else {
-              bookingWidgets.add(Text('Your Bookings:'));
-              for (DocumentSnapshot booking in snapshot.data!) {
-                bookingWidgets.add(Text('Dentist: ${booking['dentist']}, Time: ${booking['time']}'));
-              }
-            }
-            return ListView(
-              padding: EdgeInsets.all(16),
-              children: bookingWidgets,
-            );
-          }
-        },
-      ),
-    ],
-  ),
-        ),
-      ),
-    );
-              */  
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
