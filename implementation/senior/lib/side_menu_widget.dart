@@ -14,7 +14,7 @@ class _SideMenuWidgetState extends State<SideMenuWidget> {
   @override
   void initState() {
     super.initState();
-    currentRouteName = '/dashboard'; // Set initial route name
+    currentRouteName = '/admin'; // Set initial route name
   }
 
   @override
