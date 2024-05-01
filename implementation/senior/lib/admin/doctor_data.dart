@@ -1,4 +1,4 @@
-import 'package:senior/doctor_model.dart';
+import 'package:senior/admin/doctor_model.dart';
 
 class DoctorData {
   static List<Doctor> getDoctors() {

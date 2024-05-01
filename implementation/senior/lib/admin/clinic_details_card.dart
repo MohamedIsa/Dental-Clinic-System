@@ -1,5 +1,5 @@
-import 'package:senior/clinic_details.dart';
-import 'package:senior/custom_card_widget.dart';
+import 'package:senior/admin/clinic_details.dart';
+import 'package:senior/admin/custom_card_widget.dart';
 import 'package:flutter/material.dart';
 
 class ClinicDetailsCard extends StatelessWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:senior/patient_model.dart';
+import 'package:senior/admin/patient_model.dart';
 
 class PatientDetailsPage extends StatelessWidget {
   final PatientData patient;

@@ -1,4 +1,4 @@
-import 'package:senior/custom_card_widget.dart';
+import 'package:senior/admin/custom_card_widget.dart';
 import 'package:flutter/material.dart';
 
 class SummaryDetails extends StatelessWidget {

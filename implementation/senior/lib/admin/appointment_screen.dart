@@ -1,8 +1,8 @@
-import 'package:senior/appointment.dart';
+import 'package:senior/admin/appointment.dart';
 import 'package:flutter/material.dart';
-import 'package:senior/appointment_buttons_widget.dart';
-import 'package:senior/side_menu_widget.dart';
-import 'package:senior/header_widget.dart';
+import 'package:senior/admin/appointment_buttons_widget.dart';
+import 'package:senior/admin/side_menu_widget.dart';
+import 'package:senior/admin/header_widget.dart';
 
 
 class AppointmentPage extends StatelessWidget {

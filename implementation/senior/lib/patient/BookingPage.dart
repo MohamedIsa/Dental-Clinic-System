@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:senior/app_colors.dart';
-import 'package:senior/dashboard.dart';
+import 'package:senior/patient/dashboard.dart';
 import 'package:senior/responsive_widget.dart';
 
 class BookingPage extends StatefulWidget {

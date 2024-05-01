@@ -1,7 +1,7 @@
-import 'package:senior/header_widget.dart';
-import 'package:senior/patient_button_widget.dart';
-import 'package:senior/patient_list.dart';
-import 'package:senior/side_menu_widget.dart';
+import 'package:senior/admin/header_widget.dart';
+import 'package:senior/admin/patient_button_widget.dart';
+import 'package:senior/admin/patient_list.dart';
+import 'package:senior/admin/side_menu_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';

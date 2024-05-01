@@ -1,4 +1,4 @@
-import 'package:senior/constant.dart';
+import 'package:senior/admin/constant.dart';
 import 'package:flutter/material.dart';
 
 class CustomCard extends StatelessWidget {

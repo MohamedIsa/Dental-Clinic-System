@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:senior/dashboard_widget.dart';
+import 'package:senior/admin/dashboard_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:senior/side_menu_widget.dart';
-import 'package:senior/header_widget.dart';
+import 'package:senior/admin/side_menu_widget.dart';
+import 'package:senior/admin/header_widget.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({Key? key});

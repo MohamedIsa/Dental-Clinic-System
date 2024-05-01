@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:senior/patient_details_button.dart'; 
-import 'package:senior/patient_model.dart'; 
+import 'package:senior/admin/patient_details_button.dart'; 
+import 'package:senior/admin/patient_model.dart'; 
 
 class PatientsDataTable extends StatelessWidget {
   const PatientsDataTable({super.key, String? uid});

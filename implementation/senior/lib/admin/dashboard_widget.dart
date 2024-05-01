@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:senior/clinic_details_card.dart';
-import 'package:senior/today_appointment.dart';
+import 'package:senior/admin/clinic_details_card.dart';
+import 'package:senior/admin/today_appointment.dart';
 
 class DashboardWidget extends StatelessWidget {
   const DashboardWidget({Key? key});

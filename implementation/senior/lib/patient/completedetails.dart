@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:senior/app_colors.dart';
 import 'package:senior/app_icons.dart';
 import 'package:senior/app_styles.dart';
-import 'package:senior/dashboard.dart';
+import 'package:senior/patient/dashboard.dart';
 import 'package:senior/responsive_widget.dart';
-import 'package:senior/reuseable_widget.dart';
+import 'package:senior/registration/reuseable_widget.dart';
 
 class Complete extends StatefulWidget {
   final String uid;

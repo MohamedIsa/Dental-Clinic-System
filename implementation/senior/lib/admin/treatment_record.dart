@@ -1,4 +1,4 @@
-import 'package:senior/treatment_record_model.dart';
+import 'package:senior/admin/treatment_record_model.dart';
 import 'package:flutter/material.dart';
 
 class TreatmentRecordPage extends StatefulWidget {

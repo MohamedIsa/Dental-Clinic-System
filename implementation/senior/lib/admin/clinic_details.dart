@@ -1,4 +1,4 @@
-import 'package:senior/clinic_details_model.dart';
+import 'package:senior/admin/clinic_details_model.dart';
 class ClinicDetails {
   final clinicadata = const [
     DetailsModel(

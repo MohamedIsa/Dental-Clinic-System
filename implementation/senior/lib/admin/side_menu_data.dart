@@ -1,4 +1,4 @@
-import 'package:senior/side_menu_model.dart';
+import 'package:senior/admin/side_menu_model.dart';
 import 'package:flutter/material.dart';
 
 class SideMenuData {

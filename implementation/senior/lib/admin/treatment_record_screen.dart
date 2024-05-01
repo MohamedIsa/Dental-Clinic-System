@@ -1,8 +1,8 @@
 
-import 'package:senior/treatment_record.dart';
+import 'package:senior/admin/treatment_record.dart';
 import 'package:flutter/material.dart';
-import 'package:senior/header_widget.dart';
-import 'package:senior/side_menu_widget.dart';
+import 'package:senior/admin/header_widget.dart';
+import 'package:senior/admin/side_menu_widget.dart';
 
 class TreatmentRecordScreen extends StatelessWidget {
 

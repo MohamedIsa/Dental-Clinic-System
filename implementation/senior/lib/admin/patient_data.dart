@@ -1,4 +1,4 @@
-import 'package:senior/patient_model.dart';
+import 'package:senior/admin/patient_model.dart';
 
 List<PatientData> patientInfo = [
   PatientData(
