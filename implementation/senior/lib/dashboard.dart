@@ -11,11 +11,10 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  int _selectedIndex =
-      0; 
+  int _selectedIndex = 0;
 
   Future<String> getFullName() async {
-    final User? user = FirebaseAuth.instance.currentUser;
+    User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       DocumentSnapshot userDoc = await FirebaseFirestore.instance
           .collection('user')
@@ -28,65 +27,67 @@ class _WelcomePageState extends State<WelcomePage> {
     return 'User';
   }
 
-  Future<String> getUpcomingAppointment() async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('appointments')
-        .orderBy('date')
-        .get();
+Future<String> getUpcomingAppointment(String uid) async {
+  QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+      .collection('appointments')
+      .where('uid', isEqualTo: uid) // Filter by UID
+      .orderBy('date')
+      .get();
 
-    if (querySnapshot.docs.isNotEmpty) {
-      DateTime now = DateTime.now();
-      // Define the start and end hours for appointments
-      int startHour = 9;
-      int endHour = 17;
+  if (querySnapshot.docs.isNotEmpty) {
+    DateTime now = DateTime.now();
+    // Define the start and end hours for appointments
+    int startHour = 9;
+    int endHour = 17;
 
-      for (DocumentSnapshot appointment in querySnapshot.docs) {
-        DateTime appointmentDate =
-            (appointment.get('date') as Timestamp).toDate();
-        int appointmentHour = appointment['hour'] ?? 0;
+    for (DocumentSnapshot appointment in querySnapshot.docs) {
+      DateTime appointmentDate =
+          (appointment.get('date') as Timestamp).toDate();
+      int appointmentHour = appointment['hour'] ?? 0;
 
-        // Calculate the appointment time in DateTime format
-        DateTime appointmentTime = DateTime(
-          appointmentDate.year,
-          appointmentDate.month,
-          appointmentDate.day,
-          appointmentHour,
-        );
+      // Calculate the appointment time in DateTime format
+      DateTime appointmentTime = DateTime(
+        appointmentDate.year,
+        appointmentDate.month,
+        appointmentDate.day,
+        appointmentHour,
+      );
 
-        // Check if the appointment is within the working hours and after the current time
-        if (appointmentHour >= startHour &&
-            appointmentHour <= endHour &&
-            appointmentTime.isAfter(now)) {
-          // Retrieve appointment data
-          String dentist = appointment['dentist'] ?? '';
+      // Check if the appointment is within the working hours and after the current time
+      if (appointmentHour >= startHour &&
+          appointmentHour <= endHour &&
+          appointmentTime.isAfter(now)) {
+        // Retrieve appointment data
+        String dentist = appointment['dentist'] ?? '';
 
-          // Format the appointment information
-          String formattedDate =
-              DateFormat.yMd().add_jm().format(appointmentTime);
-          String formattedAppointment =
-              '\nDentist: $dentist,\nTime: $formattedDate';
+        // Format the appointment information
+        String formattedDate =
+            DateFormat.yMd().add_jm().format(appointmentTime);
+        String formattedAppointment =
+            '\nDentist: $dentist,\nTime: $formattedDate';
 
-          return formattedAppointment;
-        }
+        return formattedAppointment;
       }
     }
-    return 'No upcoming appointments';
   }
+
+  return 'No upcoming appointments';
+}
+
 
   @override
   Widget build(BuildContext context) {
     return ResponsiveWidget(
       largeScreen: Scaffold(
         appBar: AppBar(
-          title:Row(
+          title: Row(
             children: <Widget>[
               const SizedBox(width: 40),
               const Text(
                 'Clinic',
                 style: TextStyle(color: Colors.blue, fontSize: 20),
               ),
-
-                const SizedBox(width: 800),
+              const SizedBox(width: 800),
               FutureBuilder<String>(
                 future: getFullName(),
                 builder: (context, snapshot) {
@@ -166,7 +167,6 @@ class _WelcomePageState extends State<WelcomePage> {
                   });
                   switch (index) {
                     case 0:
-
                       break;
                     case 1:
                       Navigator.pushNamed(context, '/bookingm');
@@ -221,7 +221,7 @@ class _WelcomePageState extends State<WelcomePage> {
                                     'Home',
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 12,
+                                      fontSize: 20,
                                     ),
                                   ),
                                 ),
@@ -233,7 +233,7 @@ class _WelcomePageState extends State<WelcomePage> {
                                     'Book Appointment',
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 12,
+                                      fontSize: 20,
                                     ),
                                   ),
                                 ),
@@ -246,17 +246,20 @@ class _WelcomePageState extends State<WelcomePage> {
                                     'Appointment History',
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 12,
+                                      fontSize: 20,
                                     ),
                                   ),
                                 ),
                                 TextButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                        context, '/updateaccount');
+                                  },
                                   child: const Text(
                                     'Update Account',
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 12,
+                                      fontSize: 20,
                                     ),
                                   ),
                                 ),
@@ -266,7 +269,7 @@ class _WelcomePageState extends State<WelcomePage> {
                                     'Edit Appointment',
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 12,
+                                      fontSize: 20,
                                     ),
                                   ),
                                 ),
@@ -311,7 +314,9 @@ class _WelcomePageState extends State<WelcomePage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 FutureBuilder<String>(
-                                  future: getUpcomingAppointment(),
+                                  future: getUpcomingAppointment(
+                                      FirebaseAuth.instance.currentUser!.uid
+                                  ),
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
@@ -320,15 +325,16 @@ class _WelcomePageState extends State<WelcomePage> {
                                         size: 20,
                                       );
                                     } else if (snapshot.hasError) {
+                                      print('Error: ${snapshot.error}');
                                       return Text(
                                         'Error loading appointment',
                                         style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: 12,
+                                          fontSize: 20,
                                         ),
                                       );
                                     } else {
-                                      return  Text(
+                                      return Text(
                                         'Upcoming Appointment: ${snapshot.data}',
                                         style: TextStyle(
                                           color: Colors.white,

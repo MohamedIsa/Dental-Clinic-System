@@ -18,6 +18,7 @@ import 'package:senior/settings_widget.dart';
 import 'package:senior/signup_screen.dart';
 import 'package:senior/mobile.dart';
 import 'package:senior/treatment_record_screen.dart';
+import 'package:senior/updateaccount.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,7 +42,7 @@ void main() async {
       '/dashboard': (context) => WelcomePage(),
       '/signup': (context) => const SignUp(),
       '/bookingm': (context) => bookingm(),
-      /*'updateaccount':(context) => Update(),*/
+      '/updateaccount':(context) => UpdateAccountPage(),
       '/admin': (context) => const MainScreen(),
       '/appointment': (context) => const AppointmentPage(),
       '/patients': (context) => AdminPatientPage(),

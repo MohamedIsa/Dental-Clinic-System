@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:senior/dashboard_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:senior/side_menu_widget.dart';
@@ -39,7 +40,10 @@ class MainScreen extends StatelessWidget {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          return CircularProgressIndicator();
+          return SpinKitFadingCube(
+            size: 30,
+            color: Colors.blue,
+          );
         }
       },
     );
