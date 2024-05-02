@@ -6,7 +6,7 @@ import 'package:senior/registration/login_screen.dart';
 import 'package:senior/responsive_widget.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:senior/registration/reuseable_widget.dart';
+import 'package:senior/reuseable_widget.dart';
 import 'package:senior/patient/dashboard.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
