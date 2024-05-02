@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:senior/app_colors.dart';
 import 'package:senior/app_icons.dart';
 import 'package:senior/app_styles.dart';
-import 'package:senior/registration/reuseable_widget.dart';
+import 'package:senior/reuseable_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:senior/responsive_widget.dart';
 
