@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:senior/admin/header_widget.dart';
 import 'package:senior/admin/side_menu_widget.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -54,63 +53,67 @@ class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: HeaderWidget(userName: 'Ahmed Mahmood'),
-      body: SafeArea(
-        child: Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: SideMenuWidget(), // Assuming you have a SideMenuWidget
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Settings'),
             ),
-            Expanded(
-              flex: 7,
-              child: SettingsPage(
-                navigateToSettings: (settingName) {
-                  // Implement navigation logic here
-                  switch (settingName) {
-                    case 'General Settings':
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => GeneralSettingsScreen()),
-                      );
-                      break;
-                    case 'Appointment Settings':
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => AppointmentSettingsScreen()),
-                      );
-                      break;
-                    case 'Staff Management':
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => StaffManagementScreen()),
-                      );
-                      break;
-                    case 'Notifications and Alerts':
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => NotificationsScreen()),
-                      );
-                      break;
-                    case 'Edit Coupon':
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => EditCouponScreen()),
-                      );
-                      break;
-                    default:
-                      print('Setting not found');
-                  }
-                },
+            body: SafeArea(
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: SideMenuWidget(), // Assuming you have a SideMenuWidget
+                  ),
+                  Expanded(
+                    flex: 7,
+                    child: SettingsPage(
+                      navigateToSettings: (settingName) {
+                        // Implement navigation logic here
+                        switch (settingName) {
+                          case 'General Settings':
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => GeneralSettingsScreen()),
+                            );
+                            break;
+                          case 'Appointment Settings':
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => AppointmentSettingsScreen()),
+                            );
+                            break;
+                          case 'Staff Management':
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => StaffManagementScreen()),
+                            );
+                            break;
+                          case 'Notifications and Alerts':
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => NotificationsScreen()),
+                            );
+                            break;
+                          case 'Edit Coupon':
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => EditCouponScreen()),
+                            );
+                            break;
+                          default:
+                            print('Setting not found');
+                        }
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+          );
+
+        }
+      }
+
 
 class GeneralSettingsScreen extends StatelessWidget {
   @override
@@ -178,7 +181,7 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
               final name = userDoc['FullName'];
               final email = userDoc['Email'];
 
-              return FutureBuilder<String>(
+              return FutureBuilder<String?>(
                 future: _getUserRole(userDoc.id),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -189,7 +192,11 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else {
-                    final role = snapshot.data ?? '';
+                    final role = snapshot.data;
+                    if (role == null) {
+                      // Skip rendering ListTile for roles other than admin, dentist, or receptionist
+                      return SizedBox.shrink();
+                    }
                     return ListTile(
                       title: Text(name),
                       subtitle: Column(
@@ -217,19 +224,100 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          // Show a dialog or navigate to a screen to add a new staff member
-        },
-      ),
+floatingActionButton: FloatingActionButton(
+  child: Icon(Icons.add),
+  onPressed: () {
+    showDialog(
+      context: context,
+      builder: (context) {
+        var _selectedRole;
+        var _selectedGander;
+        return AlertDialog(
+          title: Text('Add Staff Member'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  decoration: InputDecoration(labelText: 'Full Name'),
+                  // You can add validation logic here if needed
+                ),
+                TextFormField(
+                  decoration: InputDecoration(labelText: 'CPR'),
+                  // You can add validation logic here if needed
+                ),
+                TextFormField(
+                  decoration: InputDecoration(labelText: 'Email'),
+                  // You can add validation logic here if needed
+                ),
+                TextFormField(
+                  decoration: InputDecoration(labelText: 'Phone Number'),
+                  // You can add validation logic here if needed
+                ),
+                TextFormField(
+                  decoration: InputDecoration(labelText: 'Birthday'),
+                  // You can add validation logic here if needed
+                ),
+                DropdownButtonFormField<String>(
+                  value: _selectedGander,
+                  decoration: InputDecoration(labelText: 'Gander'),
+                  items: ['Male', 'Female']
+                      .map((gander) => DropdownMenuItem(
+                            value: gander,
+                            child: Text(gander),
+                          ))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedGander = value!;
+                    });
+                  },
+                ),
+                DropdownButtonFormField<String>(
+                  value: _selectedRole,
+                  decoration: InputDecoration(labelText: 'Role'),
+                  items: ['Admin', 'Receptionist', 'Dentist']
+                      .map((role) => DropdownMenuItem(
+                            value: role,
+                            child: Text(role),
+                          ))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedRole = value!;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Add logic to save staff member
+                Navigator.of(context).pop();
+              },
+              child: Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  },
+),
+
     );
   }
 
-  Future<String> _getUserRole(String userId) async {
-    String role = '';
+  Future<String?> _getUserRole(String userId) async {
+    String? role;
 
-    // Fetch the user's role based on their UID
     var adminDoc =
         await FirebaseFirestore.instance.collection('admin').doc(userId).get();
     if (adminDoc.exists) {
@@ -255,7 +343,6 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
 
   Future<void> _deleteUser(String userId) async {
     try {
-      // Delete the user document from the 'user' collection
       await FirebaseFirestore.instance.collection('user').doc(userId).delete();
     } catch (e) {
       print('Error deleting user: $e');
