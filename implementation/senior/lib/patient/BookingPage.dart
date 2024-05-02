@@ -153,11 +153,13 @@ class _BookingPageState extends State<BookingPage> {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Book Appointment',
-            style: TextStyle(color: Colors.blue),),
+        title: const Text(
+          'Book Appointment',
+          style: TextStyle(color: Colors.blue),
+        ),
         backgroundColor: Colors.grey[150],
       ),
-      backgroundColor:Colors.grey[200] ,
+      backgroundColor: Colors.grey[200],
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -185,8 +187,7 @@ class _BookingPageState extends State<BookingPage> {
                           ),
                         ),
                         TextButton(
-                          onPressed: () {
-                          },
+                          onPressed: () {},
                           child: const Text(
                             'Book Appointment',
                             style: TextStyle(
@@ -255,8 +256,9 @@ class _BookingPageState extends State<BookingPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                                'Please select a dentist from the list below.'
-                                , style: TextStyle(color: Colors.white),),
+                              'Please select a dentist from the list below.',
+                              style: TextStyle(color: Colors.white),
+                            ),
                             Row(
                               children: [
                                 for (var dentist in [
@@ -357,7 +359,9 @@ class _BookingPageState extends State<BookingPage> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     const Text(
-                                        'Please select a date from the list below.', style: TextStyle(color: Colors.white),),
+                                      'Please select a date from the list below.',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
                                     Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -383,7 +387,7 @@ class _BookingPageState extends State<BookingPage> {
                                               List<List<DateTime>>
                                                   availableDatesRows =
                                                   snapshot.data ?? [];
-      
+
                                               if (availableDatesRows.isEmpty) {
                                                 return const Text(
                                                   'No available dates for selected dentist.',
@@ -444,8 +448,10 @@ class _BookingPageState extends State<BookingPage> {
                                                           child: Text(
                                                             DateFormat('MM/dd')
                                                                 .format(date),
-                                                            style: const TextStyle(
-                                                                fontSize: 16.0),
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontSize:
+                                                                        16.0),
                                                           ),
                                                         ),
                                                       ),
@@ -487,7 +493,9 @@ class _BookingPageState extends State<BookingPage> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     const Text(
-                                        'Please select a date from the list below.', style: TextStyle(color: Colors.white),),
+                                      'Please select a date from the list below.',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
                                     Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -513,7 +521,7 @@ class _BookingPageState extends State<BookingPage> {
                                               List<List<DateTime>>
                                                   availableDatesRows =
                                                   snapshot.data ?? [];
-      
+
                                               if (availableDatesRows.isEmpty) {
                                                 return const Text(
                                                   'No available dates for selected dentist.',
@@ -573,8 +581,10 @@ class _BookingPageState extends State<BookingPage> {
                                                           child: Text(
                                                             DateFormat('MM/dd')
                                                                 .format(date),
-                                                            style: const TextStyle(
-                                                                fontSize: 16.0),
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontSize:
+                                                                        16.0),
                                                           ),
                                                         ),
                                                       ),
@@ -643,7 +653,7 @@ class _BookingPageState extends State<BookingPage> {
                                               selectedDate.month,
                                               selectedDate.day,
                                             );
-      
+
                                             // Check if an appointment already exists at the selected time
                                             var existingAppointment =
                                                 await firestore
@@ -656,7 +666,7 @@ class _BookingPageState extends State<BookingPage> {
                                                     .where('hour',
                                                         isEqualTo: selectedHour)
                                                     .get();
-      
+
                                             if (existingAppointment
                                                 .docs.isEmpty) {
                                               // If no existing appointment, book the appointment
@@ -706,7 +716,9 @@ class _BookingPageState extends State<BookingPage> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               const Text(
-                                  'Please select a time from the list below.', style: TextStyle(color: Colors.white),),
+                                'Please select a time from the list below.',
+                                style: TextStyle(color: Colors.white),
+                              ),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -728,7 +740,7 @@ class _BookingPageState extends State<BookingPage> {
                                       } else {
                                         List<List<int>> availableSlotsRows =
                                             snapshot.data ?? [];
-      
+
                                         if (availableSlotsRows.isEmpty) {
                                           return const Text(
                                             'No available time slots for selected date.',
