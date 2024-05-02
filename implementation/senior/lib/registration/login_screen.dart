@@ -6,7 +6,7 @@ import 'package:senior/app_icons.dart';
 import 'package:senior/app_styles.dart';
 import 'package:senior/responsive_widget.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:senior/registration/reuseable_widget.dart';
+import 'package:senior/reuseable_widget.dart';
 import 'package:senior/registration/signup_screen.dart';
 import 'package:senior/patient/dashboard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
