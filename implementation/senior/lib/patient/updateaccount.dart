@@ -156,263 +156,277 @@ class _UpdateAccountPageState extends State<UpdateAccountPage> {
               },
             )
           : null,
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            if (ResponsiveWidget.isMediumScreen(context) ||
-                ResponsiveWidget.isLargeScreen(context))
-              Container(
-                color: Colors.blue,
-                height: 40,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/dashboard');
-                          },
-                          child: const Text(
-                            'Home',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
+      body: Container(
+        color: Colors.grey[200],
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              if (ResponsiveWidget.isMediumScreen(context) ||
+                  ResponsiveWidget.isLargeScreen(context))
+                Container(
+                  color: Colors.blue,
+                  height: 40,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/dashboard');
+                            },
+                            child: const Text(
+                              'Home',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                              ),
                             ),
                           ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/booking');
-                          },
-                          child: const Text(
-                            'Book Appointment',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/booking');
+                            },
+                            child: const Text(
+                              'Book Appointment',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                              ),
                             ),
                           ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/appointmenthistory');
-                          },
-                          child: const Text(
-                            'Appointment History',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/appointmenthistory');
+                            },
+                            child: const Text(
+                              'Appointment History',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                              ),
                             ),
                           ),
-                        ),
-                        TextButton(
-                          onPressed: () {},
-                          child: const Text(
-                            'Update Account',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
+                          TextButton(
+                            onPressed: () {},
+                            child: const Text(
+                              'Update Account',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                              ),
                             ),
                           ),
-                        ),
-                        TextButton(
-                          onPressed: () {},
-                          child: const Text(
-                            'Edit Appointment',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
+                          TextButton(
+                            onPressed: () {},
+                            child: const Text(
+                              'Edit Appointment',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start, // Aligns children to the left
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: Text(
-                      'Full Name',
-                      style: ralewayStyle.copyWith(
-                        fontSize: 12.0,
-                        color: AppColors.blueDarkColor,
-                        fontWeight: FontWeight.w700,
+                        ],
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 6.0),
-                  Container(
-                    height: 50.0,
-                    width: width,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16.0),
-                      color: AppColors.whiteColor,
-                    ),
-                    child: ReusableTextField('Enter Full Name',
-                        AppIcons.userIcon, false, _nameController),
-                  ),
-                  SizedBox(height: height * 0.014),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: Text(
-                      'CPR',
-                      style: ralewayStyle.copyWith(
-                        fontSize: 12.0,
-                        color: AppColors.blueDarkColor,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 6.0),
-                  Container(
-                    height: 50.0,
-                    width: width,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16.0),
-                      color: AppColors.whiteColor,
-                    ),
-                    child: ReusableTextField(
-                        'Enter CPR', AppIcons.idicon, false, _cprController),
-                  ),
-                  SizedBox(height: height * 0.014),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: Text(
-                      'Date of Birth',
-                      style: ralewayStyle.copyWith(
-                        fontSize: 12.0,
-                        color: AppColors.blueDarkColor,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 6.0),
-                  Container(
-                      height: 50.0,
-                      width: width,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16.0),
-                        color: AppColors.whiteColor,
-                      ),
-                      child: ReusableTextField('Ente Date of Birth',
-                          AppIcons.birthIcon, false, _dobController)),
-                  SizedBox(height: height * 0.014),
-                  Text(
-                    'Gender',
-                    style: ralewayStyle.copyWith(
-                      fontSize: 12.0,
-                      color: AppColors.blueDarkColor,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Radio(
-                        value: 'Male',
-                        groupValue: _selectedGender.text,
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedGender.text = value.toString();
-                          });
-                        },
-                      ),
-                      Text('Male'),
-                      SizedBox(
-                        width: width * 0.014,
-                      ),
-                      Radio(
-                        value: 'Female',
-                        groupValue: _selectedGender.text,
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedGender.text = value.toString();
-                          });
-                        },
-                      ),
-                      Text('Female'),
                     ],
                   ),
-                  SizedBox(height: height * 0.014),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: Text(
-                      'Phone Number',
-                      style: ralewayStyle.copyWith(
-                        fontSize: 12.0,
-                        color: AppColors.blueDarkColor,
-                        fontWeight: FontWeight.w700,
+                ),
+                 Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start, // Aligns children to the left
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: Text(
+                          'Full Name',
+                          style: ralewayStyle.copyWith(
+                            fontSize: 12.0,
+                            color: AppColors.blueDarkColor,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 6.0),
+                      Container(
+                        height: 50.0,
+                        width: width,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16.0),
+                          color: AppColors.whiteColor,
+                        ),
+                        child: ReusableTextField('Enter Full Name',
+                            AppIcons.userIcon, false, _nameController),
+                      ),
+                      SizedBox(height: height * 0.014),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: Text(
+                          'CPR',
+                          style: ralewayStyle.copyWith(
+                            fontSize: 12.0,
+                            color: AppColors.blueDarkColor,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 6.0),
+                      Container(
+                        height: 50.0,
+                        width: width,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16.0),
+                          color: AppColors.whiteColor,
+                        ),
+                        child: ReusableTextField(
+                            'Enter CPR', AppIcons.idicon, false, _cprController),
+                      ),
+                      SizedBox(height: height * 0.014),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: Text(
+                          'Date of Birth',
+                          style: ralewayStyle.copyWith(
+                            fontSize: 12.0,
+                            color: AppColors.blueDarkColor,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 6.0),
+                      Container(
+                          height: 50.0,
+                          width: width,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16.0),
+                            color: AppColors.whiteColor,
+                          ),
+                          child: ReusableTextField('Ente Date of Birth',
+                              AppIcons.birthIcon, false, _dobController)),
+                      SizedBox(height: height * 0.014),
+                      Text(
+                        'Gender',
+                        style: ralewayStyle.copyWith(
+                          fontSize: 12.0,
+                          color: AppColors.blueDarkColor,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Radio(
+                            value: 'Male',
+                            groupValue: _selectedGender.text,
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedGender.text = value.toString();
+                              });
+                            },
+                          ),
+                          Text('Male'),
+                          SizedBox(
+                            width: width * 0.014,
+                          ),
+                          Radio(
+                            value: 'Female',
+                            groupValue: _selectedGender.text,
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedGender.text = value.toString();
+                              });
+                            },
+                          ),
+                          Text('Female'),
+                        ],
+                      ),
+                      SizedBox(height: height * 0.014),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: Text(
+                          'Phone Number',
+                          style: ralewayStyle.copyWith(
+                            fontSize: 12.0,
+                            color: AppColors.blueDarkColor,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 6.0),
+                      Container(
+                          height: 50.0,
+                          width: width,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16.0),
+                            color: AppColors.whiteColor,
+                          ),
+                          child: ReusableTextField('Enter Your phone number',
+                              AppIcons.phoneIcon, false, _phoneController)),
+                      SizedBox(height: height * 0.014),
+                      SizedBox(height: 20),
+                      Center(
+                      child:ElevatedButton(
+                        onPressed: () async {
+                          if (_nameController.text.isEmpty ||
+                              _cprController.text.isEmpty ||
+                              _dobController.text.isEmpty ||
+                              _selectedGender.text.isEmpty ||
+                              _phoneController.text.isEmpty) {
+                            showErrorDialog(context, 'Please fill all fields.');
+                            return;
+                          }
+                          if (_cprController.text.length != 9) {
+                            showErrorDialog(context, 'CPR must be 9 digits.');
+                            return;
+                          }
+                
+                          CollectionReference users =
+                              FirebaseFirestore.instance.collection('user');
+                
+                          var queryResult = await users
+                              .where('CPR', isEqualTo: _cprController.text)
+                              .get();
+                
+                          // Check if CPR already exists and it's different from the original CPR
+                          if (queryResult.docs.isNotEmpty &&
+                              queryResult.docs.first['CPR'] !=
+                                  _cprController.text) {
+                            showErrorDialog(context, 'CPR already exists.');
+                            return;
+                          }
+                
+                          if (!RegExp(PhonePattern)
+                              .hasMatch(_phoneController.text)) {
+                            showErrorDialog(context, 'Invalid Phone format.');
+                            return;
+                          }
+                
+                          if (!RegExp(CPRPattern).hasMatch(_cprController.text)) {
+                            showErrorDialog(context, 'Invalid CPR format.');
+                            return;
+                          }
+                
+                          updateUser();
+                        },
+                        child: Text('Update'
+                        , style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold,)
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                          textStyle: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                       ),
                     ),
+                  )],
                   ),
-                  const SizedBox(height: 6.0),
-                  Container(
-                      height: 50.0,
-                      width: width,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16.0),
-                        color: AppColors.whiteColor,
-                      ),
-                      child: ReusableTextField('Enter Your phone number',
-                          AppIcons.phoneIcon, false, _phoneController)),
-                  SizedBox(height: height * 0.014),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () async {
-                      if (_nameController.text.isEmpty ||
-                          _cprController.text.isEmpty ||
-                          _dobController.text.isEmpty ||
-                          _selectedGender.text.isEmpty ||
-                          _phoneController.text.isEmpty) {
-                        showErrorDialog(context, 'Please fill all fields.');
-                        return;
-                      }
-                      if (_cprController.text.length != 9) {
-                        showErrorDialog(context, 'CPR must be 9 digits.');
-                        return;
-                      }
-
-                      CollectionReference users =
-                          FirebaseFirestore.instance.collection('user');
-
-                      var queryResult = await users
-                          .where('CPR', isEqualTo: _cprController.text)
-                          .get();
-
-                      // Check if CPR already exists and it's different from the original CPR
-                      if (queryResult.docs.isNotEmpty &&
-                          queryResult.docs.first['CPR'] !=
-                              _cprController.text) {
-                        showErrorDialog(context, 'CPR already exists.');
-                        return;
-                      }
-
-                      if (!RegExp(PhonePattern)
-                          .hasMatch(_phoneController.text)) {
-                        showErrorDialog(context, 'Invalid Phone format.');
-                        return;
-                      }
-
-                      if (!RegExp(CPRPattern).hasMatch(_cprController.text)) {
-                        showErrorDialog(context, 'Invalid CPR format.');
-                        return;
-                      }
-
-                      updateUser();
-                    },
-                    child: Text('Update'),
-                  ),
-                ],
-              ),
-            ),
-          ],
+                ),
+            ],
+          ),
         ),
       ),
     );

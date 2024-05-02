@@ -7,6 +7,8 @@ import 'package:senior/app_colors.dart';
 import 'package:senior/responsive_widget.dart';
 
 class BookingPage extends StatefulWidget {
+  const BookingPage({super.key});
+
   @override
   _BookingPageState createState() => _BookingPageState();
 }
@@ -155,6 +157,7 @@ class _BookingPageState extends State<BookingPage> {
             style: TextStyle(color: Colors.blue),),
         backgroundColor: Colors.grey[150],
       ),
+      backgroundColor:Colors.grey[200] ,
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -232,7 +235,6 @@ class _BookingPageState extends State<BookingPage> {
                 ),
               ),
             Container(
-              color: AppColors.bccolor,
               padding: const EdgeInsets.only(left: 50),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -253,7 +255,8 @@ class _BookingPageState extends State<BookingPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                                'Please select a dentist from the list below.'),
+                                'Please select a dentist from the list below.'
+                                , style: TextStyle(color: Colors.white),),
                             Row(
                               children: [
                                 for (var dentist in [
@@ -273,7 +276,7 @@ class _BookingPageState extends State<BookingPage> {
                                         });
                                       },
                                       style: ButtonStyle(
-                                        shape: MaterialStateProperty.all<
+                                        shape: WidgetStateProperty.all<
                                             RoundedRectangleBorder>(
                                           RoundedRectangleBorder(
                                             borderRadius:
@@ -310,7 +313,7 @@ class _BookingPageState extends State<BookingPage> {
                                         });
                                       },
                                       style: ButtonStyle(
-                                        shape: MaterialStateProperty.all<
+                                        shape: WidgetStateProperty.all<
                                             RoundedRectangleBorder>(
                                           RoundedRectangleBorder(
                                             borderRadius:
@@ -354,7 +357,7 @@ class _BookingPageState extends State<BookingPage> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     const Text(
-                                        'Please select a date from the list below.'),
+                                        'Please select a date from the list below.', style: TextStyle(color: Colors.white),),
                                     Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -365,7 +368,7 @@ class _BookingPageState extends State<BookingPage> {
                                           builder: (context, snapshot) {
                                             if (snapshot.connectionState ==
                                                 ConnectionState.waiting) {
-                                              return Padding(
+                                              return const Padding(
                                                 padding:
                                                     EdgeInsets.only(top: 50),
                                                 child: SpinKitFadingCube(
@@ -380,9 +383,9 @@ class _BookingPageState extends State<BookingPage> {
                                               List<List<DateTime>>
                                                   availableDatesRows =
                                                   snapshot.data ?? [];
-
+      
                                               if (availableDatesRows.isEmpty) {
-                                                return Text(
+                                                return const Text(
                                                   'No available dates for selected dentist.',
                                                   style: TextStyle(
                                                     color: Colors.white,
@@ -410,7 +413,7 @@ class _BookingPageState extends State<BookingPage> {
                                                             });
                                                           },
                                                           style: ButtonStyle(
-                                                            shape: MaterialStateProperty
+                                                            shape: WidgetStateProperty
                                                                 .all<
                                                                     RoundedRectangleBorder>(
                                                               RoundedRectangleBorder(
@@ -421,13 +424,13 @@ class _BookingPageState extends State<BookingPage> {
                                                               ),
                                                             ),
                                                             backgroundColor:
-                                                                MaterialStateProperty
+                                                                WidgetStateProperty
                                                                     .resolveWith<
                                                                         Color>(
-                                                              (Set<MaterialState>
+                                                              (Set<WidgetState>
                                                                   states) {
                                                                 if (states.contains(
-                                                                    MaterialState
+                                                                    WidgetState
                                                                         .pressed)) {
                                                                   return Colors
                                                                       .blueAccent
@@ -441,7 +444,7 @@ class _BookingPageState extends State<BookingPage> {
                                                           child: Text(
                                                             DateFormat('MM/dd')
                                                                 .format(date),
-                                                            style: TextStyle(
+                                                            style: const TextStyle(
                                                                 fontSize: 16.0),
                                                           ),
                                                         ),
@@ -484,7 +487,7 @@ class _BookingPageState extends State<BookingPage> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     const Text(
-                                        'Please select a date from the list below.'),
+                                        'Please select a date from the list below.', style: TextStyle(color: Colors.white),),
                                     Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -495,7 +498,7 @@ class _BookingPageState extends State<BookingPage> {
                                           builder: (context, snapshot) {
                                             if (snapshot.connectionState ==
                                                 ConnectionState.waiting) {
-                                              return Padding(
+                                              return const Padding(
                                                 padding:
                                                     EdgeInsets.only(top: 50),
                                                 child: SpinKitFadingCube(
@@ -510,9 +513,9 @@ class _BookingPageState extends State<BookingPage> {
                                               List<List<DateTime>>
                                                   availableDatesRows =
                                                   snapshot.data ?? [];
-
+      
                                               if (availableDatesRows.isEmpty) {
-                                                return Text(
+                                                return const Text(
                                                   'No available dates for selected dentist.',
                                                   style: TextStyle(
                                                     color: Colors.white,
@@ -540,7 +543,7 @@ class _BookingPageState extends State<BookingPage> {
                                                             });
                                                           },
                                                           style: ButtonStyle(
-                                                            shape: MaterialStateProperty
+                                                            shape: WidgetStateProperty
                                                                 .all<
                                                                     RoundedRectangleBorder>(
                                                               RoundedRectangleBorder(
@@ -551,27 +554,26 @@ class _BookingPageState extends State<BookingPage> {
                                                               ),
                                                             ),
                                                             backgroundColor:
-                                                                MaterialStateProperty
+                                                                WidgetStateProperty
                                                                     .resolveWith<
                                                                         Color>(
-                                                              (Set<MaterialState>
+                                                              (Set<WidgetState>
                                                                   states) {
                                                                 if (states.contains(
-                                                                    MaterialState
+                                                                    WidgetState
                                                                         .pressed)) {
                                                                   return Colors
-                                                                      .blueAccent
-                                                                      .shade700;
+                                                                      .white;
                                                                 }
                                                                 return Colors
-                                                                    .blue;
+                                                                    .white;
                                                               },
                                                             ),
                                                           ),
                                                           child: Text(
                                                             DateFormat('MM/dd')
                                                                 .format(date),
-                                                            style: TextStyle(
+                                                            style: const TextStyle(
                                                                 fontSize: 16.0),
                                                           ),
                                                         ),
@@ -616,7 +618,7 @@ class _BookingPageState extends State<BookingPage> {
                                   height: 170,
                                   child: Column(
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 10,
                                       ),
                                       const Text(
@@ -641,7 +643,7 @@ class _BookingPageState extends State<BookingPage> {
                                               selectedDate.month,
                                               selectedDate.day,
                                             );
-
+      
                                             // Check if an appointment already exists at the selected time
                                             var existingAppointment =
                                                 await firestore
@@ -654,7 +656,7 @@ class _BookingPageState extends State<BookingPage> {
                                                     .where('hour',
                                                         isEqualTo: selectedHour)
                                                     .get();
-
+      
                                             if (existingAppointment
                                                 .docs.isEmpty) {
                                               // If no existing appointment, book the appointment
@@ -670,7 +672,7 @@ class _BookingPageState extends State<BookingPage> {
                                                   context, '/dashboard');
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(
-                                                SnackBar(
+                                                const SnackBar(
                                                   content: Text(
                                                       'Appointment booked successfully!'),
                                                 ),
@@ -678,7 +680,7 @@ class _BookingPageState extends State<BookingPage> {
                                             }
                                           }
                                         },
-                                        child: Text('Book Appointment'),
+                                        child: const Text('Book Appointment'),
                                       ),
                                     ],
                                   ),
@@ -704,7 +706,7 @@ class _BookingPageState extends State<BookingPage> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               const Text(
-                                  'Please select a time from the list below.'),
+                                  'Please select a time from the list below.', style: TextStyle(color: Colors.white),),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -714,7 +716,7 @@ class _BookingPageState extends State<BookingPage> {
                                     builder: (context, snapshot) {
                                       if (snapshot.connectionState ==
                                           ConnectionState.waiting) {
-                                        return Padding(
+                                        return const Padding(
                                           padding: EdgeInsets.only(top: 10),
                                           child: SpinKitFadingCube(
                                             color: Colors.white,
@@ -726,9 +728,9 @@ class _BookingPageState extends State<BookingPage> {
                                       } else {
                                         List<List<int>> availableSlotsRows =
                                             snapshot.data ?? [];
-
+      
                                         if (availableSlotsRows.isEmpty) {
-                                          return Text(
+                                          return const Text(
                                             'No available time slots for selected date.',
                                             style: TextStyle(
                                               color: Colors.white,
@@ -752,7 +754,7 @@ class _BookingPageState extends State<BookingPage> {
                                                           padding:
                                                               const EdgeInsets
                                                                   .all(8),
-                                                          child: Container(
+                                                          child: SizedBox(
                                                             width: 120,
                                                             height: 40,
                                                             child:
@@ -777,7 +779,7 @@ class _BookingPageState extends State<BookingPage> {
                                                               },
                                                               style:
                                                                   ButtonStyle(
-                                                                shape: MaterialStateProperty
+                                                                shape: WidgetStateProperty
                                                                     .all<
                                                                         RoundedRectangleBorder>(
                                                                   RoundedRectangleBorder(
