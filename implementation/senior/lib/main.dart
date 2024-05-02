@@ -9,6 +9,7 @@ import 'package:senior/loading.dart';
 import 'package:senior/firebase_options.dart';
 import 'package:senior/patient/bookingpage.dart';
 import 'package:senior/patient/appointmenthistory.dart';
+import 'package:senior/patient/updateaccount.dart';
 import 'package:senior/registration/login_screen.dart';
 import 'package:senior/admin/main_screen.dart';
 import 'package:senior/admin/patient_screen.dart';
@@ -43,7 +44,7 @@ void main() async {
       '/dashboard': (context) => WelcomePage(),
       '/signup': (context) => const SignUp(),
       '/bookingm': (context) => bookingm(),
-      
+      '/update': (context) =>  UpdateAccountPage(),
       '/admin': (context) => const MainScreen(),
       '/appointment': (context) => const AppointmentPage(),
       '/patients': (context) => AdminPatientPage(),

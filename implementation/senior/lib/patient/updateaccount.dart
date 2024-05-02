@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/widgets.dart';
 import 'package:senior/app_colors.dart';
 import 'package:senior/app_icons.dart';
 import 'package:senior/app_styles.dart';
@@ -69,6 +70,7 @@ class _UpdateAccountPageState extends State<UpdateAccountPage> {
         'Gender': _selectedGender.text,
         'Phone': _phoneController.text,
       });
+       Navigator.pushNamed(context, '/dashboard');
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('User updated successfully'),
       ));
@@ -83,12 +85,14 @@ class _UpdateAccountPageState extends State<UpdateAccountPage> {
     String PhonePattern = r'^(66\d{6}|3[2-9]\d{6})$';
     return Scaffold(
       appBar: AppBar(
-        title: Text('Update Account'
-        , style: ralewayStyle.copyWith(
-          color: Colors.blue,
-          fontSize: 20.0,
-          fontWeight: FontWeight.w700,
-        ),),
+        title: Text(
+          'Update Account',
+          style: ralewayStyle.copyWith(
+            color: Colors.blue,
+            fontSize: 20.0,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
       ),
       bottomNavigationBar: ResponsiveWidget.isSmallScreen(context)
           ? BottomNavigationBar(
@@ -203,8 +207,7 @@ class _UpdateAccountPageState extends State<UpdateAccountPage> {
                           ),
                         ),
                         TextButton(
-                          onPressed: () {
-                          },
+                          onPressed: () {},
                           child: const Text(
                             'Update Account',
                             style: TextStyle(
@@ -231,6 +234,8 @@ class _UpdateAccountPageState extends State<UpdateAccountPage> {
             Padding(
               padding: EdgeInsets.all(16.0),
               child: Column(
+                crossAxisAlignment:
+                    CrossAxisAlignment.start, // Aligns children to the left
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 16.0),
@@ -241,7 +246,6 @@ class _UpdateAccountPageState extends State<UpdateAccountPage> {
                         color: AppColors.blueDarkColor,
                         fontWeight: FontWeight.w700,
                       ),
-                      textAlign: TextAlign.left,
                     ),
                   ),
                   const SizedBox(height: 6.0),

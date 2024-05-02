@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:senior/app_colors.dart';
-import 'package:senior/patient/dashboard.dart';
 import 'package:senior/responsive_widget.dart';
 
 class BookingPage extends StatefulWidget {
@@ -667,12 +666,8 @@ class _BookingPageState extends State<BookingPage> {
                                                 'date': dateOnly,
                                                 'hour': selectedHour,
                                               });
-                                              Navigator.of(context)
-                                                  .pushReplacement(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        WelcomePage()),
-                                              );
+                                              Navigator.pushNamed(
+                                                  context, '/dashboard');
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(
                                                 SnackBar(
