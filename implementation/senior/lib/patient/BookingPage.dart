@@ -236,7 +236,7 @@ class _BookingPageState extends State<BookingPage> {
                 ),
               ),
             Container(
-              padding: const EdgeInsets.only(left: 50),
+              padding: const EdgeInsets.only(left: 50, top: 30),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
@@ -244,99 +244,227 @@ class _BookingPageState extends State<BookingPage> {
                   children: [
                     Align(
                       alignment: AlignmentDirectional.topStart,
-                      child: Container(
-                        width: 430,
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Please select a dentist from the list below.',
-                              style: TextStyle(color: Colors.white),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 430,
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.blue,
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            Row(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                for (var dentist in [
-                                  'Dentist 1',
-                                  'Dentist 2',
-                                  'Dentist 3'
-                                ])
-                                  Container(
-                                    width: 120,
-                                    height: 40,
-                                    margin: const EdgeInsets.all(5),
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          selectedDentist = dentist;
-                                          showDate = true;
-                                        });
-                                      },
-                                      style: ButtonStyle(
-                                        shape: WidgetStateProperty.all<
-                                            RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
+                                const Text(
+                                  'Please select a dentist from the list below.',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                Row(
+                                  children: [
+                                    for (var dentist in [
+                                      'Dentist 1',
+                                      'Dentist 2',
+                                      'Dentist 3'
+                                    ])
+                                      Container(
+                                        width: 120,
+                                        height: 40,
+                                        margin: const EdgeInsets.all(5),
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              selectedDentist = dentist;
+                                              showDate = true;
+                                            });
+                                          },
+                                          style: ButtonStyle(
+                                            shape: WidgetStateProperty.all<
+                                                RoundedRectangleBorder>(
+                                              RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                            ),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8.0),
+                                            child: Text(
+                                              dentist,
+                                              textAlign: TextAlign.center,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 8.0),
-                                        child: Text(
-                                          dentist,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                for (var dentist in ['Dentist 4', 'Dentist 5'])
-                                  Container(
-                                    width: 120,
-                                    height: 40,
-                                    margin: const EdgeInsets.all(5),
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          selectedDentist = dentist;
-                                          showDate = true;
-                                        });
-                                      },
-                                      style: ButtonStyle(
-                                        shape: WidgetStateProperty.all<
-                                            RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
+                                  ],
+                                ),
+                                const SizedBox(height: 10),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    for (var dentist in [
+                                      'Dentist 4',
+                                      'Dentist 5'
+                                    ])
+                                      Container(
+                                        width: 120,
+                                        height: 40,
+                                        margin: const EdgeInsets.all(5),
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              selectedDentist = dentist;
+                                              showDate = true;
+                                            });
+                                          },
+                                          style: ButtonStyle(
+                                            shape: WidgetStateProperty.all<
+                                                RoundedRectangleBorder>(
+                                              RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                            ),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8.0),
+                                            child: Text(
+                                              dentist,
+                                              textAlign: TextAlign.center,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 8.0),
-                                        child: Text(
-                                          dentist,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                  ],
+                                ),
                               ],
                             ),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(width: 200),
+                          if (showTime)
+                            Container(
+                              width: 430,
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.blue,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Please select a time from the list below.',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      FutureBuilder<List<List<int>>>(
+                                        future: getAvailableTimeSlots(
+                                            selectedDentist, selectedDate),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const Padding(
+                                              padding: EdgeInsets.only(top: 10),
+                                              child: SpinKitFadingCube(
+                                                color: Colors.white,
+                                                size: 20.0,
+                                              ),
+                                            ); // Show loading indicator while fetching data
+                                          } else if (snapshot.hasError) {
+                                            return Text(
+                                                'Error: ${snapshot.error}');
+                                          } else {
+                                            List<List<int>> availableSlotsRows =
+                                                snapshot.data ?? [];
+
+                                            if (availableSlotsRows.isEmpty) {
+                                              return const Text(
+                                                'No available time slots for selected date.',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 20.0,
+                                                ),
+                                              ); // Display message when no time slots are available
+                                            } else {
+                                              return Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  for (var slotsRow
+                                                      in availableSlotsRows)
+                                                    Row(
+                                                      children: [
+                                                        for (var slot
+                                                            in slotsRow)
+                                                          Align(
+                                                            alignment: Alignment
+                                                                .centerLeft,
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(8),
+                                                              child: SizedBox(
+                                                                width: 120,
+                                                                height: 40,
+                                                                child:
+                                                                    ElevatedButton(
+                                                                  onPressed:
+                                                                      () async {
+                                                                    bool
+                                                                        appointmentAvailable =
+                                                                        await checkAvailability(
+                                                                      selectedDentist,
+                                                                      selectedDate,
+                                                                      slot,
+                                                                    );
+                                                                    if (appointmentAvailable) {
+                                                                      setState(
+                                                                          () {
+                                                                        selectedHour =
+                                                                            slot;
+                                                                        showcontainer =
+                                                                            true;
+                                                                      });
+                                                                    }
+                                                                  },
+                                                                  style:
+                                                                      ButtonStyle(
+                                                                    shape: WidgetStateProperty
+                                                                        .all<
+                                                                            RoundedRectangleBorder>(
+                                                                      RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(10),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  child: Text(
+                                                                      '$slot:00'),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                      ],
+                                                    ),
+                                                ],
+                                              );
+                                            }
+                                          }
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -345,273 +473,135 @@ class _BookingPageState extends State<BookingPage> {
                         alignment: AlignmentDirectional.topStart,
                         child: Row(
                           children: [
-                            if (ResponsiveWidget.isSmallScreen(context))
-                              Container(
-                                width: 430,
-                                height: 170,
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: Colors.blue,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      'Please select a date from the list below.',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        FutureBuilder<List<List<DateTime>>>(
-                                          future: getAvailableDates(
-                                              selectedDentist),
-                                          builder: (context, snapshot) {
-                                            if (snapshot.connectionState ==
-                                                ConnectionState.waiting) {
-                                              return const Padding(
-                                                padding:
-                                                    EdgeInsets.only(top: 50),
-                                                child: SpinKitFadingCube(
-                                                  color: Colors.white,
-                                                  size: 20.0,
-                                                ),
-                                              ); // Show loading indicator while fetching data
-                                            } else if (snapshot.hasError) {
-                                              return Text(
-                                                  'Error: ${snapshot.error}');
-                                            } else {
-                                              List<List<DateTime>>
-                                                  availableDatesRows =
-                                                  snapshot.data ?? [];
+                            Container(
+                              width: 430,
+                              height: 170,
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.blue,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Please select a date from the list below.',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      FutureBuilder<List<List<DateTime>>>(
+                                        future:
+                                            getAvailableDates(selectedDentist),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const Padding(
+                                              padding: EdgeInsets.only(top: 50),
+                                              child: SpinKitFadingCube(
+                                                color: Colors.white,
+                                                size: 20.0,
+                                              ),
+                                            ); // Show loading indicator while fetching data
+                                          } else if (snapshot.hasError) {
+                                            return Text(
+                                                'Error: ${snapshot.error}');
+                                          } else {
+                                            List<List<DateTime>>
+                                                availableDatesRows =
+                                                snapshot.data ?? [];
 
-                                              if (availableDatesRows.isEmpty) {
-                                                return const Text(
-                                                  'No available dates for selected dentist.',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 20.0,
-                                                  ),
-                                                ); // Display message when no dates are available
-                                              } else {
-                                                List<Widget> dateRows = [];
-                                                for (var datesRow
-                                                    in availableDatesRows) {
-                                                  List<Widget> buttonsInRow =
-                                                      [];
-                                                  for (var date in datesRow) {
-                                                    buttonsInRow.add(
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8.0),
-                                                        child: ElevatedButton(
-                                                          onPressed: () {
-                                                            setState(() {
-                                                              selectedDate =
-                                                                  date;
-                                                              showTime = true;
-                                                            });
-                                                          },
-                                                          style: ButtonStyle(
-                                                            shape: WidgetStateProperty
-                                                                .all<
-                                                                    RoundedRectangleBorder>(
-                                                              RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
-                                                              ),
-                                                            ),
-                                                            backgroundColor:
-                                                                WidgetStateProperty
-                                                                    .resolveWith<
-                                                                        Color>(
-                                                              (Set<WidgetState>
-                                                                  states) {
-                                                                if (states.contains(
-                                                                    WidgetState
-                                                                        .pressed)) {
-                                                                  return Colors
-                                                                      .blueAccent
-                                                                      .shade700;
-                                                                }
-                                                                return Colors
-                                                                    .blue;
-                                                              },
+                                            if (availableDatesRows.isEmpty) {
+                                              return const Text(
+                                                'No available dates for selected dentist.',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 20.0,
+                                                ),
+                                              ); // Display message when no dates are available
+                                            } else {
+                                              List<Widget> dateRows = [];
+                                              for (var datesRow
+                                                  in availableDatesRows) {
+                                                List<Widget> buttonsInRow = [];
+                                                for (var date in datesRow) {
+                                                  buttonsInRow.add(
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: ElevatedButton(
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            selectedDate = date;
+                                                            showTime = true;
+                                                          });
+                                                        },
+                                                        style: ButtonStyle(
+                                                          shape: WidgetStateProperty
+                                                              .all<
+                                                                  RoundedRectangleBorder>(
+                                                            RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
                                                             ),
                                                           ),
-                                                          child: Text(
-                                                            DateFormat('MM/dd')
-                                                                .format(date),
-                                                            style:
-                                                                const TextStyle(
-                                                                    fontSize:
-                                                                        16.0),
+                                                          backgroundColor:
+                                                              WidgetStateProperty
+                                                                  .resolveWith<
+                                                                      Color>(
+                                                            (Set<WidgetState>
+                                                                states) {
+                                                              if (states.contains(
+                                                                  WidgetState
+                                                                      .pressed)) {
+                                                                return Colors
+                                                                    .blueAccent
+                                                                    .shade700;
+                                                              }
+                                                              return Colors
+                                                                  .blue;
+                                                            },
                                                           ),
                                                         ),
-                                                      ),
-                                                    );
-                                                  }
-                                                  dateRows.add(Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceAround,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: buttonsInRow,
-                                                  ));
-                                                }
-                                                return Column(
-                                                  children: dateRows,
-                                                );
-                                              }
-                                            }
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            if (!ResponsiveWidget.isSmallScreen(context))
-                              Container(
-                                width: 430,
-                                height: 170,
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: Colors.blue,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      'Please select a date from the list below.',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        FutureBuilder<List<List<DateTime>>>(
-                                          future: getAvailableDates(
-                                              selectedDentist),
-                                          builder: (context, snapshot) {
-                                            if (snapshot.connectionState ==
-                                                ConnectionState.waiting) {
-                                              return const Padding(
-                                                padding:
-                                                    EdgeInsets.only(top: 50),
-                                                child: SpinKitFadingCube(
-                                                  color: Colors.white,
-                                                  size: 20.0,
-                                                ),
-                                              ); // Show loading indicator while fetching data
-                                            } else if (snapshot.hasError) {
-                                              return Text(
-                                                  'Error: ${snapshot.error}');
-                                            } else {
-                                              List<List<DateTime>>
-                                                  availableDatesRows =
-                                                  snapshot.data ?? [];
-
-                                              if (availableDatesRows.isEmpty) {
-                                                return const Text(
-                                                  'No available dates for selected dentist.',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 20.0,
-                                                  ),
-                                                ); // Display message when no dates are available
-                                              } else {
-                                                List<Widget> dateRows = [];
-                                                for (var datesRow
-                                                    in availableDatesRows) {
-                                                  List<Widget> buttonsInRow =
-                                                      [];
-                                                  for (var date in datesRow) {
-                                                    buttonsInRow.add(
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8.0),
-                                                        child: ElevatedButton(
-                                                          onPressed: () {
-                                                            setState(() {
-                                                              selectedDate =
-                                                                  date;
-                                                              showTime = true;
-                                                            });
-                                                          },
-                                                          style: ButtonStyle(
-                                                            shape: WidgetStateProperty
-                                                                .all<
-                                                                    RoundedRectangleBorder>(
-                                                              RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
-                                                              ),
-                                                            ),
-                                                            backgroundColor:
-                                                                WidgetStateProperty
-                                                                    .resolveWith<
-                                                                        Color>(
-                                                              (Set<WidgetState>
-                                                                  states) {
-                                                                if (states.contains(
-                                                                    WidgetState
-                                                                        .pressed)) {
-                                                                  return Colors
-                                                                      .white;
-                                                                }
-                                                                return Colors
-                                                                    .white;
-                                                              },
-                                                            ),
-                                                          ),
-                                                          child: Text(
-                                                            DateFormat('MM/dd')
-                                                                .format(date),
-                                                            style:
-                                                                const TextStyle(
-                                                                    fontSize:
-                                                                        16.0),
-                                                          ),
+                                                        child: Text(
+                                                          DateFormat('MM/dd')
+                                                              .format(date),
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontSize:
+                                                                      16.0),
                                                         ),
                                                       ),
-                                                    );
-                                                  }
-                                                  dateRows.add(Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceAround,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: buttonsInRow,
-                                                  ));
+                                                    ),
+                                                  );
                                                 }
-                                                return Column(
-                                                  children: dateRows,
-                                                );
+                                                dateRows.add(Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceAround,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: buttonsInRow,
+                                                ));
                                               }
+                                              return Column(
+                                                children: dateRows,
+                                              );
                                             }
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                          }
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
+                            ),
                             const SizedBox(width: 200),
                             Visibility(
                               visible: showcontainer && showTime,
@@ -698,127 +688,6 @@ class _BookingPageState extends State<BookingPage> {
                               ),
                             ),
                           ],
-                        ),
-                      ),
-                    const SizedBox(height: 20),
-                    if (showTime)
-                      Align(
-                        alignment: AlignmentDirectional.topStart,
-                        child: Container(
-                          width: 430,
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Please select a time from the list below.',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  FutureBuilder<List<List<int>>>(
-                                    future: getAvailableTimeSlots(
-                                        selectedDentist, selectedDate),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return const Padding(
-                                          padding: EdgeInsets.only(top: 10),
-                                          child: SpinKitFadingCube(
-                                            color: Colors.white,
-                                            size: 20.0,
-                                          ),
-                                        ); // Show loading indicator while fetching data
-                                      } else if (snapshot.hasError) {
-                                        return Text('Error: ${snapshot.error}');
-                                      } else {
-                                        List<List<int>> availableSlotsRows =
-                                            snapshot.data ?? [];
-
-                                        if (availableSlotsRows.isEmpty) {
-                                          return const Text(
-                                            'No available time slots for selected date.',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 20.0,
-                                            ),
-                                          ); // Display message when no time slots are available
-                                        } else {
-                                          return Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              for (var slotsRow
-                                                  in availableSlotsRows)
-                                                Row(
-                                                  children: [
-                                                    for (var slot in slotsRow)
-                                                      Align(
-                                                        alignment: Alignment
-                                                            .centerLeft,
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8),
-                                                          child: SizedBox(
-                                                            width: 120,
-                                                            height: 40,
-                                                            child:
-                                                                ElevatedButton(
-                                                              onPressed:
-                                                                  () async {
-                                                                bool
-                                                                    appointmentAvailable =
-                                                                    await checkAvailability(
-                                                                  selectedDentist,
-                                                                  selectedDate,
-                                                                  slot,
-                                                                );
-                                                                if (appointmentAvailable) {
-                                                                  setState(() {
-                                                                    selectedHour =
-                                                                        slot;
-                                                                    showcontainer =
-                                                                        true;
-                                                                  });
-                                                                }
-                                                              },
-                                                              style:
-                                                                  ButtonStyle(
-                                                                shape: WidgetStateProperty
-                                                                    .all<
-                                                                        RoundedRectangleBorder>(
-                                                                  RoundedRectangleBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            10),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              child: Text(
-                                                                  '$slot:00'),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                  ],
-                                                ),
-                                            ],
-                                          );
-                                        }
-                                      }
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
                         ),
                       ),
                   ],
