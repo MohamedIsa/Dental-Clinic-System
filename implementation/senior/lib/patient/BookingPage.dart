@@ -13,6 +13,38 @@ class BookingPage extends StatefulWidget {
   _BookingPageState createState() => _BookingPageState();
 }
 
+Future<List<String>> getDentistNames() async {
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  List<String> dentistFirstNames = [];
+
+  try {
+    QuerySnapshot dentistSnapshot = await firestore.collection('dentist').get();
+
+    for (QueryDocumentSnapshot doc in dentistSnapshot.docs) {
+      String dentistId = doc.id;
+
+      DocumentSnapshot userSnapshot =
+          await firestore.collection('user').doc(dentistId).get();
+
+      if (userSnapshot.exists &&
+          userSnapshot.data() != null &&
+          (userSnapshot.data() as Map<String, dynamic>)
+              .containsKey('FullName')) {
+        String fullName =
+            (userSnapshot.data() as Map<String, dynamic>)['FullName'];
+        if (fullName.isNotEmpty) {
+          List<String> nameParts = fullName.split(' ');
+          String firstName = nameParts.first;
+          dentistFirstNames.add('Dr. $firstName');
+        }
+      }
+    }
+  } catch (e) {
+    print('Error fetching dentist names: $e');
+  }
+  return dentistFirstNames;
+}
+
 Future<bool> checkAvailability(String dentist, DateTime date, int hour) async {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final QuerySnapshot snapshot = await _firestore
@@ -141,9 +173,20 @@ Future<bool> checkAllTimesPassed(
 }
 
 class _BookingPageState extends State<BookingPage> {
-  String selectedDentist = 'Dentist 1';
+  @override
+  void initState() {
+    super.initState();
+    getDentistNames().then((dentists) {
+      setState(() {
+        dentistFirstNames = dentists;
+      });
+    });
+  }
+
+  String selectedDentist = '';
   DateTime selectedDate = DateTime.now();
   int selectedHour = 9;
+  List<String> dentistFirstNames = [];
 
   bool showDate = false;
   bool showTime = false;
@@ -261,84 +304,83 @@ class _BookingPageState extends State<BookingPage> {
                                   'Please select a dentist from the list below.',
                                   style: TextStyle(color: Colors.white),
                                 ),
-                                Row(
-                                  children: [
-                                    for (var dentist in [
-                                      'Dentist 1',
-                                      'Dentist 2',
-                                      'Dentist 3'
-                                    ])
-                                      Container(
-                                        width: 120,
-                                        height: 40,
-                                        margin: const EdgeInsets.all(5),
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              selectedDentist = dentist;
-                                              showDate = true;
-                                            });
-                                          },
-                                          style: ButtonStyle(
-                                            shape: WidgetStateProperty.all<
-                                                RoundedRectangleBorder>(
-                                              RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                            ),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 8.0),
-                                            child: Text(
-                                              dentist,
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
+                                FutureBuilder<List<String>>(
+                                  future: getDentistNames(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Padding(
+                                        padding: EdgeInsets.only(top: 10),
+                                        child: SpinKitFadingCube(
+                                          color: Colors.white,
+                                          size: 20.0,
                                         ),
-                                      ),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    for (var dentist in [
-                                      'Dentist 4',
-                                      'Dentist 5'
-                                    ])
-                                      Container(
-                                        width: 120,
-                                        height: 40,
-                                        margin: const EdgeInsets.all(5),
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              selectedDentist = dentist;
-                                              showDate = true;
-                                            });
-                                          },
-                                          style: ButtonStyle(
-                                            shape: WidgetStateProperty.all<
-                                                RoundedRectangleBorder>(
-                                              RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
+                                      ); // Show loading indicator while fetching data
+                                    } else if (snapshot.hasError) {
+                                      return Text('Error: ${snapshot.error}');
+                                    } else {
+                                      List<String> dentistFirstNames =
+                                          snapshot.data ?? [];
+                                      return Column(
+                                        children: [
+                                          for (int i = 0;
+                                              i < dentistFirstNames.length;
+                                              i += 3)
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                for (int j = i;
+                                                    j < i + 3 &&
+                                                        j <
+                                                            dentistFirstNames
+                                                                .length;
+                                                    j++)
+                                                  Container(
+                                                    width: 120,
+                                                    height: 40,
+                                                    margin:
+                                                        const EdgeInsets.all(5),
+                                                    child: ElevatedButton(
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          selectedDentist =
+                                                              dentistFirstNames[
+                                                                  j];
+                                                          showDate = true;
+                                                        });
+                                                      },
+                                                      style: ButtonStyle(
+                                                        shape: MaterialStateProperty
+                                                            .all<
+                                                                RoundedRectangleBorder>(
+                                                          RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                vertical: 8.0),
+                                                        child: Text(
+                                                          dentistFirstNames[j],
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                              ],
                                             ),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 8.0),
-                                            child: Text(
-                                              dentist,
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                  ],
+                                        ],
+                                      );
+                                    }
+                                  },
                                 ),
                               ],
                             ),
@@ -533,49 +575,36 @@ class _BookingPageState extends State<BookingPage> {
                                                       padding:
                                                           const EdgeInsets.all(
                                                               8.0),
-                                                      child: ElevatedButton(
-                                                        onPressed: () {
-                                                          setState(() {
-                                                            selectedDate = date;
-                                                            showTime = true;
-                                                          });
-                                                        },
-                                                        style: ButtonStyle(
-                                                          shape: WidgetStateProperty
-                                                              .all<
-                                                                  RoundedRectangleBorder>(
-                                                            RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10),
+                                                      child: SizedBox(
+                                                        width: 120,
+                                                        height: 40,
+                                                        child: ElevatedButton(
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              selectedDate = date;
+                                                              showTime = true;
+                                                            });
+                                                          },
+                                                          style: ButtonStyle(
+                                                            shape: WidgetStateProperty
+                                                                .all<
+                                                                    RoundedRectangleBorder>(
+                                                              RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10),
+                                                              ),
                                                             ),
                                                           ),
-                                                          backgroundColor:
-                                                              WidgetStateProperty
-                                                                  .resolveWith<
-                                                                      Color>(
-                                                            (Set<WidgetState>
-                                                                states) {
-                                                              if (states.contains(
-                                                                  WidgetState
-                                                                      .pressed)) {
-                                                                return Colors
-                                                                    .blueAccent
-                                                                    .shade700;
-                                                              }
-                                                              return Colors
-                                                                  .blue;
-                                                            },
+                                                          child: Text(
+                                                            DateFormat('MM/dd')
+                                                                .format(date),
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontSize:
+                                                                        16.0),
                                                           ),
-                                                        ),
-                                                        child: Text(
-                                                          DateFormat('MM/dd')
-                                                              .format(date),
-                                                          style:
-                                                              const TextStyle(
-                                                                  fontSize:
-                                                                      16.0),
                                                         ),
                                                       ),
                                                     ),

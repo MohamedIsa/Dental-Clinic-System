@@ -12,6 +12,38 @@ class bookingm extends StatefulWidget {
   _bookingmState createState() => _bookingmState();
 }
 
+Future<List<String>> getDentistNames() async {
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  List<String> dentistFirstNames = [];
+
+  try {
+    QuerySnapshot dentistSnapshot = await firestore.collection('dentist').get();
+
+    for (QueryDocumentSnapshot doc in dentistSnapshot.docs) {
+      String dentistId = doc.id;
+
+      DocumentSnapshot userSnapshot =
+          await firestore.collection('user').doc(dentistId).get();
+
+      if (userSnapshot.exists &&
+          userSnapshot.data() != null &&
+          (userSnapshot.data() as Map<String, dynamic>)
+              .containsKey('FullName')) {
+        String fullName =
+            (userSnapshot.data() as Map<String, dynamic>)['FullName'];
+        if (fullName.isNotEmpty) {
+          List<String> nameParts = fullName.split(' ');
+          String firstName = nameParts.first;
+          dentistFirstNames.add('Dr. $firstName');
+        }
+      }
+    }
+  } catch (e) {
+    print('Error fetching dentist names: $e');
+  }
+  return dentistFirstNames;
+}
+
 Future<bool> checkAvailability(String dentist, DateTime date, int hour) async {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final QuerySnapshot snapshot = await _firestore
@@ -140,10 +172,11 @@ Future<bool> checkAllTimesPassed(
 }
 
 class _bookingmState extends State<bookingm> {
-  String selectedDentist = 'Dentist 1';
+  String selectedDentist = '';
   DateTime selectedDate = DateTime.now();
   int selectedHour = 9;
 
+  List<String> dentistFirstNames = [];
   bool showDate = false;
   bool showTime = false;
   bool showcontainer = false;
@@ -151,82 +184,80 @@ class _bookingmState extends State<bookingm> {
   @override
   Widget build(BuildContext context) {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
-    return Align(
-      alignment: AlignmentDirectional.topStart,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Book Appointment'),
-          backgroundColor: Colors.grey[150],
-        ),
-        bottomNavigationBar: ResponsiveWidget.isSmallScreen(context)
-            ? BottomNavigationBar(
-                selectedItemColor: Colors.blue,
-                unselectedItemColor: Colors.grey,
-                unselectedLabelStyle: TextStyle(color: Colors.grey),
-                selectedLabelStyle: TextStyle(color: Colors.blue),
-                showUnselectedLabels: true,
-                currentIndex: _selectedIndex, // Update the currentIndex
-                items: const <BottomNavigationBarItem>[
-                  BottomNavigationBarItem(
-                    icon: Icon(
-                      Icons.home,
-                    ),
-                    label: 'Home',
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Book Appointment'),
+        backgroundColor: Colors.grey[150],
+      ),
+      bottomNavigationBar: ResponsiveWidget.isSmallScreen(context)
+          ? BottomNavigationBar(
+              selectedItemColor: Colors.blue,
+              unselectedItemColor: Colors.grey,
+              unselectedLabelStyle: TextStyle(color: Colors.grey),
+              selectedLabelStyle: TextStyle(color: Colors.blue),
+              showUnselectedLabels: true,
+              currentIndex: _selectedIndex, // Update the currentIndex
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.home,
                   ),
-                  BottomNavigationBarItem(
-                    icon: Icon(
-                      Icons.calendar_today,
-                    ),
-                    label: 'Book Appointment',
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.calendar_today,
                   ),
-                  BottomNavigationBarItem(
-                    icon: Icon(
-                      Icons.history,
-                    ),
-                    label: 'Appointment History',
+                  label: 'Book Appointment',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.history,
                   ),
-                  BottomNavigationBarItem(
-                    icon: Icon(
-                      Icons.person,
-                    ),
-                    label: 'Update Account',
+                  label: 'Appointment History',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.person,
                   ),
-                  BottomNavigationBarItem(
-                    icon: Icon(
-                      Icons.edit,
-                    ),
-                    label: 'Edit Appointment',
+                  label: 'Update Account',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.edit,
                   ),
-                ],
-                onTap: (index) {
-                  setState(() {
-                    _selectedIndex = index;
-                  });
-                  switch (index) {
-                    case 0:
-                      Navigator.pushNamed(context, '/dashboard');
-                      break;
-                    case 1:
-                      break;
-                    case 2:
-                      Navigator.pushNamed(context, '/appointmenthistory');
-                      break;
-                    case 3:
-                      // Handle Update Account navigation
-                      break;
-                    case 4:
-                      // Handle Edit Appointment navigation
-                      break;
-                  }
-                },
-              )
-            : null,
-        body: SingleChildScrollView(
-          child: Container(
-            color: AppColors.bccolor,
-            padding: const EdgeInsets.only(left: 50),
+                  label: 'Edit Appointment',
+                ),
+              ],
+              onTap: (index) {
+                setState(() {
+                  _selectedIndex = index;
+                });
+                switch (index) {
+                  case 0:
+                    Navigator.pushNamed(context, '/dashboard');
+                    break;
+                  case 1:
+                    break;
+                  case 2:
+                    Navigator.pushNamed(context, '/appointmenthistory');
+                    break;
+                  case 3:
+                    Navigator.pushNamed(context, '/updateaccount');
+                    break;
+                  case 4:
+                    // Handle Edit Appointment navigation
+                    break;
+                }
+              },
+            )
+          : null,
+      backgroundColor: Colors.grey[200],
+      body: Center(
+        child: SingleChildScrollView(
+        
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(10.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -245,125 +276,84 @@ class _bookingmState extends State<bookingm> {
                         children: [
                           const Text(
                               'Please select a dentist from the list below.'),
-                          Row(
-                            children: [
-                              for (var dentist in ['Dentist 1', 'Dentist 2'])
-                                Container(
-                                  width: 100,
-                                  height: 40,
-                                  margin: const EdgeInsets.all(5),
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        selectedDentist = dentist;
-                                        showDate = true;
-                                      });
-                                    },
-                                    style: ButtonStyle(
-                                      shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
-                                        RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                      ),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8.0),
-                                      child: Text(
-                                        dentist,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(fontSize: 12),
-                                      ),
-                                    ),
+                          FutureBuilder<List<String>>(
+                            future: getDentistNames(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Padding(
+                                  padding: EdgeInsets.only(top: 50),
+                                  child: SpinKitFadingCube(
+                                    color: Colors.white,
+                                    size: 20.0,
                                   ),
-                                ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              for (var dentist in ['Dentist 3', 'Dentist 4'])
-                                Container(
-                                  width: 100,
-                                  height: 40,
-                                  margin: const EdgeInsets.all(5),
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        selectedDentist = dentist;
-                                        showDate = true;
-                                      });
-                                    },
-                                    style: ButtonStyle(
-                                      shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
-                                        RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
+                                ); // Show loading indicator while fetching data
+                              } else if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              } else {
+                                List<String> dentistFirstNames =
+                                    snapshot.data ?? [];
+                                return Column(
+                                  children: [
+                                    for (int i = 0;
+                                        i < dentistFirstNames.length;
+                                        i += 2)
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          for (int j = i;
+                                              j < i + 2 &&
+                                                  j < dentistFirstNames.length;
+                                              j++)
+                                            Container(
+                                              width: 120,
+                                              height: 40,
+                                              margin: const EdgeInsets.all(5),
+                                              child: ElevatedButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    selectedDentist =
+                                                        dentistFirstNames[j];
+                                                    showDate = true;
+                                                  });
+                                                },
+                                                style: ButtonStyle(
+                                                  shape:
+                                                      MaterialStateProperty.all<
+                                                          RoundedRectangleBorder>(
+                                                    RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                  ),
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(vertical: 8.0),
+                                                  child: Text(
+                                                    dentistFirstNames[j],
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                        ],
                                       ),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8.0),
-                                      child: Text(
-                                        dentist,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(fontSize: 12),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                          SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              for (var dentist in ['Dentist 5'])
-                                Container(
-                                  width: 100,
-                                  height: 40,
-                                  margin: const EdgeInsets.all(5),
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        selectedDentist = dentist;
-                                        showDate = true;
-                                      });
-                                    },
-                                    style: ButtonStyle(
-                                      shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
-                                        RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                      ),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8.0),
-                                      child: Text(
-                                        dentist,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(fontSize: 12),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                            ],
+                                  ],
+                                );
+                              }
+                            },
                           ),
                         ],
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  if (showDate)
-                    Align(
+                  const SizedBox(height: 50),
+                  Visibility(
+                    visible: showDate,
+                    child: Align(
                       alignment: AlignmentDirectional.topStart,
                       child: Container(
                         width: 430,
@@ -398,7 +388,7 @@ class _bookingmState extends State<bookingm> {
                                     } else {
                                       List<List<DateTime>> availableDatesRows =
                                           snapshot.data ?? [];
-
+                    
                                       if (availableDatesRows.isEmpty) {
                                         return Text(
                                           'No available dates for selected dentist.',
@@ -434,21 +424,6 @@ class _bookingmState extends State<bookingm> {
                                                                 .circular(10),
                                                       ),
                                                     ),
-                                                    backgroundColor:
-                                                        MaterialStateProperty
-                                                            .resolveWith<Color>(
-                                                      (Set<MaterialState>
-                                                          states) {
-                                                        if (states.contains(
-                                                            MaterialState
-                                                                .pressed)) {
-                                                          return Colors
-                                                              .blueAccent
-                                                              .shade700;
-                                                        }
-                                                        return Colors.blue;
-                                                      },
-                                                    ),
                                                   ),
                                                   child: Text(
                                                     DateFormat('MM/dd')
@@ -481,9 +456,11 @@ class _bookingmState extends State<bookingm> {
                         ),
                       ),
                     ),
-                  const SizedBox(height: 20),
-                  if (showTime)
-                    Align(
+                  ),
+                  const SizedBox(height: 50),
+                  Visibility(
+                    visible: showTime,
+                    child: Align(
                       alignment: AlignmentDirectional.topStart,
                       child: Container(
                         width: 430,
@@ -519,7 +496,7 @@ class _bookingmState extends State<bookingm> {
                                     } else {
                                       List<List<int>> availableSlotsRows =
                                           snapshot.data ?? [];
-
+                    
                                       if (availableSlotsRows.isEmpty) {
                                         return Text(
                                           'No available time slots for selected date.',
@@ -601,13 +578,16 @@ class _bookingmState extends State<bookingm> {
                         ),
                       ),
                     ),
-                  const SizedBox(height: 20),
+                  ),
+                  const SizedBox(height: 50),
                   Visibility(
                     visible: showcontainer && showTime,
                     child: Center(
+                      
                       child: Container(
+                        margin: const EdgeInsets.only(bottom: 10),
                         width: 400,
-                        height: 400,
+                        height: 170,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           border:
@@ -637,7 +617,7 @@ class _bookingmState extends State<bookingm> {
                                     selectedDate.month,
                                     selectedDate.day,
                                   );
-
+                    
                                   // Check if an appointment already exists at the selected time
                                   var existingAppointment = await firestore
                                       .collection('appointments')
@@ -646,7 +626,7 @@ class _bookingmState extends State<bookingm> {
                                       .where('date', isEqualTo: dateOnly)
                                       .where('hour', isEqualTo: selectedHour)
                                       .get();
-
+                    
                                   if (existingAppointment.docs.isEmpty) {
                                     // If no existing appointment, book the appointment
                                     await firestore
@@ -680,7 +660,6 @@ class _bookingmState extends State<bookingm> {
                 ],
               ),
             ),
-          ),
         ),
       ),
     );
