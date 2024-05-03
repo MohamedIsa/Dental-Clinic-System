@@ -1,0 +1,60 @@
+import 'package:senior/admin/patient_model.dart';
+
+List<PatientData> patientInfo = [
+  PatientData(
+    fullName: "John Doe",
+    cpr: "123456789",
+    birthDay: "1990-05-15",
+    gender: "Male",
+    phoneNumber: "123-456-7890",
+    email: "john@example.com",
+  ),
+  PatientData(
+    fullName: "Jane Smith",
+    cpr: "987654321",
+    birthDay: "1985-10-20",
+    gender: "Female",
+    phoneNumber: "987-654-3210",
+    email: "jane@example.com",
+  ),
+  PatientData(
+    fullName: "Michael Johnson",
+    cpr: "456123789",
+    birthDay: "1982-03-25",
+    gender: "Male",
+    phoneNumber: "456-123-7890",
+    email: "michael@example.com",
+  ),
+  PatientData(
+    fullName: "Emily Davis",
+    cpr: "789456123",
+    birthDay: "1995-12-10",
+    gender: "Female",
+    phoneNumber: "789-456-1230",
+    email: "emily@example.com",
+  ),
+  PatientData(
+    fullName: "David Brown",
+    cpr: "321654987",
+    birthDay: "1978-08-05",
+    gender: "Male",
+    phoneNumber: "321-654-9870",
+    email: "david@example.com",
+  ),
+  PatientData(
+    fullName: "Sarah Wilson",
+    cpr: "654987321",
+    birthDay: "1989-11-30",
+    gender: "Female",
+    phoneNumber: "654-987-3210",
+    email: "sarah@example.com",
+  ),
+  PatientData(
+    fullName: "Matthew Taylor",
+    cpr: "852963741",
+    birthDay: "1987-02-20",
+    gender: "Male",
+    phoneNumber: "852-963-7410",
+    email: "matthew@example.com",
+  ),
+];

@@ -123,8 +123,7 @@ Future<void> signInWithGoogle(BuildContext context) async {
         // User exists in database, navigate to welcome page
         Navigator.pushReplacementNamed(context, '/dashboard');  
       } else {
-        // User does not exist in database, navigate to complete details screen
-        Navigator.pushReplacementNamed(context, '/home');
+        Navigator.pushReplacementNamed(context, '/completedetails');
       }
     }
   } catch (e) {
