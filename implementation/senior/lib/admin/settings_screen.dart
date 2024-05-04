@@ -182,14 +182,15 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
                 future: _getUserRole(userDoc.id),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return ListTile(
-                      title: Text(name),
-                      subtitle: Text(email),
-                    );
+                    return SizedBox.shrink();
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else {
                     final role = snapshot.data ?? '';
+                    if (role.isEmpty) {
+                      // Exclude patients from the list
+                      return SizedBox.shrink();
+                    }
                     return ListTile(
                       title: Text(name),
                       subtitle: Column(
@@ -229,7 +230,15 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
   Future<String> _getUserRole(String userId) async {
     String role = '';
 
-    // Fetch the user's role based on their UID
+    // Check if the user is a patient
+    var patientDoc =
+        await FirebaseFirestore.instance.collection('patient').doc(userId).get();
+    if (patientDoc.exists) {
+      // If the user is a patient, return an empty string to exclude them from the staff list
+      return '';
+    }
+
+    // If the user is not a patient, check their role in other collections
     var adminDoc =
         await FirebaseFirestore.instance.collection('admin').doc(userId).get();
     if (adminDoc.exists) {
@@ -262,6 +271,7 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
     }
   }
 }
+
 
 class NotificationsScreen extends StatelessWidget {
   @override
