@@ -175,7 +175,7 @@ Future<String> getUpcomingAppointment(String uid) async {
                       Navigator.pushNamed(context, '/appointmenthistory');
                       break;
                     case 3:
-                      // Handle Update Account navigation
+                      Navigator.pushNamed(context, '/update');
                       break;
                     case 4:
                       // Handle Edit Appointment navigation
@@ -253,7 +253,7 @@ Future<String> getUpcomingAppointment(String uid) async {
                                 TextButton(
                                   onPressed: () {
                                     Navigator.pushNamed(
-                                        context, '/updateaccount');
+                                        context, '/update');
                                   },
                                   child: const Text(
                                     'Update Account',
@@ -360,6 +360,13 @@ Future<String> getUpcomingAppointment(String uid) async {
               ),
             );
           },
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.pushNamed(context, '/chat');
+          },
+          child: const Icon(Icons.chat),
+          backgroundColor: Colors.blue,
         ),
       ),
     );

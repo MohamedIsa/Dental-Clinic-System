@@ -438,7 +438,7 @@ class _SignUpState extends State<SignUp> {
                                       'DOB': _dobTextController.text,
                                     });
                                     await _firestore
-                                        .collection('admin')
+                                        .collection('patient')
                                         .doc(uid)
                                         .set({
                                       'uid': uid,
