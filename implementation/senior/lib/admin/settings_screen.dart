@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:senior/admin/side_menu_widget.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -32,12 +32,6 @@ class SettingsPage extends StatelessWidget {
             },
           ),
           ListTile(
-            title: Text('Notifications and Alerts'),
-            onTap: () {
-              navigateToSettings('Notifications and Alerts');
-            },
-          ),
-          ListTile(
             title: Text('Edit Coupon'),
             onTap: () {
               navigateToSettings('Edit Coupon');
@@ -53,67 +47,65 @@ class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Settings'),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Settings'),
+      ),
+      body: SafeArea(
+        child: Row(
+          children: [
+            Expanded(
+              flex: 2,
+              child: SideMenuWidget(),
             ),
-            body: SafeArea(
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: SideMenuWidget(), // Assuming you have a SideMenuWidget
-                  ),
-                  Expanded(
-                    flex: 7,
-                    child: SettingsPage(
-                      navigateToSettings: (settingName) {
-                        // Implement navigation logic here
-                        switch (settingName) {
-                          case 'General Settings':
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => GeneralSettingsScreen()),
-                            );
-                            break;
-                          case 'Appointment Settings':
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => AppointmentSettingsScreen()),
-                            );
-                            break;
-                          case 'Staff Management':
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => StaffManagementScreen()),
-                            );
-                            break;
-                          case 'Notifications and Alerts':
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => NotificationsScreen()),
-                            );
-                            break;
-                          case 'Edit Coupon':
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => EditCouponScreen()),
-                            );
-                            break;
-                          default:
-                            print('Setting not found');
-                        }
-                      },
-                    ),
-                  ),
-                ],
+            Expanded(
+              flex: 7,
+              child: SettingsPage(
+                navigateToSettings: (settingName) {
+                  // Implement navigation logic here
+                  switch (settingName) {
+                    case 'General Settings':
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => GeneralSettingsScreen()),
+                      );
+                      break;
+                    case 'Appointment Settings':
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AppointmentSettingsScreen()),
+                      );
+                      break;
+                    case 'Staff Management':
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => StaffManagementScreen()),
+                      );
+                      break;
+                    case 'Notifications and Alerts':
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => NotificationsScreen()),
+                      );
+                      break;
+                    case 'Edit Coupon':
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => EditCouponScreen()),
+                      );
+                      break;
+                    default:
+                      print('Setting not found');
+                  }
+                },
               ),
             ),
-          );
-
-        }
-      }
-
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class GeneralSettingsScreen extends StatelessWidget {
   @override
@@ -151,6 +143,24 @@ class StaffManagementScreen extends StatefulWidget {
 }
 
 class _StaffManagementScreenState extends State<StaffManagementScreen> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final TextEditingController fullNameController = TextEditingController();
+  final TextEditingController cprController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneNumberController = TextEditingController();
+  final TextEditingController birthdayController = TextEditingController();
+
+  @override
+  void dispose() {
+    // Dispose controllers to avoid memory leaks
+    fullNameController.dispose();
+    cprController.dispose();
+    emailController.dispose();
+    phoneNumberController.dispose();
+    birthdayController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -224,94 +234,109 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
           );
         },
       ),
-floatingActionButton: FloatingActionButton(
-  child: Icon(Icons.add),
-  onPressed: () {
-    showDialog(
-      context: context,
-      builder: (context) {
-        var _selectedRole;
-        var _selectedGander;
-        return AlertDialog(
-          title: Text('Add Staff Member'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Full Name'),
-                  // You can add validation logic here if needed
-                ),
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'CPR'),
-                  // You can add validation logic here if needed
-                ),
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Email'),
-                  // You can add validation logic here if needed
-                ),
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Phone Number'),
-                  // You can add validation logic here if needed
-                ),
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Birthday'),
-                  // You can add validation logic here if needed
-                ),
-                DropdownButtonFormField<String>(
-                  value: _selectedGander,
-                  decoration: InputDecoration(labelText: 'Gander'),
-                  items: ['Male', 'Female']
-                      .map((gander) => DropdownMenuItem(
-                            value: gander,
-                            child: Text(gander),
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedGander = value!;
-                    });
-                  },
-                ),
-                DropdownButtonFormField<String>(
-                  value: _selectedRole,
-                  decoration: InputDecoration(labelText: 'Role'),
-                  items: ['Admin', 'Receptionist', 'Dentist']
-                      .map((role) => DropdownMenuItem(
-                            value: role,
-                            child: Text(role),
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedRole = value!;
-                    });
-                  },
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                // Add logic to save staff member
-                Navigator.of(context).pop();
-              },
-              child: Text('Save'),
-            ),
-          ],
-        );
-      },
-    );
-  },
-),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              String selectedGender = 'Male'; // Default value for gender
+              String selectedRole = 'Admin'; // Default value for role
 
+              return AlertDialog(
+                title: Text('Add Staff Member'),
+                content: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextFormField(
+                        controller: fullNameController,
+                        decoration: InputDecoration(labelText: 'Full Name'),
+                      ),
+                      TextFormField(
+                        controller: cprController,
+                        decoration: InputDecoration(labelText: 'CPR'),
+                      ),
+                      TextFormField(
+                        controller: emailController,
+                        decoration: InputDecoration(labelText: 'Email'),
+                      ),
+                      TextFormField(
+                        controller: phoneNumberController,
+                        decoration: InputDecoration(labelText: 'Phone Number'),
+                      ),
+                      TextFormField(
+                        controller: birthdayController,
+                        decoration: InputDecoration(labelText: 'Birthday'),
+                      ),
+                      DropdownButtonFormField<String>(
+                        value: selectedGender,
+                        decoration: InputDecoration(labelText: 'Gender'),
+                        items: ['Male', 'Female']
+                            .map((gender) => DropdownMenuItem(
+                                  value: gender,
+                                  child: Text(gender),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          selectedGender = value!;
+                        },
+                      ),
+                      DropdownButtonFormField<String>(
+                        value: selectedRole,
+                        decoration: InputDecoration(labelText: 'Role'),
+                        items: ['Admin', 'Receptionist', 'Dentist']
+                            .map((role) => DropdownMenuItem(
+                                  value: role,
+                                  child: Text(role),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          selectedRole = value!;
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Cancel'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Save staff member data to Firestore
+                      _firestore.collection('user').add({
+                        'fullName': fullNameController.text,
+                        'CPR': cprController.text,
+                        'email': emailController.text,
+                        'phoneNumber': phoneNumberController.text,
+                        'birthday': birthdayController.text,
+                        'gender': selectedGender,
+                        if (selectedRole == 'Admin') ...{
+                          'role': 'Admin',
+                        } else if (selectedRole == 'Receptionist') ...{
+                          'role': 'Receptionist',
+                        } else if (selectedRole == 'Dentist') ...{
+                          'role': 'Dentist',
+                        },
+                      }).then((_) {
+                        Navigator.of(context).pop(); // Close the dialog after saving
+                      }).catchError((error) {
+                        print('Error saving staff member: $error');
+                        // Handle error here
+                      });
+                    },
+                    child: Text('Save'),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      ),
     );
   }
 

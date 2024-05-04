@@ -1,7 +1,7 @@
-
-import 'package:senior/admin/patient_data.dart';
-import 'package:senior/admin/patient_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:senior/admin/patient_details_button.dart';
+import 'package:senior/admin/patient_model.dart';
 
 class PatientButtonsWidget extends StatelessWidget {
   final VoidCallback? onAddPatientPressed;
@@ -39,57 +39,97 @@ class PatientButtonsWidget extends StatelessWidget {
     );
   }
 
-  void showSearchDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        String searchCPR = '';
+void showSearchDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      String searchCpr = '';
 
-        return AlertDialog(
-          title: const Text('Search Patient by CPR'),
-          content: TextField(
-            onChanged: (value) {
-              searchCPR = value;
-            },
-            decoration: const InputDecoration(
-              hintText: 'Enter CPR number',
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
+      return AlertDialog(
+        title: const Text('Search Patient'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              onChanged: (value) {
+                searchCpr = value;
               },
-              child: const Text('Cancel'),
+              decoration: const InputDecoration(
+                labelText: 'CPR',
+              ),
             ),
-            TextButton(
-              onPressed: () {
-                if (searchCPR.isNotEmpty && onSearchPatientPressed != null) {
-                  bool found = false;
-                  for (var patient in patientInfo) {
-                    if (patient.cpr == searchCPR) {
-                      found = true;
-                      onSearchPatientPressed!(searchCPR); // Use null-aware operator
-                      break;
-                    }
-                  }
-                  if (!found) {
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              if (searchCpr.isNotEmpty) {
+                try {
+                  // Search for user based on CPR
+                  QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+                      .collection('user')
+                      .where('cpr', isEqualTo: searchCpr)
+                      .get();
+
+                  if (querySnapshot.docs.isNotEmpty) {
+                    // Retrieve the first matching user document
+                    DocumentSnapshot userSnapshot = querySnapshot.docs.first;
+
+                    // Get the UID from the user document
+                    String uid = userSnapshot.id;
+
+                    // Retrieve the user data from the user collection
+                    DocumentSnapshot userDataSnapshot = await FirebaseFirestore.instance
+                        .collection('user')
+                        .doc(uid)
+                        .get();
+
+                    // Create a PatientData object from the retrieved user data
+                    PatientData patientData = PatientData.fromSnapshot(userDataSnapshot);
+
+                    // Navigate to the PatientDetailsPage and pass the patientData
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PatientDetailsPage(patient: patientData),
+                      ),
+                    );
+                  } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Patient with CPR $searchCPR not found.'),
+                      const SnackBar(
+                        content: Text('User not found.'),
                       ),
                     );
                   }
+                } catch (e) {
+                  print('Error: $e');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('An error occurred. Please try again later.'),
+                    ),
+                  );
                 }
-                Navigator.pop(context);
-              },
-              child: const Text('Search'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Please enter a CPR.'),
+                  ),
+                );
+              }
+            },
+            child: const Text('Search'),
+          ),
+        ],
+      );
+    },
+  );
+}
 
   void showAddPatientDialog(BuildContext context) {
     showDialog(
@@ -165,24 +205,46 @@ class PatientButtonsWidget extends StatelessWidget {
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 if (name.isNotEmpty &&
                     cpr.isNotEmpty &&
                     birthDay.isNotEmpty &&
                     gender.isNotEmpty &&
                     phoneNumber.isNotEmpty &&
                     email.isNotEmpty) {
-                  final newPatient = PatientData(
-                    fullName: name,
-                    cpr: cpr,
-                    birthDay: birthDay,
-                    gender: gender,
-                    phoneNumber: phoneNumber,
-                    email: email,
-                  );
-                  patientInfo.add(newPatient);
-                  onAddPatientPressed?.call(); // Use null-aware operator
-                  Navigator.pop(context);
+                  try {
+                    // Add data to 'user' collection
+                    DocumentReference userRef = await FirebaseFirestore.instance.collection('user').add({
+                      'name': name,
+                      'cpr': cpr,
+                      'birthDay': birthDay,
+                      'gender': gender,
+                      'phoneNumber': phoneNumber,
+                      'email': email,
+                    });
+
+                    // Get the UID of the added user
+                    String uid = userRef.id;
+
+                    // Add UID to 'patient' collection
+                    await FirebaseFirestore.instance.collection('patient').doc(uid).set({
+                      'uid': uid,
+                    });
+
+                    // Invoke the onAddPatientPressed callback
+                    if (onAddPatientPressed != null) {
+                      onAddPatientPressed!();
+                    }
+
+                    Navigator.pop(context);
+                  } catch (e) {
+                    print('Error: $e');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('An error occurred. Please try again later.'),
+                      ),
+                    );
+                  }
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(

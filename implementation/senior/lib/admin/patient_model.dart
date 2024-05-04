@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class PatientData {
   final String fullName;
   final String cpr;
@@ -15,14 +17,15 @@ class PatientData {
     required this.email,
   });
 
-  factory PatientData.fromMap(Map<String, dynamic> map) {
+  static PatientData fromSnapshot(DocumentSnapshot patientSnapshot) {
+    Map<String, dynamic> data = patientSnapshot.data() as Map<String, dynamic>;
     return PatientData(
-      fullName: map['FullName'] ?? '',
-      cpr: map['CPR'] ?? '',
-      birthDay: map['DOB'] ?? '',
-      gender: map['Gender'] ?? '',
-      phoneNumber: map['Phone'] ?? '',
-      email: map['Email'] ?? '',
+      fullName: data['name'] ?? '',
+      cpr: data['cpr'] ?? '',
+      birthDay: data['birthDay'] ?? '',
+      gender: data['gender'] ?? '',
+      phoneNumber: data['phoneNumber'] ?? '',
+      email: data['email'] ?? '',
     );
   }
 }
