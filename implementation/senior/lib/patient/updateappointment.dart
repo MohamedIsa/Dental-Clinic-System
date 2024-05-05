@@ -6,12 +6,13 @@ import 'package:intl/intl.dart';
 import 'package:senior/app_colors.dart';
 import 'package:senior/responsive_widget.dart';
 
-class BookingPage extends StatefulWidget {
-  const BookingPage({super.key});
+class Updateappointment extends StatefulWidget {
+  const Updateappointment({super.key});
 
   @override
-  _BookingPageState createState() => _BookingPageState();
+  _UpdateappointmentState createState() => _UpdateappointmentState();
 }
+
 Future<List<Map<String, dynamic>>> getDentists() async {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   List<Map<String, dynamic>> dentists = [];
@@ -171,7 +172,7 @@ Future<bool> checkAllTimesPassed(
       .every((slot) => now.isAfter(startDate.add(Duration(hours: slot))));
 }
 
-class _BookingPageState extends State<BookingPage> {
+class _UpdateappointmentState extends State<Updateappointment> {
   @override
   void initState() {
     super.initState();
@@ -196,10 +197,11 @@ class _BookingPageState extends State<BookingPage> {
   @override
   Widget build(BuildContext context) {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
-    return Scaffold(
+   final appointmentId = ModalRoute.of(context)?.settings.arguments as String;
+    return ResponsiveWidget(largeScreen: Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Book Appointment',
+          'Update Appointment',
           style: TextStyle(color: Colors.blue),
         ),
         backgroundColor: Colors.grey[150],
@@ -208,78 +210,6 @@ class _BookingPageState extends State<BookingPage> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            if (ResponsiveWidget.isMediumScreen(context) ||
-                ResponsiveWidget.isLargeScreen(context))
-              Container(
-                color: Colors.blue,
-                height: 40,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/dashboard');
-                          },
-                          child: const Text(
-                            'Home',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {},
-                          child: const Text(
-                            'Book Appointment',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/appointmenthistory');
-                          },
-                          child: const Text(
-                            'Appointment History',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/update');
-                          },
-                          child: const Text(
-                            'Update Account',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {},
-                          child: const Text(
-                            'Edit Appointment',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
             Container(
               padding: const EdgeInsets.only(left: 50, top: 30),
               child: Padding(
@@ -670,28 +600,28 @@ FutureBuilder<List<Map<String, dynamic>>>(
 
                                             if (existingAppointment
                                                 .docs.isEmpty) {
-                                              // If no existing appointment, book the appointment
-                                              await firestore
+
+                                                await firestore
                                                   .collection('appointments')
-                                                  .add({
-                                                'uid': user.uid,
+                                                  .doc(appointmentId)
+                                                  .update({
                                                 'did': selectedDentistId,
                                                 'date': dateOnly,
                                                 'hour': selectedHour,
-                                              });
+                                                });
                                               Navigator.pushNamed(
                                                   context, '/dashboard');
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(
                                                 const SnackBar(
                                                   content: Text(
-                                                      'Appointment booked successfully!'),
+                                                      'Appointment Updated successfully!'),
                                                 ),
                                               );
                                             }
                                           }
                                         },
-                                        child: const Text('Book Appointment'),
+                                        child: const Text('Update appointment'),
                                       ),
                                     ],
                                   ),
@@ -708,6 +638,7 @@ FutureBuilder<List<Map<String, dynamic>>>(
           ],
         ),
       ),
+    )
     );
   }
 }

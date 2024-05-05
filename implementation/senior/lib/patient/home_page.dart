@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -10,9 +11,32 @@ class HomePage extends StatefulWidget {
 
   @override
   State<HomePage> createState() => _HomePageState();
+
 }
 
+
 class _HomePageState extends State<HomePage> {
+  String welcomeMessage = '';
+  @override
+  void initState() {
+    super.initState();
+    fetchWelcomeMessage();
+  }
+
+  Future<void> fetchWelcomeMessage() async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> snapshot =
+          await FirebaseFirestore.instance.collection('welcome').limit(1).get();
+
+      if (snapshot.docs.isNotEmpty) {
+        setState(() {
+          welcomeMessage = snapshot.docs.first['message'];
+        });
+      }
+    } catch (error) {
+      print('Error fetching welcome message: $error');
+    }
+  }
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -200,8 +224,8 @@ class _HomePageState extends State<HomePage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
-                              'Welcome to our Dental Clinic\nSign up now to get 20% off on your first visit',
+                             Text(
+                              welcomeMessage,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
@@ -251,8 +275,8 @@ class _HomePageState extends State<HomePage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
-                              'Welcome to our Dental Clinic\nSign up now to get 20% off on your first visit',
+                             Text(
+                              welcomeMessage,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20,
