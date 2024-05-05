@@ -386,6 +386,100 @@ class NotificationsScreen extends StatelessWidget {
     );
   }
 }
+class EditWelcomeMessageScreen extends StatefulWidget {
+  @override
+  _EditWelcomeMessageScreenState createState() =>
+      _EditWelcomeMessageScreenState();
+}
+
+class _EditWelcomeMessageScreenState extends State<EditWelcomeMessageScreen> {
+  final TextEditingController _welcomeMessageController =
+      TextEditingController();
+  String _currentWelcomeMessage = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchWelcomeMessage();
+  }
+
+Future<void> _fetchWelcomeMessage() async {
+  try {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('welcome')
+        .doc('mgAMaIIGgWZTnNl0d32B')
+        .get();
+
+    if (snapshot.exists) {
+      final data = snapshot.data();
+      if (data != null && data.containsKey('message')) {
+        final message = data['message'];
+        if (message is String) {
+          _updateWelcomeMessageText(message);
+        } else {
+          print('Welcome message is not a String: $message');
+        }
+      } else {
+        print('Document does not contain a "message" field.');
+      }
+    } else {
+      print('Document does not exist. Cannot fetch welcome message.');
+    }
+  } catch (e, stackTrace) {
+    print('Error fetching welcome message: $e\n$stackTrace');
+  }
+}
+
+  void _updateWelcomeMessageText(String? message) {
+    setState(() {
+      _currentWelcomeMessage = message ?? '';
+      _welcomeMessageController.text = _currentWelcomeMessage;
+    });
+  }
+
+  Future<void> _updateWelcomeMessage(String newMessage) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('welcome')
+          .doc('mgAMaIIGgWZTnNl0d32B')
+          .set({'message': newMessage});
+      print('Welcome message updated successfully!');
+    } catch (e) {
+      print('Error updating welcome message: $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Edit Welcome Message'),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextField(
+              controller: _welcomeMessageController,
+              decoration: InputDecoration(
+                labelText: 'Welcome Message',
+              ),
+              maxLines: null, // Allow multiline input
+            ),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: () {
+                _updateWelcomeMessage(_welcomeMessageController.text);
+              },
+              child: Text('Update Welcome Message'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class EditCouponScreen extends StatelessWidget {
   @override
@@ -394,9 +488,47 @@ class EditCouponScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Edit Coupon'),
       ),
-      body: Center(
-        child: Text('Edit Coupon Screen'),
+      body: ListView(
+        children: <Widget>[
+          CouponListTile(
+            title: 'Create Coupon',
+            onTap: () {
+              // Add your onTap functionality here
+              print('Create Coupon tapped!');
+            },
+          ),
+          CouponListTile(
+            title: 'Edit Welcome Message',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditWelcomeMessageScreen(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
+    );
+  }
+}
+
+class CouponListTile extends StatelessWidget {
+  final String title;
+  final VoidCallback? onTap;
+
+  const CouponListTile({
+    Key? key,
+    required this.title,
+    required this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(title),
+      onTap: onTap,
     );
   }
 }
