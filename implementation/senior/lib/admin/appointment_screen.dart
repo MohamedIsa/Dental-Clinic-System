@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:senior/admin/appointment.dart';
 import 'package:flutter/material.dart';
 import 'package:senior/admin/appointment_buttons_widget.dart';
@@ -9,9 +11,18 @@ class AppointmentPage extends StatelessWidget {
   const AppointmentPage({Key? key});
 
   @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      appBar: HeaderWidget(userName: 'Ahmed Mahmood'),
+Widget build(BuildContext context) {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+
+    return StreamBuilder<DocumentSnapshot>(
+      stream:
+          FirebaseFirestore.instance.collection('user').doc(uid).snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final fullName = snapshot.data?.get('FullName') ?? '';
+          final firstName = fullName.split(' ')[0];
+          return Scaffold(
+            appBar: HeaderWidget(userName: firstName),
       body: SafeArea(
         child: Row(
           children: [
@@ -38,5 +49,12 @@ class AppointmentPage extends StatelessWidget {
         ),
       ),
     );
+            } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          return CircularProgressIndicator();
+        }
+        } 
+      );
   }
 }
