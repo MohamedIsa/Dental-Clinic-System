@@ -10,16 +10,18 @@ import 'package:senior/firebase_options.dart';
 import 'package:senior/patient/bookingpage.dart';
 import 'package:senior/patient/appointmenthistory.dart';
 import 'package:senior/patient/updateaccount.dart';
+import 'package:senior/patient/updateappointment.dart';
 import 'package:senior/registration/login_screen.dart';
 import 'package:senior/admin/main_screen.dart';
 import 'package:senior/admin/patient_screen.dart';
 import 'package:senior/admin/reports_screen.dart';
 import 'package:senior/registration/resetpassword.dart';
-
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:senior/registration/signup_screen.dart';
 import 'package:senior/patient/mobile.dart';
 import 'package:senior/admin/treatment_record_screen.dart';
+import 'package:senior/patient/editappointment.dart';
 
 
 void main() async {
@@ -30,6 +32,7 @@ void main() async {
   await FirebaseAuth.instance.authStateChanges().first;
 
   var firebaseUser = FirebaseAuth.instance.currentUser;
+  setUrlStrategy(PathUrlStrategy());
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     initialRoute: '/',
@@ -51,6 +54,8 @@ void main() async {
       '/treatment': (context) => TreatmentRecordScreen(),
       '/reports': (context) => const ReportsScreen(),
       '/settings': (context) => const SettingsScreen(),
+      '/editappointment': (context) => Editappointment(),
+      '/updateappointment': (context) => Updateappointment(),
     },
   ));
 }
