@@ -12,10 +12,9 @@ class BookingPage extends StatefulWidget {
   @override
   _BookingPageState createState() => _BookingPageState();
 }
-
-Future<List<String>> getDentistNames() async {
+Future<List<Map<String, dynamic>>> getDentists() async {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
-  List<String> dentistFirstNames = [];
+  List<Map<String, dynamic>> dentists = [];
 
   try {
     QuerySnapshot dentistSnapshot = await firestore.collection('dentist').get();
@@ -35,21 +34,21 @@ Future<List<String>> getDentistNames() async {
         if (fullName.isNotEmpty) {
           List<String> nameParts = fullName.split(' ');
           String firstName = nameParts.first;
-          dentistFirstNames.add('Dr. $firstName');
+          dentists.add({'id': dentistId, 'firstName': firstName});
         }
       }
     }
   } catch (e) {
-    print('Error fetching dentist names: $e');
+    print('Error fetching dentists: $e');
   }
-  return dentistFirstNames;
+  return dentists;
 }
 
-Future<bool> checkAvailability(String dentist, DateTime date, int hour) async {
+Future<bool> checkAvailability(String selectedDentistId, DateTime date, int hour) async {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final QuerySnapshot snapshot = await _firestore
       .collection('appointments')
-      .where('dentist', isEqualTo: dentist)
+      .where('did', isEqualTo: selectedDentistId)
       .where('date', isEqualTo: date)
       .where('hour', isEqualTo: hour)
       .get();
@@ -58,7 +57,7 @@ Future<bool> checkAvailability(String dentist, DateTime date, int hour) async {
 }
 
 Future<List<List<int>>> getAvailableTimeSlots(
-    String selectedDentist, DateTime selectedDate) async {
+    String selectedDentistId, DateTime selectedDate) async {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   // Create a DateTime object with only year, month, and day to match the date field in the database
@@ -68,7 +67,7 @@ Future<List<List<int>>> getAvailableTimeSlots(
 
   final QuerySnapshot snapshot = await firestore
       .collection('appointments')
-      .where('dentist', isEqualTo: selectedDentist)
+      .where('did', isEqualTo: selectedDentistId)
       .where('date', isEqualTo: startDate)
       .get();
 
@@ -99,7 +98,7 @@ Future<List<List<int>>> getAvailableTimeSlots(
   return rows;
 }
 
-Future<List<List<DateTime>>> getAvailableDates(String selectedDentist) async {
+Future<List<List<DateTime>>> getAvailableDates(String selectedDentistId) async {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   List<List<DateTime>> availableDatesRows = [];
 
@@ -116,11 +115,11 @@ Future<List<List<DateTime>>> getAvailableDates(String selectedDentist) async {
   // Filter out dates with less than 9 appointments for the selected dentist
   for (DateTime date in weekDates) {
     // Check if all available times have passed without being booked
-    bool allTimesPassed = await checkAllTimesPassed(selectedDentist, date);
+    bool allTimesPassed = await checkAllTimesPassed(selectedDentistId, date);
     if (!allTimesPassed) {
       QuerySnapshot snapshot = await firestore
           .collection('appointments')
-          .where('dentist', isEqualTo: selectedDentist)
+          .where('did', isEqualTo: selectedDentistId)
           .where('date', isEqualTo: date)
           .get();
 
@@ -146,7 +145,7 @@ Future<List<List<DateTime>>> getAvailableDates(String selectedDentist) async {
 }
 
 Future<bool> checkAllTimesPassed(
-    String selectedDentist, DateTime selectedDate) async {
+    String selectedDentistId, DateTime selectedDate) async {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   // Create a DateTime object with only year, month, and day to match the date field in the database
@@ -156,7 +155,7 @@ Future<bool> checkAllTimesPassed(
 
   final QuerySnapshot snapshot = await firestore
       .collection('appointments')
-      .where('dentist', isEqualTo: selectedDentist)
+      .where('did', isEqualTo: selectedDentistId)
       .where('date', isEqualTo: startDate)
       .get();
 
@@ -176,17 +175,20 @@ class _BookingPageState extends State<BookingPage> {
   @override
   void initState() {
     super.initState();
-    getDentistNames().then((dentists) {
+    getDentists().then((dentists) {
       setState(() {
-        dentistFirstNames = dentists;
+        dentistFirstNames = dentists
+            .map((dentist) => dentist['firstName'] as String)
+            .toList();
       });
     });
   }
 
-  String selectedDentist = '';
   DateTime selectedDate = DateTime.now();
   int selectedHour = 9;
   List<String> dentistFirstNames = [];
+  String selectedDentistId = '';
+  String selectedDentistFirstName = '';
 
   bool showDate = false;
   bool showTime = false;
@@ -304,74 +306,54 @@ class _BookingPageState extends State<BookingPage> {
                                   'Please select a dentist from the list below.',
                                   style: TextStyle(color: Colors.white),
                                 ),
-                                FutureBuilder<List<String>>(
-                                  future: getDentistNames(),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const Padding(
-                                        padding: EdgeInsets.only(top: 10),
-                                        child: SpinKitFadingCube(
-                                          color: Colors.white,
-                                          size: 20.0,
-                                        ),
-                                      ); // Show loading indicator while fetching data
-                                    } else if (snapshot.hasError) {
-                                      return Text('Error: ${snapshot.error}');
-                                    } else {
-                                      List<String> dentistFirstNames =
-                                          snapshot.data ?? [];
-                                      return Column(
-                                        children: [
-                                          for (int i = 0;
-                                              i < dentistFirstNames.length;
-                                              i += 3)
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: <Widget>[
-                                                for (int j = i;
-                                                    j < i + 3 &&
-                                                        j <
-                                                            dentistFirstNames
-                                                                .length;
-                                                    j++)
-                                                  Container(
-                                                    width: 120,
-                                                    height: 40,
-                                                    margin:
-                                                        const EdgeInsets.all(5),
-                                                    child: ElevatedButton(
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          selectedDentist =
-                                                              dentistFirstNames[
-                                                                  j];
-                                                          showDate = true;
-                                                        });
-                                                      },
-                                                      style: ButtonStyle(
-                                                        shape: MaterialStateProperty
-                                                            .all<
-                                                                RoundedRectangleBorder>(
-                                                          RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                vertical: 8.0),
-                                                        child: Text(
-                                                          dentistFirstNames[j],
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                        ),
+FutureBuilder<List<Map<String, dynamic>>>(
+  future: getDentists(),
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const Padding(
+        padding: EdgeInsets.only(top: 10),
+        child: SpinKitFadingCube(
+          color: Colors.white,
+          size: 20.0,
+        ),
+      ); // Show loading indicator while fetching data
+    } else if (snapshot.hasError) {
+      return Text('Error: ${snapshot.error}');
+    } else {
+      List<Map<String, dynamic>> dentists = snapshot.data ?? [];
+      return Column(
+        children: [
+          for (int i = 0; i < dentists.length; i += 3)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                for (int j = i; j < i + 3 && j < dentists.length; j++)
+                  Container(
+                    width: 120,
+                    height: 40,
+                    margin: const EdgeInsets.all(5),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          selectedDentistId = dentists[j]['id'];
+                          selectedDentistFirstName = dentists[j]['firstName'];
+                          showDate = true;
+                        });
+                      },
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.all<
+                            RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          'Dr. ${dentists[j]['firstName']}',
+                          textAlign: TextAlign.center,
+                        ),
                                                       ),
                                                     ),
                                                   ),
@@ -408,7 +390,7 @@ class _BookingPageState extends State<BookingPage> {
                                     children: [
                                       FutureBuilder<List<List<int>>>(
                                         future: getAvailableTimeSlots(
-                                            selectedDentist, selectedDate),
+                                            selectedDentistId, selectedDate),
                                         builder: (context, snapshot) {
                                           if (snapshot.connectionState ==
                                               ConnectionState.waiting) {
@@ -462,7 +444,7 @@ class _BookingPageState extends State<BookingPage> {
                                                                     bool
                                                                         appointmentAvailable =
                                                                         await checkAvailability(
-                                                                      selectedDentist,
+                                                                      selectedDentistId,
                                                                       selectedDate,
                                                                       slot,
                                                                     );
@@ -537,7 +519,7 @@ class _BookingPageState extends State<BookingPage> {
                                     children: [
                                       FutureBuilder<List<List<DateTime>>>(
                                         future:
-                                            getAvailableDates(selectedDentist),
+                                            getAvailableDates(selectedDentistId),
                                         builder: (context, snapshot) {
                                           if (snapshot.connectionState ==
                                               ConnectionState.waiting) {
@@ -656,7 +638,7 @@ class _BookingPageState extends State<BookingPage> {
                                       ),
                                       const SizedBox(height: 10),
                                       Text(
-                                        'Selected Dentist: $selectedDentist\nSelected Date: ${DateFormat('MM/dd').format(selectedDate)}\nSelected Time: $selectedHour:00\n',
+                                        'Selected Dentist: Dr.$selectedDentistFirstName\nSelected Date: ${DateFormat('MM/dd').format(selectedDate)}\nSelected Time: $selectedHour:00\n',
                                         style: const TextStyle(
                                             color: Colors.white),
                                       ),
@@ -677,9 +659,9 @@ class _BookingPageState extends State<BookingPage> {
                                             var existingAppointment =
                                                 await firestore
                                                     .collection('appointments')
-                                                    .where('dentist',
+                                                    .where('did',
                                                         isEqualTo:
-                                                            selectedDentist)
+                                                            selectedDentistId)
                                                     .where('date',
                                                         isEqualTo: dateOnly)
                                                     .where('hour',
@@ -693,7 +675,7 @@ class _BookingPageState extends State<BookingPage> {
                                                   .collection('appointments')
                                                   .add({
                                                 'uid': user.uid,
-                                                'dentist': selectedDentist,
+                                                'did': selectedDentistId,
                                                 'date': dateOnly,
                                                 'hour': selectedHour,
                                               });
