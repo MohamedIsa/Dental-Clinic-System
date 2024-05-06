@@ -134,7 +134,6 @@ class AppointmentSettingsScreen extends StatelessWidget {
     );
   }
 }
-
 class StaffManagementScreen extends StatefulWidget {
   const StaffManagementScreen({Key? key}) : super(key: key);
 
@@ -216,7 +215,7 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
                       trailing: IconButton(
                         icon: Icon(Icons.delete),
                         onPressed: () {
-                          _deleteUser(userDoc.id);
+                          _deleteUser(userDoc.id, role); // Pass role here
                         },
                       ),
                       onTap: () {
@@ -302,32 +301,47 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
                     },
                     child: Text('Cancel'),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Save staff member data to Firestore
-                      _firestore.collection('user').add({
-                        'fullName': fullNameController.text,
-                        'CPR': cprController.text,
-                        'email': emailController.text,
-                        'phoneNumber': phoneNumberController.text,
-                        'birthday': birthdayController.text,
-                        'gender': selectedGender,
-                        if (selectedRole == 'Admin') ...{
-                          'role': 'Admin',
-                        } else if (selectedRole == 'Receptionist') ...{
-                          'role': 'Receptionist',
-                        } else if (selectedRole == 'Dentist') ...{
-                          'role': 'Dentist',
-                        },
-                      }).then((_) {
-                        Navigator.of(context).pop(); // Close the dialog after saving
-                      }).catchError((error) {
-                        print('Error saving staff member: $error');
-                        // Handle error here
-                      });
-                    },
-                    child: Text('Save'),
-                  ),
+                 ElevatedButton(
+  onPressed: () {
+    // Save staff member data to Firestore
+    _firestore.collection('user').add({
+      'FullName': fullNameController.text,
+      'CPR': cprController.text,
+      'Email': emailController.text,
+      'Phone': phoneNumberController.text,
+      'DOB': birthdayController.text,
+      'Gender': selectedGender,
+    }).then((documentReference) {
+      // Get the ID of the newly added document
+      String userId = documentReference.id;
+      
+      // Determine the role collection based on selectedRole
+      String roleCollection;
+      if (selectedRole == 'Admin') {
+        roleCollection = 'admin';
+      } else if (selectedRole == 'Dentist') {
+        roleCollection = 'dentist';
+      } else {
+        roleCollection = 'receptionist';
+      }
+      
+      // Add user ID to the respective role collection
+      _firestore.collection(roleCollection).doc(userId).set({
+        'uid': userId,
+      }).then((_) {
+        Navigator.of(context).pop(); // Close the dialog after saving
+      }).catchError((error) {
+        print('Error saving staff member: $error');
+        // Handle error here
+      });
+    }).catchError((error) {
+      print('Error saving staff member: $error');
+      // Handle error here
+    });
+  },
+  child: Text('Save'),
+),
+
                 ],
               );
             },
@@ -363,9 +377,19 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
     return role;
   }
 
-  Future<void> _deleteUser(String userId) async {
+  Future<void> _deleteUser(String userId, String role) async {
     try {
+      // Delete the user document
       await FirebaseFirestore.instance.collection('user').doc(userId).delete();
+      
+      // Depending on the user's role, delete from respective collections
+      if (role.toLowerCase() == 'admin') {
+        await FirebaseFirestore.instance.collection('admin').doc(userId).delete();
+      } else if (role.toLowerCase() == 'dentist') {
+        await FirebaseFirestore.instance.collection('dentist').doc(userId).delete();
+      } else if (role.toLowerCase() == 'receptionist') {
+        await FirebaseFirestore.instance.collection('receptionist').doc(userId).delete();
+      }
     } catch (e) {
       print('Error deleting user: $e');
     }
