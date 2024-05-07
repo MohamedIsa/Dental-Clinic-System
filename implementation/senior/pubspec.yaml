@@ -50,6 +50,7 @@ dependencies:
   icons_flutter: ^0.0.4
   intl: ^0.19.0
   syncfusion_flutter_calendar: ^25.1.41
+  firebase_messaging: ^14.9.2
 
 
 dev_dependencies:

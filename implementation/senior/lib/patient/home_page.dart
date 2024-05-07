@@ -213,8 +213,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     if (MediaQuery.of(context).size.width <= 600)
                       Container(
-                        margin:
-                            const EdgeInsets.only(top: 95, left: 20, right: 20),
+                        margin: const EdgeInsets.only(left:100 ,top: 100),
                         padding: const EdgeInsets.all(10),
                         height: 130,
                         decoration: BoxDecoration(

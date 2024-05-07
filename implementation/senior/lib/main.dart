@@ -6,17 +6,16 @@ import 'package:senior/patient/completedetails.dart';
 import 'package:senior/patient/dashboard.dart';
 import 'package:senior/patient/home_page.dart';
 import 'package:senior/loading.dart';
-import 'package:senior/firebase_options.dart';
 import 'package:senior/patient/bookingpage.dart';
 import 'package:senior/patient/appointmenthistory.dart';
 import 'package:senior/patient/updateaccount.dart';
 import 'package:senior/patient/updateappointment.dart';
+import 'package:senior/patient/updateappomob.dart';
 import 'package:senior/registration/login_screen.dart';
 import 'package:senior/admin/main_screen.dart';
 import 'package:senior/admin/patient_screen.dart';
 import 'package:senior/admin/reports_screen.dart';
 import 'package:senior/registration/resetpassword.dart';
-import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:senior/registration/signup_screen.dart';
 import 'package:senior/patient/mobile.dart';
@@ -26,13 +25,22 @@ import 'package:senior/patient/editappointment.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  FirebaseOptions firebaseOptions = FirebaseOptions(
+apiKey: 'AIzaSyCuKUvQ9nZXLUF0NqsFDXSdGHwToawxyvQ',
+    appId: '1:351146855860:android:1d460bb507f7170d9276e1',
+    messagingSenderId: '351146855860',
+    projectId: 'endless-set-314517',
+    authDomain: 'endless-set-314517.firebaseapp.com',
+    storageBucket: 'endless-set-314517.appspot.com',
+    databaseURL: 'https://endless-set-314517-default-rtdb.asia-southeast1.firebasedatabase.app',
+    measurementId: 'G-Z479E0VRMN',
+  );
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+    options: firebaseOptions,
   );
   await FirebaseAuth.instance.authStateChanges().first;
-
+   
   var firebaseUser = FirebaseAuth.instance.currentUser;
-  setUrlStrategy(PathUrlStrategy());
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     initialRoute: '/',
@@ -56,6 +64,7 @@ void main() async {
       '/settings': (context) => const SettingsScreen(),
       '/editappointment': (context) => Editappointment(),
       '/updateappointment': (context) => Updateappointment(),
+      '/updateppoim': (context) => Updateappomob(),
     },
   ));
 }

@@ -149,6 +149,7 @@ class _UpdateAccountPageState extends State<UpdateAccountPage> {
                     Navigator.pushNamed(context, '/appointmenthistory');
                     break;
                   case 3:
+                  Navigator.pushNamed(context, '/updateaccount');
                     break;
                   case 4:
                     break;
@@ -219,7 +220,9 @@ class _UpdateAccountPageState extends State<UpdateAccountPage> {
                             ),
                           ),
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/editappointment');
+                            },
                             child: const Text(
                               'Edit Appointment',
                               style: TextStyle(

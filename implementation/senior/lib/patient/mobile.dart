@@ -12,9 +12,9 @@ class bookingm extends StatefulWidget {
   _bookingmState createState() => _bookingmState();
 }
 
-Future<List<String>> getDentistNames() async {
+Future<List<Map<String, dynamic>>> getDentists() async {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
-  List<String> dentistFirstNames = [];
+  List<Map<String, dynamic>> dentists = [];
 
   try {
     QuerySnapshot dentistSnapshot = await firestore.collection('dentist').get();
@@ -33,22 +33,29 @@ Future<List<String>> getDentistNames() async {
             (userSnapshot.data() as Map<String, dynamic>)['FullName'];
         if (fullName.isNotEmpty) {
           List<String> nameParts = fullName.split(' ');
-          String firstName = nameParts.first;
-          dentistFirstNames.add('Dr. $firstName');
+          String Name;
+          if (nameParts.length >= 3) {
+            // If there are 3 or more parts, take only the first two
+            Name = '${nameParts[0]} ${nameParts[1]}';
+          } else {
+            // If there are less than 3 parts, keep the full name
+            Name = fullName;
+          }
+          dentists.add({'id': dentistId, 'Name': Name});
         }
       }
     }
   } catch (e) {
-    print('Error fetching dentist names: $e');
+    print('Error fetching dentists: $e');
   }
-  return dentistFirstNames;
+  return dentists;
 }
 
-Future<bool> checkAvailability(String dentist, DateTime date, int hour) async {
+Future<bool> checkAvailability(String selectedDentistId, DateTime date, int hour) async {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final QuerySnapshot snapshot = await _firestore
       .collection('appointments')
-      .where('dentist', isEqualTo: dentist)
+      .where('did', isEqualTo: selectedDentistId)
       .where('date', isEqualTo: date)
       .where('hour', isEqualTo: hour)
       .get();
@@ -57,7 +64,7 @@ Future<bool> checkAvailability(String dentist, DateTime date, int hour) async {
 }
 
 Future<List<List<int>>> getAvailableTimeSlots(
-    String selectedDentist, DateTime selectedDate) async {
+    String selectedDentistId, DateTime selectedDate) async {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   // Create a DateTime object with only year, month, and day to match the date field in the database
@@ -67,7 +74,7 @@ Future<List<List<int>>> getAvailableTimeSlots(
 
   final QuerySnapshot snapshot = await firestore
       .collection('appointments')
-      .where('dentist', isEqualTo: selectedDentist)
+      .where('did', isEqualTo: selectedDentistId)
       .where('date', isEqualTo: startDate)
       .get();
 
@@ -98,7 +105,7 @@ Future<List<List<int>>> getAvailableTimeSlots(
   return rows;
 }
 
-Future<List<List<DateTime>>> getAvailableDates(String selectedDentist) async {
+Future<List<List<DateTime>>> getAvailableDates(String selectedDentistId) async {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   List<List<DateTime>> availableDatesRows = [];
 
@@ -115,11 +122,11 @@ Future<List<List<DateTime>>> getAvailableDates(String selectedDentist) async {
   // Filter out dates with less than 9 appointments for the selected dentist
   for (DateTime date in weekDates) {
     // Check if all available times have passed without being booked
-    bool allTimesPassed = await checkAllTimesPassed(selectedDentist, date);
+    bool allTimesPassed = await checkAllTimesPassed(selectedDentistId, date);
     if (!allTimesPassed) {
       QuerySnapshot snapshot = await firestore
           .collection('appointments')
-          .where('dentist', isEqualTo: selectedDentist)
+          .where('did', isEqualTo: selectedDentistId)
           .where('date', isEqualTo: date)
           .get();
 
@@ -145,7 +152,7 @@ Future<List<List<DateTime>>> getAvailableDates(String selectedDentist) async {
 }
 
 Future<bool> checkAllTimesPassed(
-    String selectedDentist, DateTime selectedDate) async {
+    String selectedDentistId, DateTime selectedDate) async {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   // Create a DateTime object with only year, month, and day to match the date field in the database
@@ -155,7 +162,7 @@ Future<bool> checkAllTimesPassed(
 
   final QuerySnapshot snapshot = await firestore
       .collection('appointments')
-      .where('dentist', isEqualTo: selectedDentist)
+      .where('did', isEqualTo: selectedDentistId)
       .where('date', isEqualTo: startDate)
       .get();
 
@@ -175,6 +182,8 @@ class _bookingmState extends State<bookingm> {
   String selectedDentist = '';
   DateTime selectedDate = DateTime.now();
   int selectedHour = 9;
+    String selectedDentistId = '';
+  String selectedDentistFirstName = '';
 
   List<String> dentistFirstNames = [];
   bool showDate = false;
@@ -276,8 +285,8 @@ class _bookingmState extends State<bookingm> {
                         children: [
                           const Text(
                               'Please select a dentist from the list below.'),
-                          FutureBuilder<List<String>>(
-                            future: getDentistNames(),
+                         FutureBuilder<List<Map<String, dynamic>>>(
+                            future: getDentists(),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
@@ -291,12 +300,12 @@ class _bookingmState extends State<bookingm> {
                               } else if (snapshot.hasError) {
                                 return Text('Error: ${snapshot.error}');
                               } else {
-                                List<String> dentistFirstNames =
-                                    snapshot.data ?? [];
+                                List<Map<String, dynamic>> dentists =
+                                          snapshot.data ?? [];
                                 return Column(
                                   children: [
                                     for (int i = 0;
-                                        i < dentistFirstNames.length;
+                                        i < dentists.length;
                                         i += 2)
                                       Row(
                                         mainAxisAlignment:
@@ -304,7 +313,7 @@ class _bookingmState extends State<bookingm> {
                                         children: <Widget>[
                                           for (int j = i;
                                               j < i + 2 &&
-                                                  j < dentistFirstNames.length;
+                                                  j < dentists.length;
                                               j++)
                                             Container(
                                               width: 120,
@@ -313,8 +322,11 @@ class _bookingmState extends State<bookingm> {
                                               child: ElevatedButton(
                                                 onPressed: () {
                                                   setState(() {
-                                                    selectedDentist =
-                                                        dentistFirstNames[j];
+                                                     selectedDentistId =
+                                                              dentists[j]['id'];
+                                                          selectedDentistFirstName =
+                                                              dentists[j]
+                                                                  ['Name'];
                                                     showDate = true;
                                                   });
                                                 },
@@ -333,7 +345,7 @@ class _bookingmState extends State<bookingm> {
                                                   padding: const EdgeInsets
                                                       .symmetric(vertical: 8.0),
                                                   child: Text(
-                                                    dentistFirstNames[j],
+                                                    'Dr. ${dentists[j]['Name']}',
                                                     textAlign: TextAlign.center,
                                                   ),
                                                 ),
@@ -603,7 +615,7 @@ class _bookingmState extends State<bookingm> {
                             ),
                             const SizedBox(height: 10),
                             Text(
-                              'Selected Dentist: $selectedDentist\nSelected Date: ${DateFormat('MM/dd').format(selectedDate)}\nSelected Time: $selectedHour:00\n',
+                              'Selected Dentist: Dr.$selectedDentistFirstName\nSelected Date: ${DateFormat('MM/dd').format(selectedDate)}\nSelected Time: $selectedHour:00\n',
                               style: const TextStyle(color: Colors.white),
                             ),
                             ElevatedButton(
@@ -621,8 +633,8 @@ class _bookingmState extends State<bookingm> {
                                   // Check if an appointment already exists at the selected time
                                   var existingAppointment = await firestore
                                       .collection('appointments')
-                                      .where('dentist',
-                                          isEqualTo: selectedDentist)
+                                      .where('did',
+                                          isEqualTo: selectedDentistId)
                                       .where('date', isEqualTo: dateOnly)
                                       .where('hour', isEqualTo: selectedHour)
                                       .get();
@@ -633,7 +645,7 @@ class _bookingmState extends State<bookingm> {
                                         .collection('appointments')
                                         .add({
                                       'uid': user.uid,
-                                      'dentist': selectedDentist,
+                                      'did': selectedDentistId,
                                       'date': dateOnly,
                                       'hour': selectedHour,
                                     });

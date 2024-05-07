@@ -306,7 +306,7 @@ class _EditappointmentState extends State<Editappointment> {
                                     ),
                                   );
                                 } else if (ResponsiveWidget.isSmallScreen(
-                                        context) ||
+                                        context) &&
                                     appointmentDateTime
                                         .isAfter(currentDateTime)) {
                                   return Container(
@@ -319,7 +319,7 @@ class _EditappointmentState extends State<Editappointment> {
                                       children: [
                                         Padding(
                                           padding:
-                                              const EdgeInsets.only(left: 50.0),
+                                              const EdgeInsets.only(left: 23.0),
                                           child: Text(
                                             'Appointment with Dr. $firstName\nDate: ${appointmentDateTime.year}-${appointmentDateTime.month}-${appointmentDateTime.day} \nTime: $time:00',
                                             style: const TextStyle(
@@ -341,11 +341,19 @@ class _EditappointmentState extends State<Editappointment> {
                                                   size: 12.0,
                                                 ),
                                                 onPressed: () {
-                                                  Navigator.pushNamed(
-                                                    context,
-                                                    '/updateappointment',
-                                                    arguments: appointment.id,
-                                                  );
+                                                  if (ResponsiveWidget.isLargeScreen(context) || ResponsiveWidget.isMediumScreen(context)) {
+                                                    Navigator.pushNamed(
+                                                      context,
+                                                      '/updateappointment',
+                                                      arguments: appointment.id,
+                                                    );
+                                                  } else {
+                                                    Navigator.pushNamed(
+                                                      context,
+                                                      '/updateppoim',
+                                                      arguments: appointment.id,
+                                                    );
+                                                  }
                                                 },
                                               ),
                                               IconButton(
@@ -373,7 +381,7 @@ class _EditappointmentState extends State<Editappointment> {
                                                                     .collection(
                                                                         'appointments')
                                                                     .doc(appointment
-                                                                        .id) 
+                                                                        .id)
                                                                     .delete();
                                                                 Navigator.of(
                                                                         context)
