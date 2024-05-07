@@ -134,7 +134,6 @@ class AppointmentSettingsScreen extends StatelessWidget {
     );
   }
 }
-
 class StaffManagementScreen extends StatefulWidget {
   const StaffManagementScreen({Key? key}) : super(key: key);
 
@@ -216,7 +215,7 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
                       trailing: IconButton(
                         icon: Icon(Icons.delete),
                         onPressed: () {
-                          _deleteUser(userDoc.id);
+                          _deleteUser(userDoc.id, role); // Pass role here
                         },
                       ),
                       onTap: () {
@@ -302,32 +301,47 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
                     },
                     child: Text('Cancel'),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Save staff member data to Firestore
-                      _firestore.collection('user').add({
-                        'fullName': fullNameController.text,
-                        'CPR': cprController.text,
-                        'email': emailController.text,
-                        'phoneNumber': phoneNumberController.text,
-                        'birthday': birthdayController.text,
-                        'gender': selectedGender,
-                        if (selectedRole == 'Admin') ...{
-                          'role': 'Admin',
-                        } else if (selectedRole == 'Receptionist') ...{
-                          'role': 'Receptionist',
-                        } else if (selectedRole == 'Dentist') ...{
-                          'role': 'Dentist',
-                        },
-                      }).then((_) {
-                        Navigator.of(context).pop(); // Close the dialog after saving
-                      }).catchError((error) {
-                        print('Error saving staff member: $error');
-                        // Handle error here
-                      });
-                    },
-                    child: Text('Save'),
-                  ),
+                 ElevatedButton(
+  onPressed: () {
+    // Save staff member data to Firestore
+    _firestore.collection('user').add({
+      'FullName': fullNameController.text,
+      'CPR': cprController.text,
+      'Email': emailController.text,
+      'Phone': phoneNumberController.text,
+      'DOB': birthdayController.text,
+      'Gender': selectedGender,
+    }).then((documentReference) {
+      // Get the ID of the newly added document
+      String userId = documentReference.id;
+      
+      // Determine the role collection based on selectedRole
+      String roleCollection;
+      if (selectedRole == 'Admin') {
+        roleCollection = 'admin';
+      } else if (selectedRole == 'Dentist') {
+        roleCollection = 'dentist';
+      } else {
+        roleCollection = 'receptionist';
+      }
+      
+      // Add user ID to the respective role collection
+      _firestore.collection(roleCollection).doc(userId).set({
+        'uid': userId,
+      }).then((_) {
+        Navigator.of(context).pop(); // Close the dialog after saving
+      }).catchError((error) {
+        print('Error saving staff member: $error');
+        // Handle error here
+      });
+    }).catchError((error) {
+      print('Error saving staff member: $error');
+      // Handle error here
+    });
+  },
+  child: Text('Save'),
+),
+
                 ],
               );
             },
@@ -363,9 +377,19 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
     return role;
   }
 
-  Future<void> _deleteUser(String userId) async {
+  Future<void> _deleteUser(String userId, String role) async {
     try {
+      // Delete the user document
       await FirebaseFirestore.instance.collection('user').doc(userId).delete();
+      
+      // Depending on the user's role, delete from respective collections
+      if (role.toLowerCase() == 'admin') {
+        await FirebaseFirestore.instance.collection('admin').doc(userId).delete();
+      } else if (role.toLowerCase() == 'dentist') {
+        await FirebaseFirestore.instance.collection('dentist').doc(userId).delete();
+      } else if (role.toLowerCase() == 'receptionist') {
+        await FirebaseFirestore.instance.collection('receptionist').doc(userId).delete();
+      }
     } catch (e) {
       print('Error deleting user: $e');
     }
@@ -386,6 +410,100 @@ class NotificationsScreen extends StatelessWidget {
     );
   }
 }
+class EditWelcomeMessageScreen extends StatefulWidget {
+  @override
+  _EditWelcomeMessageScreenState createState() =>
+      _EditWelcomeMessageScreenState();
+}
+
+class _EditWelcomeMessageScreenState extends State<EditWelcomeMessageScreen> {
+  final TextEditingController _welcomeMessageController =
+      TextEditingController();
+  String _currentWelcomeMessage = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchWelcomeMessage();
+  }
+
+Future<void> _fetchWelcomeMessage() async {
+  try {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('welcome')
+        .doc('mgAMaIIGgWZTnNl0d32B')
+        .get();
+
+    if (snapshot.exists) {
+      final data = snapshot.data();
+      if (data != null && data.containsKey('message')) {
+        final message = data['message'];
+        if (message is String) {
+          _updateWelcomeMessageText(message);
+        } else {
+          print('Welcome message is not a String: $message');
+        }
+      } else {
+        print('Document does not contain a "message" field.');
+      }
+    } else {
+      print('Document does not exist. Cannot fetch welcome message.');
+    }
+  } catch (e, stackTrace) {
+    print('Error fetching welcome message: $e\n$stackTrace');
+  }
+}
+
+  void _updateWelcomeMessageText(String? message) {
+    setState(() {
+      _currentWelcomeMessage = message ?? '';
+      _welcomeMessageController.text = _currentWelcomeMessage;
+    });
+  }
+
+  Future<void> _updateWelcomeMessage(String newMessage) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('welcome')
+          .doc('mgAMaIIGgWZTnNl0d32B')
+          .set({'message': newMessage});
+      print('Welcome message updated successfully!');
+    } catch (e) {
+      print('Error updating welcome message: $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Edit Welcome Message'),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextField(
+              controller: _welcomeMessageController,
+              decoration: InputDecoration(
+                labelText: 'Welcome Message',
+              ),
+              maxLines: null, // Allow multiline input
+            ),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: () {
+                _updateWelcomeMessage(_welcomeMessageController.text);
+              },
+              child: Text('Update Welcome Message'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class EditCouponScreen extends StatelessWidget {
   @override
@@ -394,9 +512,47 @@ class EditCouponScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Edit Coupon'),
       ),
-      body: Center(
-        child: Text('Edit Coupon Screen'),
+      body: ListView(
+        children: <Widget>[
+          CouponListTile(
+            title: 'Create Coupon',
+            onTap: () {
+              // Add your onTap functionality here
+              print('Create Coupon tapped!');
+            },
+          ),
+          CouponListTile(
+            title: 'Edit Welcome Message',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditWelcomeMessageScreen(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
+    );
+  }
+}
+
+class CouponListTile extends StatelessWidget {
+  final String title;
+  final VoidCallback? onTap;
+
+  const CouponListTile({
+    Key? key,
+    required this.title,
+    required this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(title),
+      onTap: onTap,
     );
   }
 }
