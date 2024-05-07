@@ -12,6 +12,7 @@ class BookingPage extends StatefulWidget {
   @override
   _BookingPageState createState() => _BookingPageState();
 }
+
 Future<List<Map<String, dynamic>>> getDentists() async {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   List<Map<String, dynamic>> dentists = [];
@@ -33,8 +34,15 @@ Future<List<Map<String, dynamic>>> getDentists() async {
             (userSnapshot.data() as Map<String, dynamic>)['FullName'];
         if (fullName.isNotEmpty) {
           List<String> nameParts = fullName.split(' ');
-          String firstName = nameParts.first;
-          dentists.add({'id': dentistId, 'firstName': firstName});
+          String Name;
+          if (nameParts.length >= 3) {
+            // If there are 3 or more parts, take only the first two
+            Name = '${nameParts[0]} ${nameParts[1]}';
+          } else {
+            // If there are less than 3 parts, keep the full name
+            Name = fullName;
+          }
+          dentists.add({'id': dentistId, 'Name': Name});
         }
       }
     }
@@ -44,7 +52,8 @@ Future<List<Map<String, dynamic>>> getDentists() async {
   return dentists;
 }
 
-Future<bool> checkAvailability(String selectedDentistId, DateTime date, int hour) async {
+Future<bool> checkAvailability(
+    String selectedDentistId, DateTime date, int hour) async {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final QuerySnapshot snapshot = await _firestore
       .collection('appointments')
@@ -177,9 +186,8 @@ class _BookingPageState extends State<BookingPage> {
     super.initState();
     getDentists().then((dentists) {
       setState(() {
-        dentistFirstNames = dentists
-            .map((dentist) => dentist['firstName'] as String)
-            .toList();
+        dentistFirstNames =
+            dentists.map((dentist) => dentist['Name'] as String).toList();
       });
     });
   }
@@ -306,54 +314,74 @@ class _BookingPageState extends State<BookingPage> {
                                   'Please select a dentist from the list below.',
                                   style: TextStyle(color: Colors.white),
                                 ),
-FutureBuilder<List<Map<String, dynamic>>>(
-  future: getDentists(),
-  builder: (context, snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return const Padding(
-        padding: EdgeInsets.only(top: 10),
-        child: SpinKitFadingCube(
-          color: Colors.white,
-          size: 20.0,
-        ),
-      ); // Show loading indicator while fetching data
-    } else if (snapshot.hasError) {
-      return Text('Error: ${snapshot.error}');
-    } else {
-      List<Map<String, dynamic>> dentists = snapshot.data ?? [];
-      return Column(
-        children: [
-          for (int i = 0; i < dentists.length; i += 3)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                for (int j = i; j < i + 3 && j < dentists.length; j++)
-                  Container(
-                    width: 120,
-                    height: 40,
-                    margin: const EdgeInsets.all(5),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          selectedDentistId = dentists[j]['id'];
-                          selectedDentistFirstName = dentists[j]['firstName'];
-                          showDate = true;
-                        });
-                      },
-                      style: ButtonStyle(
-                        shape: MaterialStateProperty.all<
-                            RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Text(
-                          'Dr. ${dentists[j]['firstName']}',
-                          textAlign: TextAlign.center,
-                        ),
+                                FutureBuilder<List<Map<String, dynamic>>>(
+                                  future: getDentists(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Padding(
+                                        padding: EdgeInsets.only(top: 10),
+                                        child: SpinKitFadingCube(
+                                          color: Colors.white,
+                                          size: 20.0,
+                                        ),
+                                      ); // Show loading indicator while fetching data
+                                    } else if (snapshot.hasError) {
+                                      return Text('Error: ${snapshot.error}');
+                                    } else {
+                                      List<Map<String, dynamic>> dentists =
+                                          snapshot.data ?? [];
+                                      return Column(
+                                        children: [
+                                          for (int i = 0;
+                                              i < dentists.length;
+                                              i += 3)
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                for (int j = i;
+                                                    j < i + 3 &&
+                                                        j < dentists.length;
+                                                    j++)
+                                                  Container(
+                                                    width: 120,
+                                                    height: 40,
+                                                    margin:
+                                                        const EdgeInsets.all(5),
+                                                    child: ElevatedButton(
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          selectedDentistId =
+                                                              dentists[j]['id'];
+                                                          selectedDentistFirstName =
+                                                              dentists[j]
+                                                                  ['Name'];
+                                                          showDate = true;
+                                                        });
+                                                      },
+                                                      style: ButtonStyle(
+                                                        shape: MaterialStateProperty
+                                                            .all<
+                                                                RoundedRectangleBorder>(
+                                                          RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                vertical: 8.0),
+                                                        child: Text(
+                                                          'Dr. ${dentists[j]['Name']}',
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
@@ -518,92 +546,74 @@ FutureBuilder<List<Map<String, dynamic>>>(
                                         CrossAxisAlignment.start,
                                     children: [
                                       FutureBuilder<List<List<DateTime>>>(
-                                        future:
-                                            getAvailableDates(selectedDentistId),
-                                        builder: (context, snapshot) {
-                                          if (snapshot.connectionState ==
-                                              ConnectionState.waiting) {
-                                            return const Padding(
-                                              padding: EdgeInsets.only(top: 50),
-                                              child: SpinKitFadingCube(
-                                                color: Colors.white,
-                                                size: 20.0,
-                                              ),
-                                            ); // Show loading indicator while fetching data
-                                          } else if (snapshot.hasError) {
-                                            return Text(
-                                                'Error: ${snapshot.error}');
-                                          } else {
-                                            List<List<DateTime>>
-                                                availableDatesRows =
-                                                snapshot.data ?? [];
+      future: getAvailableDates(selectedDentistId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Padding(
+            padding: EdgeInsets.only(top: 50),
+            child: SpinKitFadingCube(
+              color: Colors.white,
+              size: 20.0,
+            ),
+          ); // Show loading indicator while fetching data
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          List<List<DateTime>> availableDatesRows = snapshot.data ?? [];
 
-                                            if (availableDatesRows.isEmpty) {
-                                              return const Text(
-                                                'No available dates for selected dentist.',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 20.0,
-                                                ),
-                                              ); // Display message when no dates are available
-                                            } else {
-                                              List<Widget> dateRows = [];
-                                              for (var datesRow
-                                                  in availableDatesRows) {
-                                                List<Widget> buttonsInRow = [];
-                                                for (var date in datesRow) {
-                                                  buttonsInRow.add(
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      child: SizedBox(
-                                                        width: 120,
-                                                        height: 40,
-                                                        child: ElevatedButton(
-                                                          onPressed: () {
-                                                            setState(() {
-                                                              selectedDate = date;
-                                                              showTime = true;
-                                                            });
-                                                          },
-                                                          style: ButtonStyle(
-                                                            shape: WidgetStateProperty
-                                                                .all<
-                                                                    RoundedRectangleBorder>(
-                                                              RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          child: Text(
-                                                            DateFormat('MM/dd')
-                                                                .format(date),
-                                                            style:
-                                                                const TextStyle(
-                                                                    fontSize:
-                                                                        16.0),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                }
-                                                dateRows.add(Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceAround,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: buttonsInRow,
-                                                ));
-                                              }
-                                              return Column(
-                                                children: dateRows,
-                                              );
+          if (availableDatesRows.isEmpty) {
+            return const Text(
+              'No available dates for selected dentist.',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20.0,
+              ),
+            ); // Display message when no dates are available
+          } else {
+            List<Widget> dateRows = [];
+            for (var datesRow in availableDatesRows) {
+              List<Widget> buttonsInRow = [];
+              for (var date in datesRow) {
+                buttonsInRow.add(
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      width: 120,
+                      height: 40,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            selectedDate = date;
+                            showTime = true;
+                          });
+                        },
+                        style: ButtonStyle(
+                          shape: MaterialStateProperty.all<
+                              RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+
+                        ),
+                        child: Text(
+                          DateFormat('MM/dd').format(date),
+                          style: const TextStyle(fontSize: 16.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }
+              dateRows.add(Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: buttonsInRow,
+              ));
+            }
+            return Column(
+              children: dateRows,
+            );
                                             }
                                           }
                                         },
