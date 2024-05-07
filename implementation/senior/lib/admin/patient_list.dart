@@ -30,9 +30,7 @@ class PatientsDataTable extends StatelessWidget {
             itemCount: patientDocs.length,
             itemBuilder: (context, index) {
               var patientDoc = patientDocs[index];
-              var patientUID = patientDoc['uid']; // Assuming UID is stored in the patient document
-          
-              // Now, instead of making a separate query for each patient, we can use a single query to fetch all user data
+              var patientUID = patientDoc['uid'];
               return FutureBuilder(
                 future: FirebaseFirestore.instance.collection('user').doc(patientUID).get(),
                 builder: (context, userSnapshot) {

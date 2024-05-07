@@ -72,10 +72,10 @@ class _AppointmentHistoryPageState extends State<AppointmentHistoryPage> {
                   case 2:
                     break;
                   case 3:
-                    // Handle Update Account navigation
+                    Navigator.pushNamed(context, '/update');
                     break;
                   case 4:
-                    // Handle Edit Appointment navigation
+                  Navigator.pushNamed(context, '/editappointment');
                     break;
                 }
               },
@@ -172,7 +172,7 @@ class _AppointmentHistoryPageState extends State<AppointmentHistoryPage> {
                       itemCount: appointments.length,
                       itemBuilder: (context, index) {
                         final appointment = appointments[index];
-                        final dentistId = appointment['did'];
+final dentistId = appointment.exists ? appointment['did'] : '';
                         final timestamp = appointment['date'];
                         final time = appointment['hour'];
                         final date = DateTime.fromMillisecondsSinceEpoch(

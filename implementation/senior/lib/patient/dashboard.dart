@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
+import 'package:senior/chatpage.dart';
 import 'package:senior/responsive_widget.dart';
 
 class WelcomePage extends StatefulWidget {
@@ -372,7 +373,12 @@ Future<String> getUpcomingAppointment(String uid) async {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.pushNamed(context, '/chat');
+            Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => ChatPage(user: FirebaseAuth.instance.currentUser!, key: Key('')),
+  ),
+);
           },
           child: const Icon(Icons.chat),
           backgroundColor: Colors.blue,

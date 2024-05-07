@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:senior/app_colors.dart';
 import 'package:senior/app_icons.dart';
@@ -33,7 +34,6 @@ class _LoginScreenState extends State<LoginScreen> {
     final String? userId = prefs.getString('userId');
 
     if (userId != null) {
-      // Check if the user exists in the patient collection.
       DocumentSnapshot patientSnapshot = await FirebaseFirestore.instance.collection('patient').doc(userId).get();
       if (patientSnapshot.exists) {
         // User is a patient, redirect to the patient dashboard.
@@ -41,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         // Check if the user exists in the admin collection.
         DocumentSnapshot adminSnapshot = await FirebaseFirestore.instance.collection('admin').doc(userId).get();
-        if (adminSnapshot.exists) {
+        if (adminSnapshot.exists||isSkiaWeb) {
           // User is an admin, redirect to the admin page.
           Navigator.pushNamed(context, '/admin');
         } else {

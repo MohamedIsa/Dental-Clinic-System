@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:senior/app_colors.dart';
-import 'package:senior/responsive_widget.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class Updateappointment extends StatefulWidget {
   const Updateappointment({super.key});
@@ -198,7 +198,8 @@ class _UpdateappointmentState extends State<Updateappointment> {
   Widget build(BuildContext context) {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
    final appointmentId = ModalRoute.of(context)?.settings.arguments as String;
-    return ResponsiveWidget(largeScreen: Scaffold(
+   if(kIsWeb){
+    return Scaffold(
       appBar: AppBar(
         title: const Text(
           'Update Appointment',
@@ -638,7 +639,9 @@ FutureBuilder<List<Map<String, dynamic>>>(
           ],
         ),
       ),
-    )
     );
+   } else{
+      return Container();
+   }
   }
 }

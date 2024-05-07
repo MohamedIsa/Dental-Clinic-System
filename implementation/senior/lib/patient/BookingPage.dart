@@ -274,7 +274,9 @@ class _BookingPageState extends State<BookingPage> {
                           ),
                         ),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/editappointment');
+                          },
                           child: const Text(
                             'Edit Appointment',
                             style: TextStyle(
