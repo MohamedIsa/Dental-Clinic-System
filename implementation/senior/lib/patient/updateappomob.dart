@@ -4,12 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:senior/app_colors.dart';
-import 'package:senior/patient/dashboard.dart';
-import 'package:senior/responsive_widget.dart';
 
-class bookingm extends StatefulWidget {
+class Updateappomob extends StatefulWidget {
   @override
-  _bookingmState createState() => _bookingmState();
+  _UpdateappomobState createState() => _UpdateappomobState();
 }
 
 Future<List<Map<String, dynamic>>> getDentists() async {
@@ -178,93 +176,30 @@ Future<bool> checkAllTimesPassed(
       .every((slot) => now.isAfter(startDate.add(Duration(hours: slot))));
 }
 
-class _bookingmState extends State<bookingm> {
+class _UpdateappomobState extends State<Updateappomob> {
   String selectedDentist = '';
   DateTime selectedDate = DateTime.now();
   int selectedHour = 9;
-    String selectedDentistId = '';
+  String selectedDentistId = '';
   String selectedDentistFirstName = '';
 
   List<String> dentistFirstNames = [];
   bool showDate = false;
   bool showTime = false;
   bool showcontainer = false;
-  int _selectedIndex = 1;
+
   @override
   Widget build(BuildContext context) {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final appointmentId = ModalRoute.of(context)?.settings.arguments as String;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Book Appointment'),
-        backgroundColor: Colors.grey[150],
-      ),
-      bottomNavigationBar: ResponsiveWidget.isSmallScreen(context)
-          ? BottomNavigationBar(
-              selectedItemColor: Colors.blue,
-              unselectedItemColor: Colors.grey,
-              unselectedLabelStyle: TextStyle(color: Colors.grey),
-              selectedLabelStyle: TextStyle(color: Colors.blue),
-              showUnselectedLabels: true,
-              currentIndex: _selectedIndex, // Update the currentIndex
-              items: const <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.home,
-                  ),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.calendar_today,
-                  ),
-                  label: 'Book Appointment',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.history,
-                  ),
-                  label: 'Appointment History',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.person,
-                  ),
-                  label: 'Update Account',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.edit,
-                  ),
-                  label: 'Edit Appointment',
-                ),
-              ],
-              onTap: (index) {
-                setState(() {
-                  _selectedIndex = index;
-                });
-                switch (index) {
-                  case 0:
-                    Navigator.pushNamed(context, '/dashboard');
-                    break;
-                  case 1:
-                    break;
-                  case 2:
-                    Navigator.pushNamed(context, '/appointmenthistory');
-                    break;
-                  case 3:
-                    Navigator.pushNamed(context, '/updateaccount');
-                    break;
-                  case 4:
-                    // Handle Edit Appointment navigation
-                    break;
-                }
-              },
-            )
-          : null,
-      backgroundColor: Colors.grey[200],
-      body: Center(
-        child: SingleChildScrollView(
-        
+        appBar: AppBar(
+          title: const Text('Update Appointment', style: TextStyle(color: Colors.blue),),
+          backgroundColor: Colors.grey[150],
+        ),
+        backgroundColor: Colors.grey[200],
+        body: Center(
+          child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Column(
@@ -285,7 +220,7 @@ class _bookingmState extends State<bookingm> {
                         children: [
                           const Text(
                               'Please select a dentist from the list below.'),
-                         FutureBuilder<List<Map<String, dynamic>>>(
+                          FutureBuilder<List<Map<String, dynamic>>>(
                             future: getDentists(),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
@@ -301,7 +236,7 @@ class _bookingmState extends State<bookingm> {
                                 return Text('Error: ${snapshot.error}');
                               } else {
                                 List<Map<String, dynamic>> dentists =
-                                          snapshot.data ?? [];
+                                    snapshot.data ?? [];
                                 return Column(
                                   children: [
                                     for (int i = 0;
@@ -318,22 +253,21 @@ class _bookingmState extends State<bookingm> {
                                             Container(
                                               width: 120,
                                               height: 40,
-                                              margin: const EdgeInsets.all(5),
+                                              margin:
+                                                  const EdgeInsets.all(5),
                                               child: ElevatedButton(
                                                 onPressed: () {
                                                   setState(() {
-                                                     selectedDentistId =
-                                                              dentists[j]['id'];
-                                                          selectedDentistFirstName =
-                                                              dentists[j]
-                                                                  ['Name'];
+                                                    selectedDentistId =
+                                                        dentists[j]['id'];
+                                                    selectedDentistFirstName =
+                                                        dentists[j]['Name'];
                                                     showDate = true;
                                                   });
                                                 },
                                                 style: ButtonStyle(
-                                                  shape:
-                                                      MaterialStateProperty.all<
-                                                          RoundedRectangleBorder>(
+                                                  shape: MaterialStateProperty.all<
+                                                      RoundedRectangleBorder>(
                                                     RoundedRectangleBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -342,8 +276,9 @@ class _bookingmState extends State<bookingm> {
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(vertical: 8.0),
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                          vertical: 8.0),
                                                   child: Text(
                                                     'Dr. ${dentists[j]['Name']}',
                                                     textAlign: TextAlign.center,
@@ -400,7 +335,7 @@ class _bookingmState extends State<bookingm> {
                                     } else {
                                       List<List<DateTime>> availableDatesRows =
                                           snapshot.data ?? [];
-                    
+
                                       if (availableDatesRows.isEmpty) {
                                         return Text(
                                           'No available dates for selected dentist.',
@@ -508,7 +443,7 @@ class _bookingmState extends State<bookingm> {
                                     } else {
                                       List<List<int>> availableSlotsRows =
                                           snapshot.data ?? [];
-                    
+
                                       if (availableSlotsRows.isEmpty) {
                                         return Text(
                                           'No available time slots for selected date.',
@@ -595,7 +530,6 @@ class _bookingmState extends State<bookingm> {
                   Visibility(
                     visible: showcontainer && showTime,
                     child: Center(
-                      
                       child: Container(
                         margin: const EdgeInsets.only(bottom: 10),
                         width: 400,
@@ -629,7 +563,7 @@ class _bookingmState extends State<bookingm> {
                                     selectedDate.month,
                                     selectedDate.day,
                                   );
-                    
+
                                   // Check if an appointment already exists at the selected time
                                   var existingAppointment = await firestore
                                       .collection('appointments')
@@ -638,31 +572,28 @@ class _bookingmState extends State<bookingm> {
                                       .where('date', isEqualTo: dateOnly)
                                       .where('hour', isEqualTo: selectedHour)
                                       .get();
-                    
+
                                   if (existingAppointment.docs.isEmpty) {
                                     // If no existing appointment, book the appointment
-                                    await firestore
-                                        .collection('appointments')
-                                        .add({
-                                      'uid': user.uid,
-                                      'did': selectedDentistId,
-                                      'date': dateOnly,
-                                      'hour': selectedHour,
-                                    });
-                                    Navigator.of(context).pushReplacement(
-                                      MaterialPageRoute(
-                                          builder: (context) => WelcomePage()),
-                                    );
+                                                await firestore
+                                                  .collection('appointments')
+                                                  .doc(appointmentId)
+                                                  .update({
+                                                'did': selectedDentistId,
+                                                'date': dateOnly,
+                                                'hour': selectedHour,
+                                                });
+                                    Navigator.pushNamed(context, '/dashboard');
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
-                                            'Appointment booked successfully!'),
+                                            'Appointment updated successfully!'),
                                       ),
                                     );
                                   }
                                 }
                               },
-                              child: Text('Book Appointment'),
+                              child: Text('Update Appointment'),
                             ),
                           ],
                         ),
@@ -672,8 +603,8 @@ class _bookingmState extends State<bookingm> {
                 ],
               ),
             ),
+          ),
         ),
-      ),
-    );
+      );
   }
 }

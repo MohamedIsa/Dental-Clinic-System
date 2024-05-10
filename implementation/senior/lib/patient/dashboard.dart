@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
+import 'package:senior/chatpage.dart';
 import 'package:senior/responsive_widget.dart';
 
 class WelcomePage extends StatefulWidget {
@@ -30,7 +31,7 @@ class _WelcomePageState extends State<WelcomePage> {
 Future<String> getUpcomingAppointment(String uid) async {
   QuerySnapshot querySnapshot = await FirebaseFirestore.instance
       .collection('appointments')
-      .where('uid', isEqualTo: uid) // Filter by UID
+      .where('uid', isEqualTo: uid) 
       .orderBy('date')
       .get();
 
@@ -58,13 +59,19 @@ Future<String> getUpcomingAppointment(String uid) async {
           appointmentHour <= endHour &&
           appointmentTime.isAfter(now)) {
         // Retrieve appointment data
-        String dentist = appointment['dentist'] ?? '';
+        String dentistId = appointment['did'] ?? '';
+        DocumentSnapshot dentistDoc = await FirebaseFirestore.instance
+            .collection('user')
+            .doc(dentistId)
+            .get();
+        String dentist = dentistDoc.get('FullName') ?? '';
+        String dentistfirst=dentist.split(' ').first;
 
         // Format the appointment information
         String formattedDate =
             DateFormat.yMd().add_jm().format(appointmentTime);
         String formattedAppointment =
-            '\nDentist: $dentist,\nTime: $formattedDate';
+            '\nDentist: Dr.$dentistfirst,\nTime: $formattedDate';
 
         return formattedAppointment;
       }
@@ -178,7 +185,7 @@ Future<String> getUpcomingAppointment(String uid) async {
                       Navigator.pushNamed(context, '/update');
                       break;
                     case 4:
-                      // Handle Edit Appointment navigation
+                      Navigator.pushNamed(context, '/editappointment');
                       break;
                   }
                 },
@@ -264,7 +271,10 @@ Future<String> getUpcomingAppointment(String uid) async {
                                   ),
                                 ),
                                 TextButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                        context, '/editappointment');
+                                  },
                                   child: const Text(
                                     'Edit Appointment',
                                     style: TextStyle(
@@ -363,7 +373,12 @@ Future<String> getUpcomingAppointment(String uid) async {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.pushNamed(context, '/chat');
+            Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => ChatPage(user: FirebaseAuth.instance.currentUser!, key: Key('')),
+  ),
+);
           },
           child: const Icon(Icons.chat),
           backgroundColor: Colors.blue,

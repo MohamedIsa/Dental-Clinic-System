@@ -35,6 +35,16 @@ class DefaultFirebaseOptions {
         );
     }
   }
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyCuKUvQ9nZXLUF0NqsFDXSdGHwToawxyvQ',
+    appId: '1:351146855860:android:1d460bb507f7170d9276e1',
+    messagingSenderId: '351146855860',
+    projectId: 'endless-set-314517',
+    authDomain: 'endless-set-314517.firebaseapp.com',
+    storageBucket: 'endless-set-314517.appspot.com',
+    databaseURL: 'https://endless-set-314517-default-rtdb.asia-southeast1.firebasedatabase.app',
+    measurementId: 'G-Z479E0VRMN',
+  );
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyCI3VK_MMXG6VPkunF5bze1UefX0yJEHwc',

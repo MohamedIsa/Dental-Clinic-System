@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:senior/app_colors.dart';
 import 'package:senior/app_icons.dart';
@@ -8,7 +9,6 @@ import 'package:senior/responsive_widget.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:senior/reuseable_widget.dart';
 import 'package:senior/registration/signup_screen.dart';
-import 'package:senior/patient/dashboard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -21,6 +21,37 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _passwordTextController = TextEditingController();
   TextEditingController _emailTextController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    checkUserLoggedIn();
+  }
+
+  // Method to check if the user is already logged in
+  Future<void> checkUserLoggedIn() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? userId = prefs.getString('userId');
+
+    if (userId != null) {
+      DocumentSnapshot patientSnapshot = await FirebaseFirestore.instance.collection('patient').doc(userId).get();
+      if (patientSnapshot.exists) {
+        // User is a patient, redirect to the patient dashboard.
+        Navigator.pushNamed(context, '/dashboard');
+      } else {
+        // Check if the user exists in the admin collection.
+        DocumentSnapshot adminSnapshot = await FirebaseFirestore.instance.collection('admin').doc(userId).get();
+        if (adminSnapshot.exists||isSkiaWeb) {
+          // User is an admin, redirect to the admin page.
+          Navigator.pushNamed(context, '/admin');
+        } else {
+          showErrorDialog(context, 'User not found in patient or admin collection');
+        
+    }
+  }
+    }
+  }
+  // Method to persist user ID locally
   Future<void> persistUser(String userId) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('userId', userId);
@@ -168,20 +199,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                   await persistUser(userCredential.user!.uid);
 
                                   // Check if the user exists in the patient collection.
-                                  DocumentSnapshot patientSnapshot = await FirebaseFirestore.instance.collection('patients').doc(userCredential.user!.uid).get();
+                                  DocumentSnapshot patientSnapshot = await FirebaseFirestore.instance.collection('patient').doc(userCredential.user!.uid).get();
                                   if (patientSnapshot.exists) {
-                                    // Pass the full name to the WelcomePage.
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => WelcomePage(),
-                                      ),
-                                    );
+                                    // User is a patient, redirect to the patient dashboard.
+                                    Navigator.pushNamed(context, '/dashboard');
                                   } else {
                                     // Check if the user exists in the admin collection.
                                     DocumentSnapshot adminSnapshot = await FirebaseFirestore.instance.collection('admin').doc(userCredential.user!.uid).get();
                                     if (adminSnapshot.exists) {
-                                      // Navigate to the admin page.
-                                     Navigator.pushNamed(context, '/admin');
+                                      // User is an admin, redirect to the admin page.
+                                      Navigator.pushNamed(context, '/admin');
                                     } else {
                                       showErrorDialog(context, 'User not found in patient or admin collection');
                                     }

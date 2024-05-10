@@ -72,16 +72,16 @@ class _AppointmentHistoryPageState extends State<AppointmentHistoryPage> {
                   case 2:
                     break;
                   case 3:
-                    // Handle Update Account navigation
+                    Navigator.pushNamed(context, '/update');
                     break;
                   case 4:
-                    // Handle Edit Appointment navigation
+                  Navigator.pushNamed(context, '/editappointment');
                     break;
                 }
               },
             )
           : null,
-          backgroundColor: Colors.grey[200],
+      backgroundColor: Colors.grey[200],
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -121,8 +121,7 @@ class _AppointmentHistoryPageState extends State<AppointmentHistoryPage> {
                           ),
                         ),
                         TextButton(
-                          onPressed: () {
-                          },
+                          onPressed: () {},
                           child: const Text(
                             'Appointment History',
                             style: TextStyle(
@@ -161,7 +160,8 @@ class _AppointmentHistoryPageState extends State<AppointmentHistoryPage> {
             StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('appointments')
-                  .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                  .where('uid',
+                      isEqualTo: FirebaseAuth.instance.currentUser!.uid)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
@@ -172,49 +172,75 @@ class _AppointmentHistoryPageState extends State<AppointmentHistoryPage> {
                       itemCount: appointments.length,
                       itemBuilder: (context, index) {
                         final appointment = appointments[index];
-                        final dentist = appointment['dentist'];
+final dentistId = appointment.exists ? appointment['did'] : '';
                         final timestamp = appointment['date'];
                         final time = appointment['hour'];
                         final date = DateTime.fromMillisecondsSinceEpoch(
                                 timestamp.millisecondsSinceEpoch)
                             .toLocal();
-                        if (ResponsiveWidget.isSmallScreen(context)) {
-                          return Container(
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: Colors.blue[400],
-                              border: Border.all(color: Colors.white),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Text(
-                              'Dentist: $dentist \nDate: ${date.year}-${date.month}-${date.day} \nTime: $time:00',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.white,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          );
-                        }
-                        if (ResponsiveWidget.isLargeScreen(context)) {
-                          return Container(
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: Colors.blue[400],
-                              border: Border.all(color: Colors.white),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Text(
-                              'Dentist: $dentist \nDate: ${date.year}-${date.month}-${date.day} \nTime: $time:00',
-                              style: const TextStyle(
-                                fontSize: 20,
-                                color: Colors.white,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          );
-                        }
-                        return null;
+
+                        return FutureBuilder<DocumentSnapshot>(
+                          future: FirebaseFirestore.instance
+                              .collection('user')
+                              .doc(dentistId)
+                              .get(),
+                          builder: (context, dentistSnapshot) {
+                            if (dentistSnapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            } else if (dentistSnapshot.hasError) {
+                              return Text('Error: ${dentistSnapshot.error}');
+                            } else {
+                              final dentistData = dentistSnapshot.data!;
+                              final dentistFullName = dentistData['FullName'];
+                              final firstName = dentistFullName
+                                  .split(' ')[0]; // Extracting first name
+
+                              if (ResponsiveWidget.isSmallScreen(context)) {
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue[400],
+                                    border: Border.all(color: Colors.white),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsets.only(left:50),
+                                    child: Text(
+                                      'Dentist: Dr.$firstName \nDate: ${date.year}-${date.month}-${date.day} \nTime: $time:00',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.white,
+                                      ),
+                                      textAlign: TextAlign.start,
+                                    
+                                    ),
+                                  ),
+                                );
+                              } else if (ResponsiveWidget.isLargeScreen(
+                                  context)||ResponsiveWidget.isMediumScreen(context)) {
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue[400],
+                                    border: Border.all(color: Colors.white),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 250),
+                                    child: Text(
+                                      'Dentist: Dr.$firstName \nDate: ${date.year}-${date.month}-${date.day} \nTime: $time:00',
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        color: Colors.white,
+                                      ),
+                                      textAlign: TextAlign.start,
+                                    ),
+                                  ),
+                                );
+                              }
+                            }
+                            return Container(); // Return a default container if none of the conditions are met
+                          },
+                        );
                       },
                     ),
                   );
