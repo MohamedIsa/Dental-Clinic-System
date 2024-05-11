@@ -13,28 +13,24 @@ class SettingsPage extends StatelessWidget {
       padding: EdgeInsets.all(16.0),
       child: ListView(
         children: [
-          ListTile(
-            title: Text('General Settings'),
-            onTap: () {
-              navigateToSettings('General Settings');
-            },
-          ),
-          ListTile(
-            title: Text('Appointment Settings'),
-            onTap: () {
-              navigateToSettings('Appointment Settings');
-            },
-          ),
+
           ListTile(
             title: Text('Staff Management'),
             onTap: () {
               navigateToSettings('Staff Management');
             },
-          ),
-          ListTile(
-            title: Text('Edit Coupon'),
+          ),         
+           ListTile(
+            title: Text('Dentist Color'),
             onTap: () {
-              navigateToSettings('Edit Coupon');
+              navigateToSettings('Dentist Color');
+            },
+          ),
+        
+          ListTile(
+            title: Text('Edit Message'),
+            onTap: () {
+              navigateToSettings('Edit Message');
             },
           ),
         ],
@@ -64,34 +60,22 @@ class SettingsScreen extends StatelessWidget {
                 navigateToSettings: (settingName) {
                   // Implement navigation logic here
                   switch (settingName) {
-                    case 'General Settings':
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => GeneralSettingsScreen()),
-                      );
-                      break;
-                    case 'Appointment Settings':
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => AppointmentSettingsScreen()),
-                      );
-                      break;
                     case 'Staff Management':
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => StaffManagementScreen()),
                       );
                       break;
-                    case 'Notifications and Alerts':
+                      case 'Dentist Color':
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => NotificationsScreen()),
+                        MaterialPageRoute(builder: (context) => DentistColorSettingsScreen()),
                       );
                       break;
-                    case 'Edit Coupon':
+                    case 'Edit Message':
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => EditCouponScreen()),
+                        MaterialPageRoute(builder: (context) => EditMessageScreen()),
                       );
                       break;
                     default:
@@ -107,29 +91,15 @@ class SettingsScreen extends StatelessWidget {
   }
 }
 
-class GeneralSettingsScreen extends StatelessWidget {
+class DentistColorSettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('General Settings'),
+        title: Text('Dentist Color Settings'),
       ),
       body: Center(
-        child: Text('General Settings Screen'),
-      ),
-    );
-  }
-}
-
-class AppointmentSettingsScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Appointment Settings'),
-      ),
-      body: Center(
-        child: Text('Appointment Settings Screen'),
+        child: Text('Dentist Color Settings Screen'),
       ),
     );
   }
@@ -396,27 +366,13 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
   }
 }
 
-
-class NotificationsScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Notifications and Alerts'),
-      ),
-      body: Center(
-        child: Text('Notifications and Alerts Screen'),
-      ),
-    );
-  }
-}
-class EditWelcomeMessageScreen extends StatefulWidget {
+class EditMessageScreen extends StatefulWidget {
   @override
   _EditWelcomeMessageScreenState createState() =>
       _EditWelcomeMessageScreenState();
 }
 
-class _EditWelcomeMessageScreenState extends State<EditWelcomeMessageScreen> {
+class _EditWelcomeMessageScreenState extends State<EditMessageScreen> {
   final TextEditingController _welcomeMessageController =
       TextEditingController();
   String _currentWelcomeMessage = '';
@@ -501,58 +457,6 @@ Future<void> _fetchWelcomeMessage() async {
           ],
         ),
       ),
-    );
-  }
-}
-
-class EditCouponScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Edit Coupon'),
-      ),
-      body: ListView(
-        children: <Widget>[
-          CouponListTile(
-            title: 'Create Coupon',
-            onTap: () {
-              // Add your onTap functionality here
-              print('Create Coupon tapped!');
-            },
-          ),
-          CouponListTile(
-            title: 'Edit Welcome Message',
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditWelcomeMessageScreen(),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class CouponListTile extends StatelessWidget {
-  final String title;
-  final VoidCallback? onTap;
-
-  const CouponListTile({
-    Key? key,
-    required this.title,
-    required this.onTap,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(title),
-      onTap: onTap,
     );
   }
 }

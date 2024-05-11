@@ -20,20 +20,9 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget {
           padding: const EdgeInsets.only(right: 16.0),
           child: IconButton(
             icon: const Icon(
-              Icons.email,
+              Icons.logout,
               color: Colors.grey,
               size: 25, // Adjust the size of the email icon
-            ),
-            onPressed: () {},
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: IconButton(
-            icon: const Icon(
-              Icons.notifications,
-              color: Colors.grey,
-              size: 25, // Adjust the size of the notification icon
             ),
             onPressed: () {},
           ),
