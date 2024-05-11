@@ -7,15 +7,10 @@ class SideMenuWidget extends StatefulWidget {
   @override
   State<SideMenuWidget> createState() => _SideMenuWidgetState();
 }
-
+ String currentRouteName = '';
 class _SideMenuWidgetState extends State<SideMenuWidget> {
-  late String currentRouteName; // Track the current route name
-
-  @override
-  void initState() {
-    super.initState();
-    currentRouteName = '/admin'; // Set initial route name
-  }
+  // Track the current route name
+  String userName = "Admin"; // Default user name
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +19,7 @@ class _SideMenuWidgetState extends State<SideMenuWidget> {
     return Center(
       child: Drawer(
         child: Container(
-          color: Color.fromARGB(255, 39, 39, 40),
+          color: const Color.fromARGB(171, 33, 149, 243),
           child: ListView.builder(
             itemCount: data.menu.length,
             itemBuilder: (context, index) =>
@@ -41,7 +36,7 @@ class _SideMenuWidgetState extends State<SideMenuWidget> {
     return ListTile(
       selected: isSelected,
       selectedTileColor:
-          Colors.blue, // Change the background color of the selected item
+          const Color.fromARGB(255, 0, 58, 106).withOpacity(0.5), // Change the background color of the selected item
       onTap: () {
         setState(() {
           currentRouteName =
@@ -51,13 +46,13 @@ class _SideMenuWidgetState extends State<SideMenuWidget> {
       },
       leading: Icon(
         data.menu[index].icon,
-        color: isSelected ? Colors.white : Colors.grey,
+        color: isSelected ? Colors.white : const Color.fromARGB(255, 255, 255, 255),
       ),
       title: Text(
         data.menu[index].title,
         style: TextStyle(
           fontSize: 16,
-          color: isSelected ? Colors.white : Colors.grey,
+          color: isSelected ? Colors.white : const Color.fromARGB(255, 255, 255, 255),
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
         ),
       ),

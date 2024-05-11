@@ -5,7 +5,8 @@ import 'package:senior/admin/side_menu_widget.dart';
 class SettingsPage extends StatelessWidget {
   final Function(String) navigateToSettings;
 
-  const SettingsPage({Key? key, required this.navigateToSettings}) : super(key: key);
+  const SettingsPage({Key? key, required this.navigateToSettings})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -13,20 +14,18 @@ class SettingsPage extends StatelessWidget {
       padding: EdgeInsets.all(16.0),
       child: ListView(
         children: [
-
           ListTile(
             title: Text('Staff Management'),
             onTap: () {
               navigateToSettings('Staff Management');
             },
-          ),         
-           ListTile(
+          ),
+          ListTile(
             title: Text('Dentist Color'),
             onTap: () {
               navigateToSettings('Dentist Color');
             },
           ),
-        
           ListTile(
             title: Text('Edit Message'),
             onTap: () {
@@ -51,10 +50,6 @@ class SettingsScreen extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-              flex: 2,
-              child: SideMenuWidget(),
-            ),
-            Expanded(
               flex: 7,
               child: SettingsPage(
                 navigateToSettings: (settingName) {
@@ -63,19 +58,22 @@ class SettingsScreen extends StatelessWidget {
                     case 'Staff Management':
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => StaffManagementScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => StaffManagementScreen()),
                       );
                       break;
-                      case 'Dentist Color':
+                    case 'Dentist Color':
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => DentistColorSettingsScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => DentistColorSettingsScreen()),
                       );
                       break;
                     case 'Edit Message':
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => EditMessageScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => EditMessageScreen()),
                       );
                       break;
                     default:
@@ -91,19 +89,194 @@ class SettingsScreen extends StatelessWidget {
   }
 }
 
-class DentistColorSettingsScreen extends StatelessWidget {
+class DentistColorSettingsScreen extends StatefulWidget {
+  const DentistColorSettingsScreen({Key? key, this.uid});
+
+  final String? uid;
+
+  @override
+  _DentistsDataTableState createState() => _DentistsDataTableState();
+}
+
+class _DentistsDataTableState extends State<DentistColorSettingsScreen> {
+  String selectedColor = '';
+  List<String> famousColors = [
+    'Red',
+    'Green',
+    'Blue',
+    'Yellow',
+    'Orange',
+    'Purple',
+    'Pink',
+    'Brown',
+    'White',
+    'Gray'
+  ];
+
+  Map<String, String> userColors = {}; // Store color values for each user
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Dentist Color Settings'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              // Handle update action
+              // For example, update selected colors in the database
+            },
+            child: Text('Update'),
+          ),
+          TextButton(
+            onPressed: () {
+              // Handle cancel action
+              // For example, reset selected colors to previous state
+            },
+            child: Text('Cancel'),
+          ),
+        ],
       ),
-      body: Center(
-        child: Text('Dentist Color Settings Screen'),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('dentist').snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+
+          final dentistDocs = snapshot.data?.docs;
+
+          if (dentistDocs == null || dentistDocs.isEmpty) {
+            return Center(child: Text('No dentist data found'));
+          }
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                child: Text(
+                  'Table of Dentists',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    columns: [
+                      DataColumn(label: Text('Full Name')),
+                      DataColumn(label: Text('Email')),
+                      DataColumn(label: Text('Color')),
+                    ],
+                    rows: dentistDocs.map((dentistDoc) {
+                      final dentistUID =
+                          dentistDoc.id; // Assuming UID is the document ID
+                      return DataRow(cells: [
+                        DataCell(
+                          FutureBuilder<DocumentSnapshot>(
+                            future: FirebaseFirestore.instance
+                                .collection('user')
+                                .doc(dentistUID)
+                                .get(),
+                            builder: (context, userSnapshot) {
+                              if (userSnapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                    child: CircularProgressIndicator());
+                              } else if (userSnapshot.hasError) {
+                                return Center(
+                                    child:
+                                        Text('Error: ${userSnapshot.error}'));
+                              }
+
+                              final Map<String, dynamic>? userData =
+                                  userSnapshot.data?.data()
+                                      as Map<String, dynamic>?;
+
+                              if (userData == null) {
+                                return Text('User data not found');
+                              }
+
+                              final fullName =
+                                  userData['FullName'] ?? 'No Full Name';
+                              return Text(fullName);
+                            },
+                          ),
+                        ),
+                        DataCell(
+                          FutureBuilder<DocumentSnapshot>(
+                            future: FirebaseFirestore.instance
+                                .collection('user')
+                                .doc(dentistUID)
+                                .get(),
+                            builder: (context, userSnapshot) {
+                              if (userSnapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                    child: CircularProgressIndicator());
+                              } else if (userSnapshot.hasError) {
+                                return Center(
+                                    child:
+                                        Text('Error: ${userSnapshot.error}'));
+                              }
+
+                              final Map<String, dynamic>? userData =
+                                  userSnapshot.data?.data()
+                                      as Map<String, dynamic>?;
+
+                              if (userData == null) {
+                                return Text('User data not found');
+                              }
+
+                              final email = userData['Email'] ?? 'No Email';
+                              return Text(email);
+                            },
+                          ),
+                        ),
+                        DataCell(
+                          DropdownButton<String>(
+                            value: userColors[dentistUID] ??
+                                '', // Get color value from userColors map
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                userColors[dentistUID] =
+                                    newValue!; // Update color value in userColors map
+                              });
+                            },
+                            items: famousColors
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ]);
+                    }).toList(),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 }
+
 class StaffManagementScreen extends StatefulWidget {
   const StaffManagementScreen({Key? key}) : super(key: key);
 
@@ -271,47 +444,47 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
                     },
                     child: Text('Cancel'),
                   ),
-                 ElevatedButton(
-  onPressed: () {
-    // Save staff member data to Firestore
-    _firestore.collection('user').add({
-      'FullName': fullNameController.text,
-      'CPR': cprController.text,
-      'Email': emailController.text,
-      'Phone': phoneNumberController.text,
-      'DOB': birthdayController.text,
-      'Gender': selectedGender,
-    }).then((documentReference) {
-      // Get the ID of the newly added document
-      String userId = documentReference.id;
-      
-      // Determine the role collection based on selectedRole
-      String roleCollection;
-      if (selectedRole == 'Admin') {
-        roleCollection = 'admin';
-      } else if (selectedRole == 'Dentist') {
-        roleCollection = 'dentist';
-      } else {
-        roleCollection = 'receptionist';
-      }
-      
-      // Add user ID to the respective role collection
-      _firestore.collection(roleCollection).doc(userId).set({
-        'uid': userId,
-      }).then((_) {
-        Navigator.of(context).pop(); // Close the dialog after saving
-      }).catchError((error) {
-        print('Error saving staff member: $error');
-        // Handle error here
-      });
-    }).catchError((error) {
-      print('Error saving staff member: $error');
-      // Handle error here
-    });
-  },
-  child: Text('Save'),
-),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Save staff member data to Firestore
+                      _firestore.collection('user').add({
+                        'FullName': fullNameController.text,
+                        'CPR': cprController.text,
+                        'Email': emailController.text,
+                        'Phone': phoneNumberController.text,
+                        'DOB': birthdayController.text,
+                        'Gender': selectedGender,
+                      }).then((documentReference) {
+                        // Get the ID of the newly added document
+                        String userId = documentReference.id;
 
+                        // Determine the role collection based on selectedRole
+                        String roleCollection;
+                        if (selectedRole == 'Admin') {
+                          roleCollection = 'admin';
+                        } else if (selectedRole == 'Dentist') {
+                          roleCollection = 'dentist';
+                        } else {
+                          roleCollection = 'receptionist';
+                        }
+
+                        // Add user ID to the respective role collection
+                        _firestore.collection(roleCollection).doc(userId).set({
+                          'uid': userId,
+                        }).then((_) {
+                          Navigator.of(context)
+                              .pop(); // Close the dialog after saving
+                        }).catchError((error) {
+                          print('Error saving staff member: $error');
+                          // Handle error here
+                        });
+                      }).catchError((error) {
+                        print('Error saving staff member: $error');
+                        // Handle error here
+                      });
+                    },
+                    child: Text('Save'),
+                  ),
                 ],
               );
             },
@@ -329,8 +502,10 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
     if (adminDoc.exists) {
       role = 'Admin';
     } else {
-      var dentistDoc =
-          await FirebaseFirestore.instance.collection('dentist').doc(userId).get();
+      var dentistDoc = await FirebaseFirestore.instance
+          .collection('dentist')
+          .doc(userId)
+          .get();
       if (dentistDoc.exists) {
         role = 'Dentist';
       } else {
@@ -351,14 +526,23 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
     try {
       // Delete the user document
       await FirebaseFirestore.instance.collection('user').doc(userId).delete();
-      
+
       // Depending on the user's role, delete from respective collections
       if (role.toLowerCase() == 'admin') {
-        await FirebaseFirestore.instance.collection('admin').doc(userId).delete();
+        await FirebaseFirestore.instance
+            .collection('admin')
+            .doc(userId)
+            .delete();
       } else if (role.toLowerCase() == 'dentist') {
-        await FirebaseFirestore.instance.collection('dentist').doc(userId).delete();
+        await FirebaseFirestore.instance
+            .collection('dentist')
+            .doc(userId)
+            .delete();
       } else if (role.toLowerCase() == 'receptionist') {
-        await FirebaseFirestore.instance.collection('receptionist').doc(userId).delete();
+        await FirebaseFirestore.instance
+            .collection('receptionist')
+            .doc(userId)
+            .delete();
       }
     } catch (e) {
       print('Error deleting user: $e');
@@ -383,32 +567,32 @@ class _EditWelcomeMessageScreenState extends State<EditMessageScreen> {
     _fetchWelcomeMessage();
   }
 
-Future<void> _fetchWelcomeMessage() async {
-  try {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('welcome')
-        .doc('mgAMaIIGgWZTnNl0d32B')
-        .get();
+  Future<void> _fetchWelcomeMessage() async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('welcome')
+          .doc('mgAMaIIGgWZTnNl0d32B')
+          .get();
 
-    if (snapshot.exists) {
-      final data = snapshot.data();
-      if (data != null && data.containsKey('message')) {
-        final message = data['message'];
-        if (message is String) {
-          _updateWelcomeMessageText(message);
+      if (snapshot.exists) {
+        final data = snapshot.data();
+        if (data != null && data.containsKey('message')) {
+          final message = data['message'];
+          if (message is String) {
+            _updateWelcomeMessageText(message);
+          } else {
+            print('Welcome message is not a String: $message');
+          }
         } else {
-          print('Welcome message is not a String: $message');
+          print('Document does not contain a "message" field.');
         }
       } else {
-        print('Document does not contain a "message" field.');
+        print('Document does not exist. Cannot fetch welcome message.');
       }
-    } else {
-      print('Document does not exist. Cannot fetch welcome message.');
+    } catch (e, stackTrace) {
+      print('Error fetching welcome message: $e\n$stackTrace');
     }
-  } catch (e, stackTrace) {
-    print('Error fetching welcome message: $e\n$stackTrace');
   }
-}
 
   void _updateWelcomeMessageText(String? message) {
     setState(() {
@@ -424,6 +608,7 @@ Future<void> _fetchWelcomeMessage() async {
           .doc('mgAMaIIGgWZTnNl0d32B')
           .set({'message': newMessage});
       print('Welcome message updated successfully!');
+      Navigator.pop(context); // Navigate back to previous screen
     } catch (e) {
       print('Error updating welcome message: $e');
     }

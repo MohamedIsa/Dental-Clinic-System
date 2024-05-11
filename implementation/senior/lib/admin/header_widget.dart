@@ -11,17 +11,20 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.transparent, // Make the app bar transparent
+      backgroundColor: Colors.blue, // Set the background color to blue
       elevation: 0, // Remove the shadow
       automaticallyImplyLeading: false, // Don't show the back button
-      title: Text('Welcome, $userName'), // Display welcome message with user name
+      title: Text(
+        'Welcome, $userName',
+        style: TextStyle(color: Colors.white), // Set text color to white
+      ), // Display welcome message with user name
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: IconButton(
             icon: const Icon(
               Icons.logout,
-              color: Colors.grey,
+              color: Color.fromARGB(255, 255, 255, 255),
               size: 25, // Adjust the size of the email icon
             ),
             onPressed: () {},
