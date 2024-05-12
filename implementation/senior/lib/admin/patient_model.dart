@@ -7,6 +7,7 @@ class PatientData {
   final String gender;
   final String phoneNumber;
   final String email;
+  final String id;
 
   PatientData({
     required this.fullName,
@@ -15,6 +16,7 @@ class PatientData {
     required this.gender,
     required this.phoneNumber,
     required this.email,
+    required this.id,
   });
 
   static PatientData fromSnapshot(DocumentSnapshot patientSnapshot) {
@@ -26,6 +28,7 @@ class PatientData {
       gender: data['gender'] ?? '',
       phoneNumber: data['phoneNumber'] ?? '',
       email: data['email'] ?? '',
+      id: patientSnapshot.id ,
     );
   }
 }

@@ -1,8 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:senior/app_icons.dart';
 import 'package:senior/service_card.dart';
 import 'package:senior/registration/signup_screen.dart';
 
@@ -11,9 +8,7 @@ class HomePage extends StatefulWidget {
 
   @override
   State<HomePage> createState() => _HomePageState();
-
 }
-
 
 class _HomePageState extends State<HomePage> {
   String welcomeMessage = '';
@@ -37,18 +32,22 @@ class _HomePageState extends State<HomePage> {
       print('Error fetching welcome message: $error');
     }
   }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         title: Row(
           children: <Widget>[
             if (MediaQuery.of(context).size.width > 600)
-              const SizedBox(width: 40),
-            const Text(
-              'Clinic',
-              style: TextStyle(color: Colors.blue, fontSize: 20),
+              const SizedBox(width: 10),
+            Image.asset(
+              'assets/images/logoh.png',
+              width: width * 0.09,
+              height: height * 0.09,
             ),
           ],
         ),
@@ -59,10 +58,9 @@ class _HomePageState extends State<HomePage> {
           ? BottomNavigationBar(
               selectedItemColor: Colors.blue,
               unselectedItemColor: Colors.grey,
-              unselectedLabelStyle:const TextStyle(color: Colors.grey),
+              unselectedLabelStyle: const TextStyle(color: Colors.grey),
               selectedLabelStyle: const TextStyle(color: Colors.blue),
               showUnselectedLabels: true,
-
               items: const <BottomNavigationBarItem>[
                 BottomNavigationBarItem(
                   icon: Icon(Icons.home),
@@ -88,16 +86,12 @@ class _HomePageState extends State<HomePage> {
               onTap: (index) {
                 switch (index) {
                   case 0:
-                    Navigator.pushNamed(
-                      context,
-                      '/home',
-                    );
                     break;
                   case 1:
-                    // Handle Dental Services tap
+                  Navigator.pushNamed(context, '/service');
                     break;
                   case 2:
-                    // Handle About Us tap
+                    Navigator.pushNamed(context, '/aboutus');
                     break;
                   case 3:
                     Navigator.pushNamed(
@@ -143,7 +137,9 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/service');
+                            },
                             child: const Text(
                               'Dental services',
                               style: TextStyle(
@@ -153,7 +149,9 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/aboutus');
+                            },
                             child: const Text(
                               'About Us',
                               style: TextStyle(
@@ -213,7 +211,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     if (MediaQuery.of(context).size.width <= 600)
                       Container(
-                        margin: const EdgeInsets.only(left:100 ,top: 100),
+                        margin: const EdgeInsets.only(left: 70, top: 100),
                         padding: const EdgeInsets.all(10),
                         height: 130,
                         decoration: BoxDecoration(
@@ -223,7 +221,7 @@ class _HomePageState extends State<HomePage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                             Text(
+                            Text(
                               welcomeMessage,
                               style: TextStyle(
                                 color: Colors.white,
@@ -274,7 +272,7 @@ class _HomePageState extends State<HomePage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                             Text(
+                            Text(
                               welcomeMessage,
                               style: TextStyle(
                                 color: Colors.white,
@@ -333,27 +331,23 @@ class _HomePageState extends State<HomePage> {
                                   ServiceCard(
                                       title: 'Dental Implants',
                                       imagePath: 'assets/cards/implant.png',
-                                      overlayColor: Colors.white,
                                       description:
                                           'Dental implants are titanium tooth roots placed into the jawbone to support replacement teeth. They offer a durable and natural-looking solution for missing teeth, enhancing chewing, speech, and overall oral health'),
                                   ServiceCard(
                                     title: 'Orthodontics',
-                                    imagePath: 'assets/cards/Orthodontics.png',
-                                    overlayColor: Colors.white,
+                                    imagePath: 'assets/cards/braces.png',
                                     description:
                                         'Orthodontics is a dental specialty aimed at correcting misaligned teeth and jaws for improved oral health and aesthetics. Treatments involve braces or aligners to gradually align teeth and address issues like overcrowding and bite problems, enhancing both appearance and function',
                                   ),
                                   ServiceCard(
                                     title: 'Laser Dentistry',
                                     imagePath: 'assets/cards/laser-beam.png',
-                                    overlayColor: Colors.white,
                                     description:
                                         'Laser dentistry utilizes laser technology for precise and minimally invasive dental procedures, offering benefits like reduced discomfort, faster healing, and greater precision compared to traditional methods. It encompasses treatments for gum disease, cavity preparation, tooth whitening, and soft tissue procedures, providing patients with a more comfortable and efficient dental experience.',
                                   ),
                                   ServiceCard(
                                     title: 'Teeth Whitening',
-                                    imagePath: 'assets/cards/whiteing.png',
-                                    overlayColor: Colors.white,
+                                    imagePath: 'assets/cards/healthy-tooth.png',
                                     description:
                                         'Teeth whitening is a cosmetic dental procedure that aims to lighten teeth and remove stains. It can be done using bleaching agents like hydrogen peroxide. This safe and effective treatment enhances smile appearance, though results may vary based on staining severity and oral health.',
                                   ),
@@ -367,28 +361,24 @@ class _HomePageState extends State<HomePage> {
                                   ServiceCard(
                                     title: 'Root Canal',
                                     imagePath: 'assets/cards/root-canal.png',
-                                    overlayColor: Colors.white,
                                     description:
                                         'A root canal is a dental procedure that addresses infected or damaged tooth pulp by removing the affected tissue, cleaning the inside of the tooth, and sealing it to prevent further infection. This treatment alleviates pain, preserves the tooth, and restores its function, often followed by the placement of a crown for added protection and strength.',
                                   ),
                                   ServiceCard(
                                     title: 'Gum Depigmentation',
-                                    imagePath: 'assets/cards/gum.png',
-                                    overlayColor: Colors.white,
+                                    imagePath: 'assets/cards/infection.png',
                                     description:
                                         'Gum depigmentation is a cosmetic dental procedure that reduces dark spots on the gums caused by excess melanin pigmentation. It involves techniques like laser treatment or surgical scraping to remove pigmented tissue, revealing lighter-colored gums underneath. This procedure improves smile aesthetics and is safe and effective for achieving a more uniform gum line.',
                                   ),
                                   ServiceCard(
                                     title: 'Dental Fillings',
                                     imagePath: 'assets/cards/tooth-filling.png',
-                                    overlayColor: Colors.white,
                                     description:
                                         'Dental fillings are materials used to repair teeth damaged by decay, fractures, or wear. Dentists remove the damaged portion of the tooth and fill the space with materials like amalgam or composite resin to restore its strength and function. Fillings prevent further decay, restore appearance, and aid in chewing.',
                                   ),
                                   ServiceCard(
                                     title: 'Crowns & Bridges',
                                     imagePath: 'assets/cards/bridge.png',
-                                    overlayColor: Colors.white,
                                     description:
                                         'Crowns are covers used to repair damaged teeth, while bridges replace missing teeth by bridging the gap between adjacent teeth. Crowns restore the shape, strength, and appearance of a tooth, while bridges restore chewing function and maintain tooth alignment. Both are custom-made restorations that provide long-lasting solutions for dental issues.',
                                   ),
@@ -396,7 +386,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ],
                           ),
-                          height: 600,
+                          height: 520,
                           width: 1000,
                         ),
                       ),
@@ -429,13 +419,11 @@ class _HomePageState extends State<HomePage> {
                                   ServiceCard(
                                       title: 'Dental Implants',
                                       imagePath: 'assets/cards/implant.png',
-                                      overlayColor: Colors.white,
                                       description:
                                           'Dental implants are titanium tooth roots placed into the jawbone to support replacement teeth. They offer a durable and natural-looking solution for missing teeth, enhancing chewing, speech, and overall oral health'),
                                   ServiceCard(
                                     title: 'Orthodontics',
-                                    imagePath: 'assets/cards/Orthodontics.png',
-                                    overlayColor: Colors.white,
+                                    imagePath: 'assets/cards/braces.png',
                                     description:
                                         'Orthodontics is a dental specialty aimed at correcting misaligned teeth and jaws for improved oral health and aesthetics. Treatments involve braces or aligners to gradually align teeth and address issues like overcrowding and bite problems, enhancing both appearance and function',
                                   ),
@@ -449,14 +437,12 @@ class _HomePageState extends State<HomePage> {
                                   ServiceCard(
                                     title: 'Laser Dentistry',
                                     imagePath: 'assets/cards/laser-beam.png',
-                                    overlayColor: Colors.white,
                                     description:
                                         'Laser dentistry utilizes laser technology for precise and minimally invasive dental procedures, offering benefits like reduced discomfort, faster healing, and greater precision compared to traditional methods. It encompasses treatments for gum disease, cavity preparation, tooth whitening, and soft tissue procedures, providing patients with a more comfortable and efficient dental experience.',
                                   ),
                                   ServiceCard(
                                     title: 'Teeth Whitening',
-                                    imagePath: 'assets/cards/whiteing.png',
-                                    overlayColor: Colors.white,
+                                    imagePath: 'assets/cards/healthy-tooth.png',
                                     description:
                                         'Teeth whitening is a cosmetic dental procedure that aims to lighten teeth and remove stains. It can be done using bleaching agents like hydrogen peroxide. This safe and effective treatment enhances smile appearance, though results may vary based on staining severity and oral health.',
                                   ),
@@ -470,14 +456,12 @@ class _HomePageState extends State<HomePage> {
                                   ServiceCard(
                                     title: 'Root Canal',
                                     imagePath: 'assets/cards/root-canal.png',
-                                    overlayColor: Colors.white,
                                     description:
                                         'A root canal is a dental procedure that addresses infected or damaged tooth pulp by removing the affected tissue, cleaning the inside of the tooth, and sealing it to prevent further infection. This treatment alleviates pain, preserves the tooth, and restores its function, often followed by the placement of a crown for added protection and strength.',
                                   ),
                                   ServiceCard(
                                     title: 'Gum Depigmentation',
-                                    imagePath: 'assets/cards/gum.png',
-                                    overlayColor: Colors.white,
+                                    imagePath: 'assets/cards/infection.png',
                                     description:
                                         'Gum depigmentation is a cosmetic dental procedure that reduces dark spots on the gums caused by excess melanin pigmentation. It involves techniques like laser treatment or surgical scraping to remove pigmented tissue, revealing lighter-colored gums underneath. This procedure improves smile aesthetics and is safe and effective for achieving a more uniform gum line.',
                                   ),
@@ -491,14 +475,12 @@ class _HomePageState extends State<HomePage> {
                                   ServiceCard(
                                     title: 'Dental Fillings',
                                     imagePath: 'assets/cards/tooth-filling.png',
-                                    overlayColor: Colors.white,
                                     description:
                                         'Dental fillings are materials used to repair teeth damaged by decay, fractures, or wear. Dentists remove the damaged portion of the tooth and fill the space with materials like amalgam or composite resin to restore its strength and function. Fillings prevent further decay, restore appearance, and aid in chewing.',
                                   ),
                                   ServiceCard(
                                     title: 'Crowns & Bridges',
                                     imagePath: 'assets/cards/bridge.png',
-                                    overlayColor: Colors.white,
                                     description:
                                         'Crowns are covers used to repair damaged teeth, while bridges replace missing teeth by bridging the gap between adjacent teeth. Crowns restore the shape, strength, and appearance of a tooth, while bridges restore chewing function and maintain tooth alignment. Both are custom-made restorations that provide long-lasting solutions for dental issues.',
                                   ),
@@ -513,112 +495,6 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-              if (MediaQuery.of(context).size.width > 600)
-                Container(
-                  height: 150,
-                  color: Colors.blue,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Follow Us on Social Media',
-                        style: TextStyle(color: Colors.white, fontSize: 30),
-                      ),
-                      const SizedBox(height: 30),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            onPressed: () {},
-                            icon: SvgPicture.asset(
-                              AppIcons.facebook,
-                              color: Colors.white,
-                              width: 50,
-                              height: 50,
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 60,
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: SvgPicture.asset(
-                              AppIcons.instagramIcon,
-                              color: Colors.white,
-                              width: 50,
-                              height: 50,
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 60,
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: SvgPicture.asset(
-                              AppIcons.linkedinIcon,
-                              color: Colors.white,
-                              width: 50,
-                              height: 50,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              if (MediaQuery.of(context).size.width <= 600)
-                Container(
-                  height: 100,
-                  color: Colors.blue,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Follow Us on Social Media',
-                        style: TextStyle(color: Colors.white, fontSize: 20),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            onPressed: () {},
-                            icon: SvgPicture.asset(
-                              AppIcons.facebook,
-                              color: Colors.white,
-                              width: 30,
-                              height: 30,
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: SvgPicture.asset(
-                              AppIcons.instagramIcon,
-                              color: Colors.white,
-                              width: 30,
-                              height: 30,
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: SvgPicture.asset(
-                              AppIcons.linkedinIcon,
-                              color: Colors.white,
-                              width: 30,
-                              height: 30,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
             ],
           ),
         ),

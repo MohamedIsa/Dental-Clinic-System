@@ -1,10 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:senior/admin/patient_details_button.dart'; 
 import 'package:senior/admin/patient_model.dart'; 
 
 class PatientsDataTable extends StatelessWidget {
-  const PatientsDataTable({super.key, String? uid});
+  const PatientsDataTable({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +52,7 @@ class PatientsDataTable extends StatelessWidget {
                     subtitle: Text(userData['CPR'] ?? ''),
                     onTap: () {
                       var patientData = PatientData(
+                        id: patientUID, // Pass patient ID here
                         fullName: userData['FullName'] ?? '',
                         cpr: userData['CPR'] ?? '',
                         birthDay: userData['DOB'] ?? '',
@@ -61,7 +63,9 @@ class PatientsDataTable extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PatientDetailsPage(patient: patientData),
+                          builder: (context) => PatientDetailsPage(
+                            patient: patientData,
+                            user: FirebaseAuth.instance.currentUser!,),
                         ),
                       );
                     },

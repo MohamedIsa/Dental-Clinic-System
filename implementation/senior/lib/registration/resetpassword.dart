@@ -21,34 +21,36 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   String _errorMessage = '';
 
   Future<void> _resetPassword() async {
-  try {
-    final snapshot = await _firestore
-        .collection('user') 
-        .where('Email', isEqualTo: _emailController.text)
-        .get();
+    try {
+      // Query Firestore after authentication
+      final snapshot = await _firestore
+          .collection('user') 
+          .where('Email', isEqualTo: _emailController.text)
+          .get();
 
-    if (snapshot.docs.isNotEmpty) {
-      // Email exists in Firestore, send reset password email
-      await _auth.sendPasswordResetEmail(email: _emailController.text);
+      if (snapshot.docs.isNotEmpty) {
+        // Email exists in Firestore, send reset password email
+        await _auth.sendPasswordResetEmail(email: _emailController.text);
+        setState(() {
+          _errorMessage =
+              'Password reset email sent. Please check your inbox.\nIt may take a few minutes to arrive.';
+        });
+      } else {
+        setState(() {
+          _errorMessage = 'This email is not registered.';
+        });
+      }
+    } catch (error) {
+      print(error); // Add this line to print the error message
       setState(() {
-        _errorMessage =
-            'Password reset email sent. Please check your inbox.\nIt may take a few minutes to arrive.';
-      });
-    } else {
-      setState(() {
-        _errorMessage = 'This email is not registered.';
+        _errorMessage = error.toString();
       });
     }
-  } catch (error) {
-    setState(() {
-      _errorMessage = error.toString();
-    });
   }
-}
 
   @override
   Widget build(BuildContext context) {
-        double height = MediaQuery.of(context).size.height;
+    double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: AppColors.backColor,
@@ -62,20 +64,20 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
             ResponsiveWidget.isSmallScreen(context)
                 ? const SizedBox()
                 : Expanded(
-                    child: Container(
+                    child:  Container(
                       height: height,
-                      color: AppColors.mainBlueColor,
+                        color:  Colors.lightBlue,
                       child: Center(
-                        child: Text(
-                          'Dental Clinic',
-                          style: ralewayStyle.copyWith(
-                            fontSize: 48.0,
-                            color: AppColors.whiteColor,
-                            fontWeight: FontWeight.w800,
-                          ),
+                        child: Container(
+                            child: Image.asset(
+                            'assets/images/logo.png',
+                            width: width*0.4,
+                            height: height*0.4,
+                            ),
                         ),
-                      ),
+                      
                     ),
+                  ),
                   ),
             Expanded(
               child: Container(
@@ -146,7 +148,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                             AppIcons.emailIcon, false, _emailController),
                       ),
                       SizedBox(height: height * 0.04),
-                     Container(
+                      Container(
                         height: 50.0,
                         width: width,
                         decoration: BoxDecoration(
@@ -155,10 +157,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                         ),
                         child: Material(
                           color: Colors.transparent,
-                          child: InkWell( 
+                          child: InkWell(
                             onTap: () {
                               _resetPassword();
-                               },
+                            },
                             borderRadius: BorderRadius.circular(16.0),
                             child: Ink(
                               padding: EdgeInsets.symmetric(
@@ -190,23 +192,24 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-
                       InkWell(
-                              onTap: () {},
-                              child: TextButton(
-                                onPressed: () {
-                                  Navigator.pushNamed(context, '/login');
-                                },
-                                child: Text(
-                                  'Log in',
-                                  style: ralewayStyle.copyWith(
-                                    fontSize: 12.0,
-                                    color: AppColors.mainBlueColor,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
+                        onTap: () {
+                          Navigator.pushNamed(context, '/login');
+                        },
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/login');
+                          },
+                          child: Text(
+                            'Log in',
+                            style: ralewayStyle.copyWith(
+                              fontSize: 12.0,
+                              color: AppColors.mainBlueColor,
+                              fontWeight: FontWeight.w600,
                             ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -218,32 +221,3 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     );
   }
 }
-
-    
-    /*Scaffold(
-      appBar: AppBar(
-        title: Text('Reset Password'),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            reusableTextField('Email', AppIcons.emailIcon, false, _emailController),
-            SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: _resetPassword,
-              child: Text('Reset Password'),
-            ),
-            SizedBox(height: 16.0),
-            Text(
-              _errorMessage,
-              style: TextStyle(color: Colors.red),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-*/

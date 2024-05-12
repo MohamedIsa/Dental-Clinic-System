@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:senior/admin/patient_model.dart';
+import 'package:senior/chatpage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class PatientDetailsPage extends StatelessWidget {
   final PatientData patient;
+  final User user;
 
-  const PatientDetailsPage({required this.patient});
+  const PatientDetailsPage({required this.patient, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +27,22 @@ class PatientDetailsPage extends StatelessWidget {
             Text('Email: ${patient.email}'),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChatPage(
+                key: Key('chatPage'),
+                user: user,
+                otherUserId: patient.id, 
+                isAdmin: false, 
+              ),
+            ),
+          );
+        },
+        child: Icon(Icons.chat, color: Colors.blue,),
       ),
     );
   }

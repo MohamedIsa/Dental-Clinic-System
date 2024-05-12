@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:senior/admin/patient_details_button.dart';
 import 'package:senior/admin/patient_model.dart';
@@ -97,7 +98,7 @@ class PatientButtonsWidget extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PatientDetailsPage(patient: patientData),
+                          builder: (context) => PatientDetailsPage(patient: patientData, user: FirebaseAuth.instance.currentUser!),
                         ),
                       );
                     } else {
