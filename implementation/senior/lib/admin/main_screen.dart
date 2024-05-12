@@ -40,7 +40,17 @@ class MainScreen extends StatelessWidget {
                               ),
                               Expanded(
                                 flex: 10,
-                                child: TodayAppointmentPage(),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      right: BorderSide(
+                                        color: Colors.grey,
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                  ),
+                                  child: TodayAppointmentPage(),
+                                ),
                               ),
                               Expanded(
                                 flex: 5,
@@ -77,13 +87,17 @@ class MainScreen extends StatelessWidget {
                   },
                 ),
               ],
-              ),
-            body: Center(
-              child: Text('You cannot use this page unless you are on the web.',
-                style: TextStyle(color: Colors.red, fontSize: 20, fontWeight: FontWeight.bold),)
-
             ),
-
+            body: Center(
+              child: Text(
+                'You cannot use this page unless you are on the web.',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
           );
   }
 }

@@ -3,9 +3,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:senior/admin/patient_details_button.dart'; 
 import 'package:senior/admin/patient_model.dart'; 
 
-class PatientsDataTable extends StatelessWidget {
-  const PatientsDataTable({super.key, String? uid});
+class PatientsDataTable extends StatefulWidget {
+  const PatientsDataTable({Key? key, this.uid});
 
+  final String? uid;
+
+  @override
+  _PatientsDataTableState createState() => _PatientsDataTableState();
+}
+
+class _PatientsDataTableState extends State<PatientsDataTable> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(

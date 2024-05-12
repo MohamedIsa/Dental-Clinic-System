@@ -1,139 +1,378 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:senior/admin/side_menu_widget.dart';
 
 class SettingsPage extends StatelessWidget {
   final Function(String) navigateToSettings;
 
-  const SettingsPage({Key? key, required this.navigateToSettings}) : super(key: key);
+  const SettingsPage({Key? key, required this.navigateToSettings})
+      : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(16.0),
+Widget build(BuildContext context) {
+  return Padding(
+    padding: EdgeInsets.all(16.0),
+    child: Container(
+      
       child: ListView(
         children: [
-          ListTile(
-            title: Text('General Settings'),
-            onTap: () {
-              navigateToSettings('General Settings');
-            },
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.white, // Set the border color
+                  width: 1.0, // Set the border width
+                ),
+              ),
+            ),
+            child: ListTile(
+              title: Text(
+                'Staff Management',
+                style: TextStyle(
+                  color: Colors.white, // Set the text color to white
+                ),
+              ),
+              tileColor: const Color.fromARGB(255, 38, 99, 148), // Set the tile color to blue
+              onTap: () {
+                navigateToSettings('Staff Management');
+              },
+            ),
           ),
-          ListTile(
-            title: Text('Appointment Settings'),
-            onTap: () {
-              navigateToSettings('Appointment Settings');
-            },
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.white, // Set the border color
+                  width: 1.0, // Set the border width
+                ),
+              ),
+            ),
+            child: ListTile(
+              title: Text(
+                'Dentist Color',
+                style: TextStyle(
+                  color: Colors.white, // Set the text color to white
+                ),
+              ),
+              tileColor: const Color.fromARGB(255, 38, 99, 148), // Set the tile color to blue
+              onTap: () {
+                navigateToSettings('Dentist Color');
+              },
+            ),
           ),
-          ListTile(
-            title: Text('Staff Management'),
-            onTap: () {
-              navigateToSettings('Staff Management');
-            },
-          ),
-          ListTile(
-            title: Text('Edit Coupon'),
-            onTap: () {
-              navigateToSettings('Edit Coupon');
-            },
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.white, // Set the border color
+                  width: 1.0, // Set the border width
+                ),
+              ),
+            ),
+            child: ListTile(
+              title: Text(
+                'Edit Message',
+                style: TextStyle(
+                  color: Colors.white, // Set the text color to white
+                ),
+              ),
+              tileColor: const Color.fromARGB(255, 38, 99, 148), // Set the tile color to blue
+              onTap: () {
+                navigateToSettings('Edit Message');
+              },
+            ),
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
+        title: Text(
+          'Settings',
+          style: TextStyle(color: Colors.white), // Set app bar text color to white
+        ),
+        backgroundColor: Colors.blue, // Set app bar background color to blue
       ),
-      body: SafeArea(
-        child: Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: SideMenuWidget(),
-            ),
-            Expanded(
-              flex: 7,
-              child: SettingsPage(
-                navigateToSettings: (settingName) {
-                  // Implement navigation logic here
-                  switch (settingName) {
-                    case 'General Settings':
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => GeneralSettingsScreen()),
-                      );
-                      break;
-                    case 'Appointment Settings':
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => AppointmentSettingsScreen()),
-                      );
-                      break;
-                    case 'Staff Management':
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => StaffManagementScreen()),
-                      );
-                      break;
-                    case 'Notifications and Alerts':
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => NotificationsScreen()),
-                      );
-                      break;
-                    case 'Edit Coupon':
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => EditCouponScreen()),
-                      );
-                      break;
-                    default:
-                      print('Setting not found');
-                  }
-                },
+      body: Container(
+        color: Colors.blue, // Set background color of the SettingsScreen to blue
+        child: SafeArea(
+          child: Row(
+            children: [
+              Expanded(
+                flex: 7,
+                child: SettingsPage(
+                  navigateToSettings: (settingName) {
+                    // Implement navigation logic here
+                    switch (settingName) {
+                      case 'Staff Management':
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => StaffManagementScreen()),
+                        );
+                        break;
+                      case 'Dentist Color':
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  DentistColorSettingsScreen()),
+                        );
+                        break;
+                      case 'Edit Message':
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => EditMessageScreen()),
+                        );
+                        break;
+                      default:
+                        print('Setting not found');
+                    }
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class GeneralSettingsScreen extends StatelessWidget {
+class DentistColorSettingsScreen extends StatefulWidget {
+  const DentistColorSettingsScreen({Key? key, this.uid});
+
+  final String? uid;
+
+  @override
+  _DentistColorSettingsScreenState createState() =>
+      _DentistColorSettingsScreenState();
+}
+
+class _DentistColorSettingsScreenState
+    extends State<DentistColorSettingsScreen> {
+  String selectedColor = '';
+  List<String> famousColors = [
+    'Red',
+    'Green',
+    'Blue',
+    'Yellow',
+    'Orange',
+    'Purple',
+    'Pink',
+    'Brown',
+    'White',
+    'Gray'
+  ];
+
+  Map<String, String> userColors = {}; // Store color values for each user
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('General Settings'),
+        title: Text('Dentist Color Settings'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
       ),
-      body: Center(
-        child: Text('General Settings Screen'),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('dentist').snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+
+          final dentistDocs = snapshot.data?.docs;
+
+          if (dentistDocs == null || dentistDocs.isEmpty) {
+            return Center(child: Text('No dentist data found'));
+          }
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+             Padding(
+  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+  child: Center(
+    child: Text(
+      'Table of Dentists',
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 20,
       ),
+    ),
+  ),
+),
+
+              Expanded(
+                child: Center(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: DataTable(
+                      columns: [
+                        DataColumn(label: Text('Full Name')),
+                        DataColumn(label: Text('Email')),
+                        DataColumn(label: Text('Color')),
+                      ],
+                      rows: dentistDocs.map((dentistDoc) {
+                        final dentistUID =
+                            dentistDoc.id; // Assuming UID is the document ID
+                        return DataRow(cells: [
+                          DataCell(
+                            FutureBuilder<DocumentSnapshot>(
+                              future: FirebaseFirestore.instance
+                                  .collection('user')
+                                  .doc(dentistUID)
+                                  .get(),
+                              builder: (context, userSnapshot) {
+                                if (userSnapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Center(
+                                      child: CircularProgressIndicator());
+                                } else if (userSnapshot.hasError) {
+                                  return Center(
+                                      child:
+                                          Text('Error: ${userSnapshot.error}'));
+                                }
+
+                                final Map<String, dynamic>? userData =
+                                    userSnapshot.data?.data()
+                                        as Map<String, dynamic>?;
+
+                                if (userData == null) {
+                                  return Text('User data not found');
+                                }
+
+                                final fullName =
+                                    userData['FullName'] ?? 'No Full Name';
+                                return Text(fullName);
+                              },
+                            ),
+                          ),
+                          DataCell(
+                            FutureBuilder<DocumentSnapshot>(
+                              future: FirebaseFirestore.instance
+                                  .collection('user')
+                                  .doc(dentistUID)
+                                  .get(),
+                              builder: (context, userSnapshot) {
+                                if (userSnapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Center(
+                                      child: CircularProgressIndicator());
+                                } else if (userSnapshot.hasError) {
+                                  return Center(
+                                      child:
+                                          Text('Error: ${userSnapshot.error}'));
+                                }
+
+                                final Map<String, dynamic>? userData =
+                                    userSnapshot.data?.data()
+                                        as Map<String, dynamic>?;
+
+                                if (userData == null) {
+                                  return Text('User data not found');
+                                }
+
+                                final email = userData['Email'] ?? 'No Email';
+                                return Text(email);
+                              },
+                            ),
+                          ),
+                          DataCell(
+                            DropdownButton<String>(
+                              value: userColors[dentistUID] ??
+                                  famousColors[
+                                      0], // Default to the first color if no value is set
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  userColors[dentistUID] =
+                                      newValue!; // Update color value in userColors map
+                                });
+                              },
+                              items: famousColors.map<DropdownMenuItem<String>>(
+                                  (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        ]);
+                      }).toList(),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+bottomNavigationBar: BottomAppBar(
+  child: Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(width: 16), // Adjust the width as needed
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.blue, // Set background color of the button
+            borderRadius: BorderRadius.circular(8), // Optional: adjust the border radius
+          ),
+          child: TextButton(
+            onPressed: () {
+              // Handle cancel action
+            },
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: Colors.white), // Set text color to white
+            ),
+          ),
+        ),
+        SizedBox(width: 16), // Adjust the width as needed
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.blue, // Set background color of the button
+            borderRadius: BorderRadius.circular(8), // Optional: adjust the border radius
+          ),
+          child: TextButton(
+            onPressed: () {
+              // Handle update action
+            },
+            child: Text(
+              'Update',
+              style: TextStyle(color: Colors.white), // Set text color to white
+            ),
+          ),
+        ),
+      ],
+    ),
+  ),
+),
+
+
+
     );
   }
 }
 
-class AppointmentSettingsScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Appointment Settings'),
-      ),
-      body: Center(
-        child: Text('Appointment Settings Screen'),
-      ),
-    );
-  }
-}
 class StaffManagementScreen extends StatefulWidget {
   const StaffManagementScreen({Key? key}) : super(key: key);
 
@@ -301,47 +540,47 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
                     },
                     child: Text('Cancel'),
                   ),
-                 ElevatedButton(
-  onPressed: () {
-    // Save staff member data to Firestore
-    _firestore.collection('user').add({
-      'FullName': fullNameController.text,
-      'CPR': cprController.text,
-      'Email': emailController.text,
-      'Phone': phoneNumberController.text,
-      'DOB': birthdayController.text,
-      'Gender': selectedGender,
-    }).then((documentReference) {
-      // Get the ID of the newly added document
-      String userId = documentReference.id;
-      
-      // Determine the role collection based on selectedRole
-      String roleCollection;
-      if (selectedRole == 'Admin') {
-        roleCollection = 'admin';
-      } else if (selectedRole == 'Dentist') {
-        roleCollection = 'dentist';
-      } else {
-        roleCollection = 'receptionist';
-      }
-      
-      // Add user ID to the respective role collection
-      _firestore.collection(roleCollection).doc(userId).set({
-        'uid': userId,
-      }).then((_) {
-        Navigator.of(context).pop(); // Close the dialog after saving
-      }).catchError((error) {
-        print('Error saving staff member: $error');
-        // Handle error here
-      });
-    }).catchError((error) {
-      print('Error saving staff member: $error');
-      // Handle error here
-    });
-  },
-  child: Text('Save'),
-),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Save staff member data to Firestore
+                      _firestore.collection('user').add({
+                        'FullName': fullNameController.text,
+                        'CPR': cprController.text,
+                        'Email': emailController.text,
+                        'Phone': phoneNumberController.text,
+                        'DOB': birthdayController.text,
+                        'Gender': selectedGender,
+                      }).then((documentReference) {
+                        // Get the ID of the newly added document
+                        String userId = documentReference.id;
 
+                        // Determine the role collection based on selectedRole
+                        String roleCollection;
+                        if (selectedRole == 'Admin') {
+                          roleCollection = 'admin';
+                        } else if (selectedRole == 'Dentist') {
+                          roleCollection = 'dentist';
+                        } else {
+                          roleCollection = 'receptionist';
+                        }
+
+                        // Add user ID to the respective role collection
+                        _firestore.collection(roleCollection).doc(userId).set({
+                          'uid': userId,
+                        }).then((_) {
+                          Navigator.of(context)
+                              .pop(); // Close the dialog after saving
+                        }).catchError((error) {
+                          print('Error saving staff member: $error');
+                          // Handle error here
+                        });
+                      }).catchError((error) {
+                        print('Error saving staff member: $error');
+                        // Handle error here
+                      });
+                    },
+                    child: Text('Save'),
+                  ),
                 ],
               );
             },
@@ -359,8 +598,10 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
     if (adminDoc.exists) {
       role = 'Admin';
     } else {
-      var dentistDoc =
-          await FirebaseFirestore.instance.collection('dentist').doc(userId).get();
+      var dentistDoc = await FirebaseFirestore.instance
+          .collection('dentist')
+          .doc(userId)
+          .get();
       if (dentistDoc.exists) {
         role = 'Dentist';
       } else {
@@ -381,14 +622,23 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
     try {
       // Delete the user document
       await FirebaseFirestore.instance.collection('user').doc(userId).delete();
-      
+
       // Depending on the user's role, delete from respective collections
       if (role.toLowerCase() == 'admin') {
-        await FirebaseFirestore.instance.collection('admin').doc(userId).delete();
+        await FirebaseFirestore.instance
+            .collection('admin')
+            .doc(userId)
+            .delete();
       } else if (role.toLowerCase() == 'dentist') {
-        await FirebaseFirestore.instance.collection('dentist').doc(userId).delete();
+        await FirebaseFirestore.instance
+            .collection('dentist')
+            .doc(userId)
+            .delete();
       } else if (role.toLowerCase() == 'receptionist') {
-        await FirebaseFirestore.instance.collection('receptionist').doc(userId).delete();
+        await FirebaseFirestore.instance
+            .collection('receptionist')
+            .doc(userId)
+            .delete();
       }
     } catch (e) {
       print('Error deleting user: $e');
@@ -396,27 +646,13 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
   }
 }
 
-
-class NotificationsScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Notifications and Alerts'),
-      ),
-      body: Center(
-        child: Text('Notifications and Alerts Screen'),
-      ),
-    );
-  }
-}
-class EditWelcomeMessageScreen extends StatefulWidget {
+class EditMessageScreen extends StatefulWidget {
   @override
   _EditWelcomeMessageScreenState createState() =>
       _EditWelcomeMessageScreenState();
 }
 
-class _EditWelcomeMessageScreenState extends State<EditWelcomeMessageScreen> {
+class _EditWelcomeMessageScreenState extends State<EditMessageScreen> {
   final TextEditingController _welcomeMessageController =
       TextEditingController();
   String _currentWelcomeMessage = '';
@@ -427,32 +663,32 @@ class _EditWelcomeMessageScreenState extends State<EditWelcomeMessageScreen> {
     _fetchWelcomeMessage();
   }
 
-Future<void> _fetchWelcomeMessage() async {
-  try {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('welcome')
-        .doc('mgAMaIIGgWZTnNl0d32B')
-        .get();
+  Future<void> _fetchWelcomeMessage() async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('welcome')
+          .doc('mgAMaIIGgWZTnNl0d32B')
+          .get();
 
-    if (snapshot.exists) {
-      final data = snapshot.data();
-      if (data != null && data.containsKey('message')) {
-        final message = data['message'];
-        if (message is String) {
-          _updateWelcomeMessageText(message);
+      if (snapshot.exists) {
+        final data = snapshot.data();
+        if (data != null && data.containsKey('message')) {
+          final message = data['message'];
+          if (message is String) {
+            _updateWelcomeMessageText(message);
+          } else {
+            print('Welcome message is not a String: $message');
+          }
         } else {
-          print('Welcome message is not a String: $message');
+          print('Document does not contain a "message" field.');
         }
       } else {
-        print('Document does not contain a "message" field.');
+        print('Document does not exist. Cannot fetch welcome message.');
       }
-    } else {
-      print('Document does not exist. Cannot fetch welcome message.');
+    } catch (e, stackTrace) {
+      print('Error fetching welcome message: $e\n$stackTrace');
     }
-  } catch (e, stackTrace) {
-    print('Error fetching welcome message: $e\n$stackTrace');
   }
-}
 
   void _updateWelcomeMessageText(String? message) {
     setState(() {
@@ -468,6 +704,7 @@ Future<void> _fetchWelcomeMessage() async {
           .doc('mgAMaIIGgWZTnNl0d32B')
           .set({'message': newMessage});
       print('Welcome message updated successfully!');
+      Navigator.pop(context); // Navigate back to previous screen
     } catch (e) {
       print('Error updating welcome message: $e');
     }
@@ -501,58 +738,6 @@ Future<void> _fetchWelcomeMessage() async {
           ],
         ),
       ),
-    );
-  }
-}
-
-class EditCouponScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Edit Coupon'),
-      ),
-      body: ListView(
-        children: <Widget>[
-          CouponListTile(
-            title: 'Create Coupon',
-            onTap: () {
-              // Add your onTap functionality here
-              print('Create Coupon tapped!');
-            },
-          ),
-          CouponListTile(
-            title: 'Edit Welcome Message',
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditWelcomeMessageScreen(),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class CouponListTile extends StatelessWidget {
-  final String title;
-  final VoidCallback? onTap;
-
-  const CouponListTile({
-    Key? key,
-    required this.title,
-    required this.onTap,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(title),
-      onTap: onTap,
     );
   }
 }

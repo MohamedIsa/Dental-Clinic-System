@@ -21,7 +21,7 @@ class AppointmentPage extends StatelessWidget {
           final firstName = fullName.split(' ')[0];
           return Scaffold(
             appBar: HeaderWidget(userName: firstName),
-            body: SafeArea(
+            body: const SafeArea(
               child: Row(
                 children: [
                   Expanded(
@@ -38,7 +38,7 @@ class AppointmentPage extends StatelessWidget {
                         ),
                         SizedBox(height: 20), // Add desired spacing between the buttons and calendar
                         Expanded(
-                          child: AppointmentCalender(),
+                          child: AppointmentCalendar(),
                         ),
                       ],
                     ),
@@ -50,7 +50,7 @@ class AppointmentPage extends StatelessWidget {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         }
