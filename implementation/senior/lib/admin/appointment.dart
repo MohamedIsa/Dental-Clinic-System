@@ -1,9 +1,11 @@
+import 'dart:math'; // Import math library to use Random class
+
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class AppointmentCalender extends StatelessWidget {
-  const AppointmentCalender({Key? key});
+class AppointmentCalendar extends StatelessWidget {
+  const AppointmentCalendar({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,31 +23,29 @@ class AppointmentCalender extends StatelessWidget {
               if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               }
-              if (snapshot.hasData) {
-                return FutureBuilder<List<Appointment>>(
-                  future: _fetchAppointments(snapshot.data!.docs),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                    if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    }
-                    final List<Appointment> appointments = snapshot.data!;
-                    return SfCalendar(
-                      view: CalendarView.timelineWeek,
-                      timeSlotViewSettings: TimeSlotViewSettings(
-                        startHour: 9, // Adjust the starting hour
-                        endHour: 18, // Adjust the ending hour
-                        timeIntervalWidth: 100, // Adjust the width of each time slot
-                      ),
-                      dataSource: AppointmentDataSource(appointments),
-                    );
-                  },
-                );
-              } else {
-                return Center(child: Text('No data available'));
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return Center(child: Text('No appointments available'));
               }
+              return FutureBuilder<List<Appointment>>(
+                future: _fetchAppointments(snapshot.data!.docs),
+                builder: (context, appointmentSnapshot) {
+                  if (appointmentSnapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  if (appointmentSnapshot.hasError) {
+                    return Center(child: Text('Error: ${appointmentSnapshot.error}'));
+                  }
+                  return SfCalendar(
+                    view: CalendarView.timelineWeek,
+                    timeSlotViewSettings: TimeSlotViewSettings(
+                      startHour: 9, // Adjust the starting hour
+                      endHour: 18, // Adjust the ending hour
+                      timeIntervalWidth: 100, // Adjust the width of each time slot
+                    ),
+                    dataSource: AppointmentDataSource(appointmentSnapshot.data!),
+                  );
+                },
+              );
             },
           ),
         ),
@@ -53,37 +53,27 @@ class AppointmentCalender extends StatelessWidget {
     );
   }
 
- 
   Future<List<Appointment>> _fetchAppointments(List<DocumentSnapshot> documents) async {
-    final List<Appointment> todayAppointments = [];
-    final now = DateTime.now();
+    final List<Appointment> appointments = [];
+    final Random random = Random(); // Create an instance of Random class
 
     for (final doc in documents) {
       final data = doc.data() as Map<String, dynamic>;
       final DateTime date = data['date'].toDate();
-
-      if (date.year == now.year && date.month == now.month && date.day == now.day) {
-        final int hour = data['hour'];
-        final DateTime startTime = DateTime(date.year, date.month, date.day, hour);
-        final DateTime endTime = startTime.add(Duration(hours: 1));
-
-        final String patientId = data['uid'];
-        final String patientName = await getPatientName(patientId);
-        
-
-        final colorSnapshot = await FirebaseFirestore.instance.collection('color').doc(patientId).get();
-        final String? color = colorSnapshot.data()?['color'];
-
-        todayAppointments.add(Appointment(
-          startTime: startTime,
-          endTime: endTime,
-          subject: 'Appointment with $patientName',
-          color: color != null ? Color(int.parse(color)) : Colors.blue,
-        ));
-      }
+      final int hour = data['hour'];
+      final DateTime startTime = DateTime(date.year, date.month, date.day, hour);
+      final DateTime endTime = startTime.add(Duration(hours: 1));
+      final String patientId = data['uid'];
+      final String patientName = await getPatientName(patientId);
+      final Color randomColor = Color.fromRGBO(random.nextInt(256), random.nextInt(256), random.nextInt(256), 1); // Generate a random color
+      appointments.add(Appointment(
+        startTime: startTime,
+        endTime: endTime,
+        subject: 'Appointment with $patientName',
+        color: randomColor, // Use the generated random color
+      ));
     }
-
-    return todayAppointments;
+    return appointments;
   }
 
   Future<String> getPatientName(String patientId) async {

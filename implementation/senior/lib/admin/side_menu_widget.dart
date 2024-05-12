@@ -7,53 +7,79 @@ class SideMenuWidget extends StatefulWidget {
   @override
   State<SideMenuWidget> createState() => _SideMenuWidgetState();
 }
- String currentRouteName = '';
+
+String currentRouteName = '';
+
 class _SideMenuWidgetState extends State<SideMenuWidget> {
-  // Track the current route name
   String userName = "Admin"; // Default user name
 
   @override
   Widget build(BuildContext context) {
     final data = SideMenuData();
-
-    return Center(
-      child: Drawer(
-        child: Container(
-          color: const Color.fromARGB(171, 33, 149, 243),
-          child: ListView.builder(
-            itemCount: data.menu.length,
-            itemBuilder: (context, index) =>
-                buildMenuEntry(data, index, context),
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            color: Colors.white,
+            width: 2,
+          ),
+        ),
+      ),
+      child: Center(
+        child: Material(
+          borderRadius: BorderRadius.circular(0),
+          child: Drawer(
+            shape: ContinuousRectangleBorder(borderRadius: BorderRadius.zero),
+            child: Container(
+              color: Colors.blue,
+              child: ListView.builder(
+                itemCount: data.menu.length,
+                itemBuilder: (context, index) =>
+                    buildMenuEntry(data, index, context),
+              ),
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget buildMenuEntry(SideMenuData data, int index, BuildContext context) {
+  Widget buildMenuEntry(
+      SideMenuData data, int index, BuildContext context) {
     final isSelected = data.menu[index].routeName == currentRouteName;
 
-    return ListTile(
-      selected: isSelected,
-      selectedTileColor:
-          const Color.fromARGB(255, 0, 58, 106).withOpacity(0.5), // Change the background color of the selected item
+    return GestureDetector(
       onTap: () {
         setState(() {
-          currentRouteName =
-              data.menu[index].routeName; // Update current route name
+          currentRouteName = data.menu[index].routeName;
         });
         Navigator.pushNamed(context, data.menu[index].routeName);
       },
-      leading: Icon(
-        data.menu[index].icon,
-        color: isSelected ? Colors.white : const Color.fromARGB(255, 255, 255, 255),
-      ),
-      title: Text(
-        data.menu[index].title,
-        style: TextStyle(
-          fontSize: 16,
-          color: isSelected ? Colors.white : const Color.fromARGB(255, 255, 255, 255),
-          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+      child: Container(
+        color: isSelected
+            ? const Color.fromARGB(255, 0, 58, 106).withOpacity(0.5)
+            : Colors.transparent,
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+        child: Row(
+          children: [
+            Icon(
+              data.menu[index].icon,
+              color: isSelected
+                  ? Colors.white
+                  : const Color.fromARGB(255, 255, 255, 255),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              data.menu[index].title,
+              style: TextStyle(
+                fontSize: 16,
+                color: isSelected
+                    ? Colors.white
+                    : const Color.fromARGB(255, 255, 255, 255),
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+              ),
+            ),
+          ],
         ),
       ),
     );

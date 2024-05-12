@@ -19,22 +19,35 @@ class PatientButtonsWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ButtonTheme(
-            minWidth: 120,
-            child: ElevatedButton(
-              onPressed: () => showAddPatientDialog(context),
-              child: const Text('Add New Patient'),
-            ),
-          ),
-          const SizedBox(width: 16),
-          ButtonTheme(
-            minWidth: 120,
-            child: ElevatedButton(
-              onPressed: () => showSearchDialog(context),
-              child: const Text('Search'),
-            ),
-          ),
-        ],
+  ButtonTheme(
+    minWidth: 120,
+    child: ElevatedButton(
+      onPressed: () => showAddPatientDialog(context),
+      child: const Text(
+        'Add New Patient',
+        style: TextStyle(color: Colors.white), // Set text color to white
+      ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.blue, // Set background color to blue
+      ),
+    ),
+  ),
+  const SizedBox(width: 16),
+  ButtonTheme(
+    minWidth: 120,
+    child: ElevatedButton(
+      onPressed: () => showSearchDialog(context),
+      child: const Text(
+        'Search',
+        style: TextStyle(color: Colors.white), // Set text color to white
+      ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.blue, // Set background color to blue
+      ),
+    ),
+  ),
+],
+
       ),
     );
   }

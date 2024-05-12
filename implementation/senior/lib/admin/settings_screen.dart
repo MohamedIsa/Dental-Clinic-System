@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:senior/admin/side_menu_widget.dart';
 
 class SettingsPage extends StatelessWidget {
   final Function(String) navigateToSettings;
@@ -9,80 +8,140 @@ class SettingsPage extends StatelessWidget {
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(16.0),
+Widget build(BuildContext context) {
+  return Padding(
+    padding: EdgeInsets.all(16.0),
+    child: Container(
+      
       child: ListView(
         children: [
-          ListTile(
-            title: Text('Staff Management'),
-            onTap: () {
-              navigateToSettings('Staff Management');
-            },
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.white, // Set the border color
+                  width: 1.0, // Set the border width
+                ),
+              ),
+            ),
+            child: ListTile(
+              title: Text(
+                'Staff Management',
+                style: TextStyle(
+                  color: Colors.white, // Set the text color to white
+                ),
+              ),
+              tileColor: const Color.fromARGB(255, 38, 99, 148), // Set the tile color to blue
+              onTap: () {
+                navigateToSettings('Staff Management');
+              },
+            ),
           ),
-          ListTile(
-            title: Text('Dentist Color'),
-            onTap: () {
-              navigateToSettings('Dentist Color');
-            },
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.white, // Set the border color
+                  width: 1.0, // Set the border width
+                ),
+              ),
+            ),
+            child: ListTile(
+              title: Text(
+                'Dentist Color',
+                style: TextStyle(
+                  color: Colors.white, // Set the text color to white
+                ),
+              ),
+              tileColor: const Color.fromARGB(255, 38, 99, 148), // Set the tile color to blue
+              onTap: () {
+                navigateToSettings('Dentist Color');
+              },
+            ),
           ),
-          ListTile(
-            title: Text('Edit Message'),
-            onTap: () {
-              navigateToSettings('Edit Message');
-            },
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.white, // Set the border color
+                  width: 1.0, // Set the border width
+                ),
+              ),
+            ),
+            child: ListTile(
+              title: Text(
+                'Edit Message',
+                style: TextStyle(
+                  color: Colors.white, // Set the text color to white
+                ),
+              ),
+              tileColor: const Color.fromARGB(255, 38, 99, 148), // Set the tile color to blue
+              onTap: () {
+                navigateToSettings('Edit Message');
+              },
+            ),
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
+        title: Text(
+          'Settings',
+          style: TextStyle(color: Colors.white), // Set app bar text color to white
+        ),
+        backgroundColor: Colors.blue, // Set app bar background color to blue
       ),
-      body: SafeArea(
-        child: Row(
-          children: [
-            Expanded(
-              flex: 7,
-              child: SettingsPage(
-                navigateToSettings: (settingName) {
-                  // Implement navigation logic here
-                  switch (settingName) {
-                    case 'Staff Management':
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => StaffManagementScreen()),
-                      );
-                      break;
-                    case 'Dentist Color':
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => DentistColorSettingsScreen()),
-                      );
-                      break;
-                    case 'Edit Message':
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => EditMessageScreen()),
-                      );
-                      break;
-                    default:
-                      print('Setting not found');
-                  }
-                },
+      body: Container(
+        color: Colors.blue, // Set background color of the SettingsScreen to blue
+        child: SafeArea(
+          child: Row(
+            children: [
+              Expanded(
+                flex: 7,
+                child: SettingsPage(
+                  navigateToSettings: (settingName) {
+                    // Implement navigation logic here
+                    switch (settingName) {
+                      case 'Staff Management':
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => StaffManagementScreen()),
+                        );
+                        break;
+                      case 'Dentist Color':
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  DentistColorSettingsScreen()),
+                        );
+                        break;
+                      case 'Edit Message':
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => EditMessageScreen()),
+                        );
+                        break;
+                      default:
+                        print('Setting not found');
+                    }
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -95,10 +154,12 @@ class DentistColorSettingsScreen extends StatefulWidget {
   final String? uid;
 
   @override
-  _DentistsDataTableState createState() => _DentistsDataTableState();
+  _DentistColorSettingsScreenState createState() =>
+      _DentistColorSettingsScreenState();
 }
 
-class _DentistsDataTableState extends State<DentistColorSettingsScreen> {
+class _DentistColorSettingsScreenState
+    extends State<DentistColorSettingsScreen> {
   String selectedColor = '';
   List<String> famousColors = [
     'Red',
@@ -126,22 +187,6 @@ class _DentistsDataTableState extends State<DentistColorSettingsScreen> {
             Navigator.of(context).pop();
           },
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              // Handle update action
-              // For example, update selected colors in the database
-            },
-            child: Text('Update'),
-          ),
-          TextButton(
-            onPressed: () {
-              // Handle cancel action
-              // For example, reset selected colors to previous state
-            },
-            child: Text('Cancel'),
-          ),
-        ],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('dentist').snapshots(),
@@ -161,111 +206,117 @@ class _DentistsDataTableState extends State<DentistColorSettingsScreen> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                child: Text(
-                  'Table of Dentists',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                ),
-              ),
+             Padding(
+  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+  child: Center(
+    child: Text(
+      'Table of Dentists',
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 20,
+      ),
+    ),
+  ),
+),
+
               Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                    columns: [
-                      DataColumn(label: Text('Full Name')),
-                      DataColumn(label: Text('Email')),
-                      DataColumn(label: Text('Color')),
-                    ],
-                    rows: dentistDocs.map((dentistDoc) {
-                      final dentistUID =
-                          dentistDoc.id; // Assuming UID is the document ID
-                      return DataRow(cells: [
-                        DataCell(
-                          FutureBuilder<DocumentSnapshot>(
-                            future: FirebaseFirestore.instance
-                                .collection('user')
-                                .doc(dentistUID)
-                                .get(),
-                            builder: (context, userSnapshot) {
-                              if (userSnapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return Center(
-                                    child: CircularProgressIndicator());
-                              } else if (userSnapshot.hasError) {
-                                return Center(
-                                    child:
-                                        Text('Error: ${userSnapshot.error}'));
-                              }
+                child: Center(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: DataTable(
+                      columns: [
+                        DataColumn(label: Text('Full Name')),
+                        DataColumn(label: Text('Email')),
+                        DataColumn(label: Text('Color')),
+                      ],
+                      rows: dentistDocs.map((dentistDoc) {
+                        final dentistUID =
+                            dentistDoc.id; // Assuming UID is the document ID
+                        return DataRow(cells: [
+                          DataCell(
+                            FutureBuilder<DocumentSnapshot>(
+                              future: FirebaseFirestore.instance
+                                  .collection('user')
+                                  .doc(dentistUID)
+                                  .get(),
+                              builder: (context, userSnapshot) {
+                                if (userSnapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Center(
+                                      child: CircularProgressIndicator());
+                                } else if (userSnapshot.hasError) {
+                                  return Center(
+                                      child:
+                                          Text('Error: ${userSnapshot.error}'));
+                                }
 
-                              final Map<String, dynamic>? userData =
-                                  userSnapshot.data?.data()
-                                      as Map<String, dynamic>?;
+                                final Map<String, dynamic>? userData =
+                                    userSnapshot.data?.data()
+                                        as Map<String, dynamic>?;
 
-                              if (userData == null) {
-                                return Text('User data not found');
-                              }
+                                if (userData == null) {
+                                  return Text('User data not found');
+                                }
 
-                              final fullName =
-                                  userData['FullName'] ?? 'No Full Name';
-                              return Text(fullName);
-                            },
+                                final fullName =
+                                    userData['FullName'] ?? 'No Full Name';
+                                return Text(fullName);
+                              },
+                            ),
                           ),
-                        ),
-                        DataCell(
-                          FutureBuilder<DocumentSnapshot>(
-                            future: FirebaseFirestore.instance
-                                .collection('user')
-                                .doc(dentistUID)
-                                .get(),
-                            builder: (context, userSnapshot) {
-                              if (userSnapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return Center(
-                                    child: CircularProgressIndicator());
-                              } else if (userSnapshot.hasError) {
-                                return Center(
-                                    child:
-                                        Text('Error: ${userSnapshot.error}'));
-                              }
+                          DataCell(
+                            FutureBuilder<DocumentSnapshot>(
+                              future: FirebaseFirestore.instance
+                                  .collection('user')
+                                  .doc(dentistUID)
+                                  .get(),
+                              builder: (context, userSnapshot) {
+                                if (userSnapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Center(
+                                      child: CircularProgressIndicator());
+                                } else if (userSnapshot.hasError) {
+                                  return Center(
+                                      child:
+                                          Text('Error: ${userSnapshot.error}'));
+                                }
 
-                              final Map<String, dynamic>? userData =
-                                  userSnapshot.data?.data()
-                                      as Map<String, dynamic>?;
+                                final Map<String, dynamic>? userData =
+                                    userSnapshot.data?.data()
+                                        as Map<String, dynamic>?;
 
-                              if (userData == null) {
-                                return Text('User data not found');
-                              }
+                                if (userData == null) {
+                                  return Text('User data not found');
+                                }
 
-                              final email = userData['Email'] ?? 'No Email';
-                              return Text(email);
-                            },
+                                final email = userData['Email'] ?? 'No Email';
+                                return Text(email);
+                              },
+                            ),
                           ),
-                        ),
-                        DataCell(
-                          DropdownButton<String>(
-                            value: userColors[dentistUID] ??
-                                '', // Get color value from userColors map
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                userColors[dentistUID] =
-                                    newValue!; // Update color value in userColors map
-                              });
-                            },
-                            items: famousColors
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
+                          DataCell(
+                            DropdownButton<String>(
+                              value: userColors[dentistUID] ??
+                                  famousColors[
+                                      0], // Default to the first color if no value is set
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  userColors[dentistUID] =
+                                      newValue!; // Update color value in userColors map
+                                });
+                              },
+                              items: famousColors.map<DropdownMenuItem<String>>(
+                                  (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
                           ),
-                        ),
-                      ]);
-                    }).toList(),
+                        ]);
+                      }).toList(),
+                    ),
                   ),
                 ),
               ),
@@ -273,6 +324,51 @@ class _DentistsDataTableState extends State<DentistColorSettingsScreen> {
           );
         },
       ),
+bottomNavigationBar: BottomAppBar(
+  child: Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(width: 16), // Adjust the width as needed
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.blue, // Set background color of the button
+            borderRadius: BorderRadius.circular(8), // Optional: adjust the border radius
+          ),
+          child: TextButton(
+            onPressed: () {
+              // Handle cancel action
+            },
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: Colors.white), // Set text color to white
+            ),
+          ),
+        ),
+        SizedBox(width: 16), // Adjust the width as needed
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.blue, // Set background color of the button
+            borderRadius: BorderRadius.circular(8), // Optional: adjust the border radius
+          ),
+          child: TextButton(
+            onPressed: () {
+              // Handle update action
+            },
+            child: Text(
+              'Update',
+              style: TextStyle(color: Colors.white), // Set text color to white
+            ),
+          ),
+        ),
+      ],
+    ),
+  ),
+),
+
+
+
     );
   }
 }
