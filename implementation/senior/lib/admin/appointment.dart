@@ -1,9 +1,11 @@
+import 'dart:math'; // Import math library to use Random class
+
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class AppointmentCalender extends StatelessWidget {
-  const AppointmentCalender({Key? key});
+class AppointmentCalendar extends StatelessWidget {
+  const AppointmentCalendar({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,65 +17,78 @@ class AppointmentCalender extends StatelessWidget {
             // StreamBuilder to listen for changes in Firestore collection
             stream: FirebaseFirestore.instance.collection('appointments').snapshots(),
             builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final List<Appointment> appointments = snapshot.data!.docs.map((doc) {
-                  final data = doc.data() as Map<String, dynamic>;
-                  final DateTime date = data['date'].toDate();
-                  final int hour = data['hour'];
-                  final DateTime startTime = DateTime(date.year, date.month, date.day, hour);
-                  final DateTime endTime = startTime.add(Duration(hours: 1)); // Duration is 1 hour
-                  
-                  // Fetch dentist's name
-                  final String dentistId = data['did'];
-                  String dentistName = 'Unknown Dentist';
-                  FirebaseFirestore.instance.collection('dentist').doc(dentistId).get().then((dentistDoc) {
-                    if (dentistDoc.exists) {
-                      dentistName = dentistDoc.data()?['FullName'] ?? 'Unknown Dentist';
-                    } else {
-                      // If did doesn't exist in dentist collection, fetch from user collection
-                      FirebaseFirestore.instance.collection('user').doc(dentistId).get().then((userDoc) {
-                        if (userDoc.exists) {
-                          dentistName = userDoc.data()?['FullName'] ?? 'Unknown Dentist';
-                        }
-                      });
-                    }
-                  });
-
-                  // Fetch patient's name
-                  final String patientId = data['uid'];
-                  String patientName = 'Unknown Patient';
-                  FirebaseFirestore.instance.collection('patient').doc(patientId).get().then((patientDoc) {
-                    if (patientDoc.exists) {
-                      patientName = patientDoc.data()?['FullName'] ?? 'Unknown Patient';
-                    }
-                  });
-
-                  return Appointment(
-                    startTime: startTime,
-                    endTime: endTime,
-                    subject: 'Appointment with $patientName, Dentist: $dentistName',
-                    color: Colors.blue, // You can set colors based on different appointments
-                  );
-                }).toList();
-                return SfCalendar(
-                  view: CalendarView.timelineWeek,
-                  timeSlotViewSettings: TimeSlotViewSettings(
-                    startHour: 9, // Adjust the starting hour
-                    endHour: 18, // Adjust the ending hour
-                    timeIntervalWidth: 100, // Adjust the width of each time slot
-                  ),
-                  dataSource: AppointmentDataSource(appointments),
-                );
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              } else {
+              if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
               }
+              if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              }
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return Center(child: Text('No appointments available'));
+              }
+              return FutureBuilder<List<Appointment>>(
+                future: _fetchAppointments(snapshot.data!.docs),
+                builder: (context, appointmentSnapshot) {
+                  if (appointmentSnapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  if (appointmentSnapshot.hasError) {
+                    return Center(child: Text('Error: ${appointmentSnapshot.error}'));
+                  }
+                  return SfCalendar(
+                    view: CalendarView.timelineWeek,
+                    timeSlotViewSettings: TimeSlotViewSettings(
+                      startHour: 9, // Adjust the starting hour
+                      endHour: 18, // Adjust the ending hour
+                      timeIntervalWidth: 100, // Adjust the width of each time slot
+                    ),
+                    dataSource: AppointmentDataSource(appointmentSnapshot.data!),
+                  );
+                },
+              );
             },
           ),
         ),
       ),
     );
+  }
+
+  Future<List<Appointment>> _fetchAppointments(List<DocumentSnapshot> documents) async {
+    final List<Appointment> appointments = [];
+    final Random random = Random(); // Create an instance of Random class
+
+    for (final doc in documents) {
+      final data = doc.data() as Map<String, dynamic>;
+      final DateTime date = data['date'].toDate();
+      final int hour = data['hour'];
+      final DateTime startTime = DateTime(date.year, date.month, date.day, hour);
+      final DateTime endTime = startTime.add(Duration(hours: 1));
+      final String patientId = data['uid'];
+      final String patientName = await getPatientName(patientId);
+      final Color randomColor = Color.fromRGBO(random.nextInt(256), random.nextInt(256), random.nextInt(256), 1); // Generate a random color
+      appointments.add(Appointment(
+        startTime: startTime,
+        endTime: endTime,
+        subject: 'Appointment with $patientName',
+        color: randomColor, // Use the generated random color
+      ));
+    }
+    return appointments;
+  }
+
+  Future<String> getPatientName(String patientId) async {
+    String patientName = 'Unknown Patient';
+    final patientDoc = await FirebaseFirestore.instance.collection('user').doc(patientId).get();
+    if (patientDoc.exists) {
+      final fullName = patientDoc.data()?['FullName'] ?? 'Unknown Patient';
+      final List<String> names = fullName.split(' ');
+      if (names.length >= 2) {
+        patientName = '${names[0]} ${names[1]}';
+      } else {
+        patientName = fullName;
+      }
+    }
+    return patientName;
   }
 }
 

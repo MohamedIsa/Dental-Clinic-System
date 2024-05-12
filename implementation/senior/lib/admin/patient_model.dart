@@ -19,6 +19,8 @@ class PatientData {
     required this.id,
   });
 
+  get FullName => null;
+
   static PatientData fromSnapshot(DocumentSnapshot patientSnapshot) {
     Map<String, dynamic> data = patientSnapshot.data() as Map<String, dynamic>;
     return PatientData(

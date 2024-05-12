@@ -41,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         // Check if the user exists in the admin collection.
         DocumentSnapshot adminSnapshot = await FirebaseFirestore.instance.collection('admin').doc(userId).get();
-        if (adminSnapshot.exists||isSkiaWeb) {
+        if (adminSnapshot.exists) {
           // User is an admin, redirect to the admin page.
           Navigator.pushNamed(context, '/admin');
         } else {

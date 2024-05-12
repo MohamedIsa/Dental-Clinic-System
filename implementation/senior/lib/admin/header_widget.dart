@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HeaderWidget extends StatelessWidget implements PreferredSizeWidget {
@@ -10,35 +11,35 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      backgroundColor: Colors.transparent, // Make the app bar transparent
-      elevation: 0, // Remove the shadow
-      automaticallyImplyLeading: false, // Don't show the back button
-      title: Text('Welcome, $userName'), // Display welcome message with user name
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: IconButton(
-            icon: const Icon(
-              Icons.email,
-              color: Colors.grey,
-              size: 25, // Adjust the size of the email icon
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.blue, // Set the background color to blue
+      ),
+      child: AppBar(
+        backgroundColor: Colors.transparent, // Make the app bar transparent
+        elevation: 0, // Remove the shadow
+        automaticallyImplyLeading: false, // Don't show the back button
+        title: Text(
+          'Welcome, $userName',
+          style: TextStyle(color: Colors.white), // Set text color to white
+        ), // Display welcome message with user name
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: IconButton(
+              icon: const Icon(
+                Icons.logout,
+                color: Colors.white, // Set icon color to white
+                size: 25, // Adjust the size of the email icon
+              ),
+              onPressed: () {
+                FirebaseAuth.instance.signOut();
+                Navigator.pushNamed(context, '/home');
+              },
             ),
-            onPressed: () {},
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: IconButton(
-            icon: const Icon(
-              Icons.notifications,
-              color: Colors.grey,
-              size: 25, // Adjust the size of the notification icon
-            ),
-            onPressed: () {},
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

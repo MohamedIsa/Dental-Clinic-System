@@ -73,7 +73,8 @@ class PatientButtonsWidget extends StatelessWidget {
                 if (searchCpr.isNotEmpty) {
                   try {
                     // Search for user based on CPR
-                    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+                    QuerySnapshot querySnapshot = await FirebaseFirestore
+                        .instance
                         .collection('user')
                         .where('CPR', isEqualTo: searchCpr)
                         .get();
@@ -86,19 +87,23 @@ class PatientButtonsWidget extends StatelessWidget {
                       String uid = userSnapshot.id;
 
                       // Retrieve the user data from the user collection
-                      DocumentSnapshot userDataSnapshot = await FirebaseFirestore.instance
-                          .collection('user')
-                          .doc(uid)
-                          .get();
+                      DocumentSnapshot userDataSnapshot =
+                          await FirebaseFirestore.instance
+                              .collection('user')
+                              .doc(uid)
+                              .get();
 
                       // Create a PatientData object from the retrieved user data
-                      PatientData patientData = PatientData.fromSnapshot(userDataSnapshot);
+                      PatientData patientData =
+                          PatientData.fromSnapshot(userDataSnapshot);
 
                       // Navigate to the PatientDetailsPage and pass the patientData
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PatientDetailsPage(patient: patientData, user: FirebaseAuth.instance.currentUser!),
+                          builder: (context) => PatientDetailsPage(
+                              patient: patientData,
+                              user: FirebaseAuth.instance.currentUser!),
                         ),
                       );
                     } else {
@@ -112,7 +117,8 @@ class PatientButtonsWidget extends StatelessWidget {
                     print('Error: $e');
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('An error occurred. Please try again later.'),
+                        content:
+                            Text('An error occurred. Please try again later.'),
                       ),
                     );
                   }
@@ -174,19 +180,18 @@ class PatientButtonsWidget extends StatelessWidget {
                     labelText: 'Birth Day',
                   ),
                 ),
-                      DropdownButtonFormField<String>(
-                        value: selectedGender,
-                        decoration: InputDecoration(labelText: 'Gender'),
-                        items: ['Male', 'Female']
-  .map((gender) => DropdownMenuItem(
-                                  value: gender,
-                                  child: Text(gender),
-                                )
-                                )
-                            .toList(),
-                        onChanged: (value) {
-                          selectedGender = value!;
-                        }),
+                DropdownButtonFormField<String>(
+                    value: selectedGender,
+                    decoration: InputDecoration(labelText: 'Gender'),
+                    items: ['Male', 'Female']
+                        .map((gender) => DropdownMenuItem(
+                              value: gender,
+                              child: Text(gender),
+                            ))
+                        .toList(),
+                    onChanged: (value) {
+                      selectedGender = value!;
+                    }),
                 TextField(
                   onChanged: (value) {
                     phoneNumber = value;
@@ -223,7 +228,9 @@ class PatientButtonsWidget extends StatelessWidget {
                     email.isNotEmpty) {
                   try {
                     // Add data to 'user' collection
-                    DocumentReference userRef = await FirebaseFirestore.instance.collection('user').add({
+                    DocumentReference userRef = await FirebaseFirestore.instance
+                        .collection('user')
+                        .add({
                       'FullName': name,
                       'CPR': cpr,
                       'DOB': birthDay,
@@ -236,7 +243,10 @@ class PatientButtonsWidget extends StatelessWidget {
                     String uid = userRef.id;
 
                     // Add UID to 'patient' collection
-                    await FirebaseFirestore.instance.collection('patient').doc(uid).set({
+                    await FirebaseFirestore.instance
+                        .collection('patient')
+                        .doc(uid)
+                        .set({
                       'uid': uid,
                     });
 
@@ -250,7 +260,8 @@ class PatientButtonsWidget extends StatelessWidget {
                     print('Error: $e');
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('An error occurred. Please try again later.'),
+                        content:
+                            Text('An error occurred. Please try again later.'),
                       ),
                     );
                   }
