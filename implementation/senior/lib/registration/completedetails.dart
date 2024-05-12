@@ -43,15 +43,12 @@ class _CompleteState extends State<Complete> {
                 : Expanded(
                     child: Container(
                       height: height,
-                      color: AppColors.mainBlueColor,
+                      color: Colors.lightBlue,
                       child: Center(
-                        child: Text(
-                          'Dental Clinic',
-                          style: ralewayStyle.copyWith(
-                            fontSize: 48.0,
-                            color: AppColors.whiteColor,
-                            fontWeight: FontWeight.w800,
-                          ),
+                        child: Image.asset(
+                          'assets/images/logo.png',
+                          width: width * 0.5,
+                          height: height * 0.5,
                         ),
                       ),
                     ),

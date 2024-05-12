@@ -28,73 +28,70 @@ class _WelcomePageState extends State<WelcomePage> {
     return 'User';
   }
 
-Future<String> getUpcomingAppointment(String uid) async {
-  QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-      .collection('appointments')
-      .where('uid', isEqualTo: uid) 
-      .orderBy('date')
-      .get();
+  Future<String> getUpcomingAppointment(String uid) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('appointments')
+        .where('uid', isEqualTo: uid)
+        .orderBy('date')
+        .get();
 
-  if (querySnapshot.docs.isNotEmpty) {
-    DateTime now = DateTime.now();
-    // Define the start and end hours for appointments
-    int startHour = 9;
-    int endHour = 17;
+    if (querySnapshot.docs.isNotEmpty) {
+      DateTime now = DateTime.now();
+      // Define the start and end hours for appointments
+      int startHour = 9;
+      int endHour = 17;
 
-    for (DocumentSnapshot appointment in querySnapshot.docs) {
-      DateTime appointmentDate =
-          (appointment.get('date') as Timestamp).toDate();
-      int appointmentHour = appointment['hour'] ?? 0;
+      for (DocumentSnapshot appointment in querySnapshot.docs) {
+        DateTime appointmentDate =
+            (appointment.get('date') as Timestamp).toDate();
+        int appointmentHour = appointment['hour'] ?? 0;
 
-      // Calculate the appointment time in DateTime format
-      DateTime appointmentTime = DateTime(
-        appointmentDate.year,
-        appointmentDate.month,
-        appointmentDate.day,
-        appointmentHour,
-      );
+        // Calculate the appointment time in DateTime format
+        DateTime appointmentTime = DateTime(
+          appointmentDate.year,
+          appointmentDate.month,
+          appointmentDate.day,
+          appointmentHour,
+        );
 
-      // Check if the appointment is within the working hours and after the current time
-      if (appointmentHour >= startHour &&
-          appointmentHour <= endHour &&
-          appointmentTime.isAfter(now)) {
-        // Retrieve appointment data
-        String dentistId = appointment['did'] ?? '';
-        DocumentSnapshot dentistDoc = await FirebaseFirestore.instance
-            .collection('user')
-            .doc(dentistId)
-            .get();
-        String dentist = dentistDoc.get('FullName') ?? '';
-        String dentistfirst=dentist.split(' ').first;
+        // Check if the appointment is within the working hours and after the current time
+        if (appointmentHour >= startHour &&
+            appointmentHour <= endHour &&
+            appointmentTime.isAfter(now)) {
+          // Retrieve appointment data
+          String dentistId = appointment['did'] ?? '';
+          DocumentSnapshot dentistDoc = await FirebaseFirestore.instance
+              .collection('user')
+              .doc(dentistId)
+              .get();
+          String dentist = dentistDoc.get('FullName') ?? '';
+          String dentistfirst = dentist.split(' ').first;
 
-        // Format the appointment information
-        String formattedDate =
-            DateFormat.yMd().add_jm().format(appointmentTime);
-        String formattedAppointment =
-            '\nDentist: Dr.$dentistfirst,\nTime: $formattedDate';
+          // Format the appointment information
+          String formattedDate =
+              DateFormat.yMd().add_jm().format(appointmentTime);
+          String formattedAppointment =
+              '\nDentist: Dr.$dentistfirst,\nTime: $formattedDate';
 
-        return formattedAppointment;
+          return formattedAppointment;
+        }
       }
     }
+
+    return 'No upcoming appointments';
   }
-
-  return 'No upcoming appointments';
-}
-
 
   @override
   Widget build(BuildContext context) {
+     double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return ResponsiveWidget(
       largeScreen: Scaffold(
         appBar: AppBar(
           title: Row(
             children: <Widget>[
-              const SizedBox(width: 40),
-              const Text(
-                'Clinic',
-                style: TextStyle(color: Colors.blue, fontSize: 20),
-              ),
-              const SizedBox(width: 800),
+              Image.asset( 'assets/images/logoh.png', width:width*0.09 , height: height*0.09, ),
+               SizedBox(width: ResponsiveWidget.isLargeScreen(context) ? 800 : 40),
               FutureBuilder<String>(
                 future: getFullName(),
                 builder: (context, snapshot) {
@@ -259,8 +256,7 @@ Future<String> getUpcomingAppointment(String uid) async {
                                 ),
                                 TextButton(
                                   onPressed: () {
-                                    Navigator.pushNamed(
-                                        context, '/update');
+                                    Navigator.pushNamed(context, '/update');
                                   },
                                   child: const Text(
                                     'Update Account',
@@ -308,58 +304,66 @@ Future<String> getUpcomingAppointment(String uid) async {
                               color: Colors.transparent,
                             ),
                           ),
-                          Container(
-                            margin: EdgeInsets.only(
-                                top: 100,
-                                left: MediaQuery.of(context).size.width * 0.3,
-                                right: MediaQuery.of(context).size.width * 0.3),
-                            padding: const EdgeInsets.all(20),
-                            height: 230,
-                            width: 400,
-                            decoration: BoxDecoration(
-                              color: Colors.blue,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                FutureBuilder<String>(
-                                  future: getUpcomingAppointment(
-                                      FirebaseAuth.instance.currentUser!.uid
+                          Padding(
+                            padding: EdgeInsets.only(left: ResponsiveWidget.isLargeScreen(context)? 80:0),
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                  top: 80,
+                                  left: ResponsiveWidget.isLargeScreen(context)
+                                      ? 300
+                                      : 20,
+                                  right: ResponsiveWidget.isLargeScreen(context)
+                                      ? 300
+                                      : 20),
+                                  
+                              padding: const EdgeInsets.all(20),
+                              
+                              height: 200,
+                              width: 400,
+                              decoration: BoxDecoration(
+                                color: Colors.blue,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  FutureBuilder<String>(
+                                    future: getUpcomingAppointment(
+                                        FirebaseAuth.instance.currentUser!.uid),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return SpinKitFadingCircle(
+                                          color: Colors.white,
+                                          size: 20,
+                                        );
+                                      } else if (snapshot.hasError) {
+                                        print('Error: ${snapshot.error}');
+                                        return Text(
+                                          'Error loading appointment',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20,
+                                          ),
+                                        );
+                                      } else {
+                                        return Text(
+                                          'Upcoming Appointment: ${snapshot.data}',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize:
+                                                ResponsiveWidget.isLargeScreen(
+                                                        context)
+                                                    ? 20
+                                                    : 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        );
+                                      }
+                                    },
                                   ),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return SpinKitFadingCircle(
-                                        color: Colors.white,
-                                        size: 20,
-                                      );
-                                    } else if (snapshot.hasError) {
-                                      print('Error: ${snapshot.error}');
-                                      return Text(
-                                        'Error loading appointment',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                        ),
-                                      );
-                                    } else {
-                                      return Text(
-                                        'Upcoming Appointment: ${snapshot.data}',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize:
-                                              ResponsiveWidget.isLargeScreen(
-                                                      context)
-                                                  ? 20
-                                                  : 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      );
-                                    }
-                                  },
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ],
@@ -374,11 +378,16 @@ Future<String> getUpcomingAppointment(String uid) async {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (context) => ChatPage(user: FirebaseAuth.instance.currentUser!, key: Key('')),
-  ),
-);
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChatPage(
+                  key: Key('chatPage'),
+                  user: FirebaseAuth.instance.currentUser!,
+                  otherUserId: 'admin',
+                  isAdmin: false,
+                ),
+              ),
+            );
           },
           child: const Icon(Icons.chat),
           backgroundColor: Colors.blue,

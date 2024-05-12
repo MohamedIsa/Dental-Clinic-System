@@ -1,8 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:senior/aboutus.dart';
 import 'package:senior/admin/appointment_screen.dart';
 import 'package:senior/admin/settings_screen.dart';
-import 'package:senior/patient/completedetails.dart';
+import 'package:senior/registration/completedetails.dart';
 import 'package:senior/patient/dashboard.dart';
 import 'package:senior/patient/home_page.dart';
 import 'package:senior/loading.dart';
@@ -21,6 +22,7 @@ import 'package:senior/registration/signup_screen.dart';
 import 'package:senior/patient/mobile.dart';
 import 'package:senior/admin/treatment_record_screen.dart';
 import 'package:senior/patient/editappointment.dart';
+import 'package:senior/services.dart';
 
 
 void main() async {
@@ -65,6 +67,8 @@ apiKey: 'AIzaSyCuKUvQ9nZXLUF0NqsFDXSdGHwToawxyvQ',
       '/editappointment': (context) => Editappointment(),
       '/updateappointment': (context) => Updateappointment(),
       '/updateppoim': (context) => Updateappomob(),
+      '/aboutus': (context) => const Aboutus(),
+      '/service': (context) =>  Services(),
     },
   ));
 }

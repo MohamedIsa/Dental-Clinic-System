@@ -3,14 +3,12 @@ import 'package:flutter/material.dart';
 class ServiceCard extends StatelessWidget {
   final String title;
   final String imagePath;
-  final Color overlayColor;
   final String description;
 
   const ServiceCard({
     Key? key,
     required this.title,
     required this.imagePath,
-    required this.overlayColor,
     required this.description,
   }) : super(key: key);
 
@@ -39,8 +37,8 @@ class ServiceCard extends StatelessWidget {
         );
       },
       child: Container(
-        width: isMobile ? 120 : 150,
-        height: isMobile ? 160 : 200,
+        width: isMobile ? 100 : 130,
+        height: isMobile ? 140 : 180,
         decoration: BoxDecoration(
           color: Colors.blue,
           borderRadius: BorderRadius.circular(40),

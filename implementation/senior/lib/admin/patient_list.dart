@@ -1,18 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:senior/admin/patient_details_button.dart'; 
-import 'package:senior/admin/patient_model.dart'; 
+import 'package:senior/admin/patient_details_button.dart';
+import 'package:senior/admin/patient_model.dart';
 
-class PatientsDataTable extends StatefulWidget {
-  const PatientsDataTable({Key? key, this.uid});
+class PatientsDataTable extends StatelessWidget {
+  const PatientsDataTable({Key? key});
 
-  final String? uid;
-
-  @override
-  _PatientsDataTableState createState() => _PatientsDataTableState();
-}
-
-class _PatientsDataTableState extends State<PatientsDataTable> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -39,25 +33,29 @@ class _PatientsDataTableState extends State<PatientsDataTable> {
               var patientDoc = patientDocs[index];
               var patientUID = patientDoc['uid'];
               return FutureBuilder(
-                future: FirebaseFirestore.instance.collection('user').doc(patientUID).get(),
+                future: FirebaseFirestore.instance
+                    .collection('user')
+                    .doc(patientUID)
+                    .get(),
                 builder: (context, userSnapshot) {
                   if (userSnapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator();
                   } else if (userSnapshot.hasError) {
                     return Text('Error: ${userSnapshot.error}');
                   }
-          
+
                   var userData = userSnapshot.data!.data();
                   if (userData == null) {
                     return Text('User data not found');
                   }
-          
+
                   // Now you have the user data from the "user" collection
                   return ListTile(
                     title: Text(userData['FullName'] ?? ''),
                     subtitle: Text(userData['CPR'] ?? ''),
                     onTap: () {
                       var patientData = PatientData(
+                        id: patientUID, // Pass patient ID here
                         fullName: userData['FullName'] ?? '',
                         cpr: userData['CPR'] ?? '',
                         birthDay: userData['DOB'] ?? '',
@@ -68,7 +66,10 @@ class _PatientsDataTableState extends State<PatientsDataTable> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PatientDetailsPage(patient: patientData),
+                          builder: (context) => PatientDetailsPage(
+                            patient: patientData,
+                            user: FirebaseAuth.instance.currentUser!,
+                          ),
                         ),
                       );
                     },
