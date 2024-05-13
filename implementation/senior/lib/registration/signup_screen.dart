@@ -51,18 +51,18 @@ class _SignUpState extends State<SignUp> {
                 : Expanded(
                     child: Container(
                       height: height,
-                      color: AppColors.mainBlueColor,
+                        color:  Colors.lightBlue,
                       child: Center(
-                        child: Text(
-                          'Dental Clinic',
-                          style: ralewayStyle.copyWith(
-                            fontSize: 48.0,
-                            color: AppColors.whiteColor,
-                            fontWeight: FontWeight.w800,
-                          ),
+                        child: Container(
+                            child: Image.asset(
+                            'assets/images/logo.png',
+                            width: width*0.4,
+                            height: height*0.4,
+                            ),
                         ),
-                      ),
+                      
                     ),
+                  ),
                   ),
             Expanded(
               child: Container(
@@ -513,7 +513,7 @@ class _SignUpState extends State<SignUp> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Container(
+                               Container(
                               height: 50.0,
                               width: 50.0,
                               decoration: BoxDecoration(
@@ -521,23 +521,9 @@ class _SignUpState extends State<SignUp> {
                                 color: AppColors.mainBlueColor,
                               ),
                               child: IconButton(
-                                onPressed: () {},
-                                icon: SvgPicture.asset(
-                                  AppIcons.facebookIcon,
-                                  color: AppColors.whiteColor,
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 10.0),
-                            Container(
-                              height: 50.0,
-                              width: 50.0,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16.0),
-                                color: AppColors.mainBlueColor,
-                              ),
-                              child: IconButton(
-                                onPressed: () {},
+                                onPressed: () async {
+                                   await signInWithGoogle(context);
+                                },
                                 icon: SvgPicture.asset(
                                   AppIcons.googleIcon,
                                   color: AppColors.whiteColor,
