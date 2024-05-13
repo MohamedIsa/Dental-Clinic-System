@@ -35,7 +35,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (userId != null) {
       // Define a list of collections to check
-      List<String> collectionsToCheck = ['patient', 'admin', 'receptionist'];
+      List<String> collectionsToCheck = ['patient', 'admin', 'receptionist',
+      'dentist'];
 
       // Flag to check if user is found
       bool userFound = false;
@@ -55,6 +56,8 @@ class _LoginScreenState extends State<LoginScreen> {
             Navigator.pushNamed(context, '/admin');
           } else if (collection == 'receptionist') {
             Navigator.pushNamed(context, '/receptionist');
+          } else if (collection=='dentist'){
+            Navigator.pushNamed(context, '/dentist');
           }
           break; // Exit loop once user is found
         }
@@ -234,6 +237,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                           .collection('receptionist')
                                           .doc(userCredential.user!.uid)
                                           .get();
+                                  DocumentSnapshot dentistSnapshot =
+                                      await FirebaseFirestore.instance
+                                          .collection('dentist')
+                                          .doc(userCredential.user!.uid)
+                                          .get();
                                   if (patientSnapshot.exists) {
                                     // User is a patient, redirect to the patient dashboard.
                                     Navigator.pushNamed(context, '/dashboard');
@@ -244,6 +252,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                     // User is a receptionist, redirect to the receptionist page.
                                     Navigator.pushNamed(
                                         context, '/receptionist');
+                                  } else if (dentistSnapshot.exists) {
+                                    // User is a receptionist, redirect to the receptionist page.
+                                    Navigator.pushNamed(
+                                        context, '/dentist');
                                   } else {
                                     showErrorDialog(context, 'User not found');
                                   }

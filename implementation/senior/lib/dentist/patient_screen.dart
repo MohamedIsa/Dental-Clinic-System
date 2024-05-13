@@ -1,12 +1,12 @@
-import 'package:senior/receptionist/header_widget.dart';
-import 'package:senior/receptionist/patient_button_widget.dart';
-import 'package:senior/receptionist/patient_list.dart';
-import 'package:senior/receptionist/side_menu_widget.dart';
+import 'package:senior/dentist/header_widget.dart';
+import 'package:senior/dentist/patient_button_widget.dart';
+import 'package:senior/dentist/patient_list.dart';
+import 'package:senior/dentist/side_menu_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class ReceptionistPatientPage extends StatelessWidget {
+class DentistPatientPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final uid = FirebaseAuth.instance.currentUser?.uid;
@@ -25,7 +25,7 @@ class ReceptionistPatientPage extends StatelessWidget {
                 children: [
                   Expanded(
                     flex: 2,
-                    child: ReceptionistSideMenuWidget(),
+                    child: SideMenuWidget(),
                   ),
                   Expanded(
                     flex: 9,

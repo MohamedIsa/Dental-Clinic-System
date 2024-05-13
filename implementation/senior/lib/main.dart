@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:senior/aboutus.dart';
 import 'package:senior/admin/appointment_screen.dart';
 import 'package:senior/admin/settings_screen.dart';
+import 'package:senior/dentist/dentist_main_screen.dart';
+import 'package:senior/dentist/patient_screen.dart';
+import 'package:senior/dentist/treatment_record_screen.dart';
 import 'package:senior/receptionist/appointment_screen.dart';
 import 'package:senior/receptionist/main_screen.dart';
 import 'package:senior/receptionist/patient_screen.dart';
@@ -18,12 +21,10 @@ import 'package:senior/patient/updateappomob.dart';
 import 'package:senior/registration/login_screen.dart';
 import 'package:senior/admin/main_screen.dart';
 import 'package:senior/admin/patient_screen.dart';
-import 'package:senior/admin/reports_screen.dart';
 import 'package:senior/registration/resetpassword.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:senior/registration/signup_screen.dart';
 import 'package:senior/patient/mobile.dart';
-import 'package:senior/admin/treatment_record_screen.dart';
 import 'package:senior/patient/editappointment.dart';
 import 'package:senior/services.dart';
 
@@ -63,10 +64,12 @@ apiKey: 'AIzaSyCuKUvQ9nZXLUF0NqsFDXSdGHwToawxyvQ',
       '/update': (context) =>  UpdateAccountPage(),
       '/admin': (context) => const MainScreen(),
       '/receptionist': (context) => const ReceptionistMainScreen(),
+      '/dentist': (context) => const DentistMainScreen(),
       '/appointment': (context) => const AppointmentPage(),
       '/appointment_receptionist': (context) => const ReceptionistAppointmentPage(),
       '/patients': (context) => AdminPatientPage(),
-      '/patients_Receptionist': (context) => ReceptionistAdminPatientPage(),
+      '/patients_Receptionist': (context) => ReceptionistPatientPage(),
+      '/patients_dentist': (context) => DentistPatientPage(),
       '/treatment': (context) => TreatmentRecordScreen(),
       '/settings': (context) => const SettingsScreen(),
       '/editappointment': (context) => Editappointment(),
