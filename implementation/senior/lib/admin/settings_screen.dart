@@ -8,84 +8,86 @@ class SettingsPage extends StatelessWidget {
       : super(key: key);
 
   @override
-Widget build(BuildContext context) {
-  return Padding(
-    padding: EdgeInsets.all(16.0),
-    child: Container(
-      
-      child: ListView(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: Colors.white, // Set the border color
-                  width: 1.0, // Set the border width
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(16.0),
+      child: Container(
+        child: ListView(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: Colors.white, // Set the border color
+                    width: 1.0, // Set the border width
+                  ),
                 ),
               ),
-            ),
-            child: ListTile(
-              title: Text(
-                'Staff Management',
-                style: TextStyle(
-                  color: Colors.white, // Set the text color to white
+              child: ListTile(
+                title: Text(
+                  'Staff Management',
+                  style: TextStyle(
+                    color: Colors.white, // Set the text color to white
+                  ),
                 ),
-              ),
-              tileColor: const Color.fromARGB(255, 38, 99, 148), // Set the tile color to blue
-              onTap: () {
-                navigateToSettings('Staff Management');
-              },
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: Colors.white, // Set the border color
-                  width: 1.0, // Set the border width
-                ),
+                tileColor: const Color.fromARGB(
+                    255, 38, 99, 148), // Set the tile color to blue
+                onTap: () {
+                  navigateToSettings('Staff Management');
+                },
               ),
             ),
-            child: ListTile(
-              title: Text(
-                'Dentist Color',
-                style: TextStyle(
-                  color: Colors.white, // Set the text color to white
+            Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: Colors.white, // Set the border color
+                    width: 1.0, // Set the border width
+                  ),
                 ),
               ),
-              tileColor: const Color.fromARGB(255, 38, 99, 148), // Set the tile color to blue
-              onTap: () {
-                navigateToSettings('Dentist Color');
-              },
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: Colors.white, // Set the border color
-                  width: 1.0, // Set the border width
+              child: ListTile(
+                title: Text(
+                  'Dentist Color',
+                  style: TextStyle(
+                    color: Colors.white, // Set the text color to white
+                  ),
                 ),
+                tileColor: const Color.fromARGB(
+                    255, 38, 99, 148), // Set the tile color to blue
+                onTap: () {
+                  navigateToSettings('Dentist Color');
+                },
               ),
             ),
-            child: ListTile(
-              title: Text(
-                'Edit Message',
-                style: TextStyle(
-                  color: Colors.white, // Set the text color to white
+            Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: Colors.white, // Set the border color
+                    width: 1.0, // Set the border width
+                  ),
                 ),
               ),
-              tileColor: const Color.fromARGB(255, 38, 99, 148), // Set the tile color to blue
-              onTap: () {
-                navigateToSettings('Edit Message');
-              },
+              child: ListTile(
+                title: Text(
+                  'Edit Message',
+                  style: TextStyle(
+                    color: Colors.white, // Set the text color to white
+                  ),
+                ),
+                tileColor: const Color.fromARGB(
+                    255, 38, 99, 148), // Set the tile color to blue
+                onTap: () {
+                  navigateToSettings('Edit Message');
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 }
 
 class SettingsScreen extends StatelessWidget {
@@ -97,12 +99,14 @@ class SettingsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Settings',
-          style: TextStyle(color: Colors.white), // Set app bar text color to white
+          style:
+              TextStyle(color: Colors.white), // Set app bar text color to white
         ),
         backgroundColor: Colors.blue, // Set app bar background color to blue
       ),
       body: Container(
-        color: Colors.blue, // Set background color of the SettingsScreen to blue
+        color:
+            Colors.blue, // Set background color of the SettingsScreen to blue
         child: SafeArea(
           child: Row(
             children: [
@@ -206,19 +210,18 @@ class _DentistColorSettingsScreenState
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-             Padding(
-  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-  child: Center(
-    child: Text(
-      'Table of Dentists',
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 20,
-      ),
-    ),
-  ),
-),
-
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                child: Center(
+                  child: Text(
+                    'Table of Dentists',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+              ),
               Expanded(
                 child: Center(
                   child: SingleChildScrollView(
@@ -324,51 +327,52 @@ class _DentistColorSettingsScreenState
           );
         },
       ),
-bottomNavigationBar: BottomAppBar(
-  child: Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(width: 16), // Adjust the width as needed
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.blue, // Set background color of the button
-            borderRadius: BorderRadius.circular(8), // Optional: adjust the border radius
-          ),
-          child: TextButton(
-            onPressed: () {
-              // Handle cancel action
-            },
-            child: Text(
-              'Cancel',
-              style: TextStyle(color: Colors.white), // Set text color to white
-            ),
+      bottomNavigationBar: BottomAppBar(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(width: 16), // Adjust the width as needed
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.blue, // Set background color of the button
+                  borderRadius: BorderRadius.circular(
+                      8), // Optional: adjust the border radius
+                ),
+                child: TextButton(
+                  onPressed: () {
+                    // Handle cancel action
+                  },
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(
+                        color: Colors.white), // Set text color to white
+                  ),
+                ),
+              ),
+              SizedBox(width: 16), // Adjust the width as needed
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.blue, // Set background color of the button
+                  borderRadius: BorderRadius.circular(
+                      8), // Optional: adjust the border radius
+                ),
+                child: TextButton(
+                  onPressed: () {
+                    // Handle update action
+                  },
+                  child: Text(
+                    'Update',
+                    style: TextStyle(
+                        color: Colors.white), // Set text color to white
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-        SizedBox(width: 16), // Adjust the width as needed
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.blue, // Set background color of the button
-            borderRadius: BorderRadius.circular(8), // Optional: adjust the border radius
-          ),
-          child: TextButton(
-            onPressed: () {
-              // Handle update action
-            },
-            child: Text(
-              'Update',
-              style: TextStyle(color: Colors.white), // Set text color to white
-            ),
-          ),
-        ),
-      ],
-    ),
-  ),
-),
-
-
-
+      ),
     );
   }
 }
@@ -697,14 +701,38 @@ class _EditWelcomeMessageScreenState extends State<EditMessageScreen> {
     });
   }
 
-  Future<void> _updateWelcomeMessage(String newMessage) async {
+  Future<void> _updateWelcomeMessage(
+      BuildContext context, String newMessage) async {
     try {
       await FirebaseFirestore.instance
           .collection('welcome')
           .doc('mgAMaIIGgWZTnNl0d32B')
           .set({'message': newMessage});
       print('Welcome message updated successfully!');
-      Navigator.pop(context); // Navigate back to previous screen
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(' '),
+            content: Text(
+              'The Welcome Message Updated Successfully',
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.blue,
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  'OK',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          );
+        },
+      );
     } catch (e) {
       print('Error updating welcome message: $e');
     }
@@ -714,7 +742,13 @@ class _EditWelcomeMessageScreenState extends State<EditMessageScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Welcome Message'),
+        title: Text(
+          'Edit Welcome Message',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.blue,
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -725,19 +759,29 @@ class _EditWelcomeMessageScreenState extends State<EditMessageScreen> {
               controller: _welcomeMessageController,
               decoration: InputDecoration(
                 labelText: 'Welcome Message',
+                labelStyle: TextStyle(color: Colors.white),
               ),
+              style: TextStyle(color: Colors.white),
               maxLines: null, // Allow multiline input
             ),
             SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
-                _updateWelcomeMessage(_welcomeMessageController.text);
+                _updateWelcomeMessage(context,
+                    _welcomeMessageController.text); // Pass context here
               },
-              child: Text('Update Welcome Message'),
+              child: Text(
+                'Update Welcome Message',
+                style: TextStyle(color: Colors.blue),
+              ),
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(Colors.white),
+              ),
             ),
           ],
         ),
       ),
+      backgroundColor: Colors.blue,
     );
   }
 }
