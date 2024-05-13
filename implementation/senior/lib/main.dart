@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:senior/aboutus.dart';
 import 'package:senior/admin/appointment_screen.dart';
 import 'package:senior/admin/settings_screen.dart';
+import 'package:senior/receptionist/appointment_screen.dart';
+import 'package:senior/receptionist/main_screen.dart';
+import 'package:senior/receptionist/patient_screen.dart';
 import 'package:senior/registration/completedetails.dart';
 import 'package:senior/patient/dashboard.dart';
 import 'package:senior/patient/home_page.dart';
@@ -59,10 +62,12 @@ apiKey: 'AIzaSyCuKUvQ9nZXLUF0NqsFDXSdGHwToawxyvQ',
       '/bookingm': (context) => bookingm(),
       '/update': (context) =>  UpdateAccountPage(),
       '/admin': (context) => const MainScreen(),
+      '/receptionist': (context) => const ReceptionistMainScreen(),
       '/appointment': (context) => const AppointmentPage(),
+      '/appointment_receptionist': (context) => const ReceptionistAppointmentPage(),
       '/patients': (context) => AdminPatientPage(),
+      '/patients_Receptionist': (context) => ReceptionistAdminPatientPage(),
       '/treatment': (context) => TreatmentRecordScreen(),
-      '/reports': (context) => const ReportsScreen(),
       '/settings': (context) => const SettingsScreen(),
       '/editappointment': (context) => Editappointment(),
       '/updateappointment': (context) => Updateappointment(),
