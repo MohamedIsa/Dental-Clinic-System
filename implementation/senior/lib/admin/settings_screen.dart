@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class SettingsPage extends StatelessWidget {
   final Function(String) navigateToSettings;
@@ -164,19 +165,19 @@ class DentistColorSettingsScreen extends StatefulWidget {
 
 class _DentistColorSettingsScreenState
     extends State<DentistColorSettingsScreen> {
-  String selectedColor = '';
-  List<String> famousColors = [
-    'Red',
-    'Green',
-    'Blue',
-    'Yellow',
-    'Orange',
-    'Purple',
-    'Pink',
-    'Brown',
-    'White',
-    'Gray'
-  ];
+List<String> famousColors = [
+  'Red1',
+  'Green1',
+  'Blue1',
+  'Yellow1',
+  'Orange1',
+  'Purple1',
+  'Pink1',
+  'Brown1',
+  'White1',
+  'Gray1'
+];
+
 
   Map<String, String> userColors = {}; // Store color values for each user
 
@@ -298,24 +299,54 @@ class _DentistColorSettingsScreenState
                             ),
                           ),
                           DataCell(
-                            DropdownButton<String>(
-                              value: userColors[dentistUID] ??
-                                  famousColors[
-                                      0], // Default to the first color if no value is set
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  userColors[dentistUID] =
-                                      newValue!; // Update color value in userColors map
-                                });
-                              },
-                              items: famousColors.map<DropdownMenuItem<String>>(
-                                  (String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                            ),
+ TextButton(
+  onPressed: () {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        Color selectedColor = userColors[dentistUID] != null
+            ? Color(int.parse(userColors[dentistUID]!))
+            : Colors.blue; // Default color
+
+        return AlertDialog(
+          title: Text('Select a color'),
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              pickerColor: selectedColor,
+              onColorChanged: (Color color) {
+                setState(() {
+                  selectedColor = color;
+                });
+              },
+              showLabel: true, // Show color labels
+              pickerAreaHeightPercent: 0.8, // Adjust picker area height
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  userColors[dentistUID] =
+                      selectedColor.value.toString(); // Update color value in userColors map
+                });
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  },
+  child: Text('Choose Color'),
+),
+
                           ),
                         ]);
                       }).toList(),
@@ -360,7 +391,23 @@ class _DentistColorSettingsScreenState
                 ),
                 child: TextButton(
                   onPressed: () {
-                    // Handle update action
+                    () async {
+                      // Iterate through userColors map to update colors in Firebase
+                      userColors.forEach((dentistUID, color) async {
+                        try {
+                          // Update color for the dentist in Firebase
+                          await FirebaseFirestore.instance
+                              .collection('dentist')
+                              .doc(dentistUID)
+                              .update({'color': color});
+                          print(
+                              'Color updated successfully for dentist $dentistUID');
+                        } catch (e) {
+                          print(
+                              'Error updating color for dentist $dentistUID: $e');
+                        }
+                      });
+                    };
                   },
                   child: Text(
                     'Update',
@@ -560,18 +607,26 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
 
                         // Determine the role collection based on selectedRole
                         String roleCollection;
-                        if (selectedRole == 'Admin') {
-                          roleCollection = 'admin';
-                        } else if (selectedRole == 'Dentist') {
+                        Map<String, dynamic> userData = {
+                          'uid': userId
+                        }; // Data to add in each role collection
+
+                        if (selectedRole == 'Dentist') {
                           roleCollection = 'dentist';
+                          userData['color'] =
+                              'blue'; // Add color if role is Dentist
+                        } else if (selectedRole == 'Admin') {
+                          roleCollection = 'admin';
                         } else {
                           roleCollection = 'receptionist';
                         }
 
-                        // Add user ID to the respective role collection
-                        _firestore.collection(roleCollection).doc(userId).set({
-                          'uid': userId,
-                        }).then((_) {
+                        // Add user ID and color (if Dentist) to the respective role collection
+                        _firestore
+                            .collection(roleCollection)
+                            .doc(userId)
+                            .set(userData)
+                            .then((_) {
                           Navigator.of(context)
                               .pop(); // Close the dialog after saving
                         }).catchError((error) {
