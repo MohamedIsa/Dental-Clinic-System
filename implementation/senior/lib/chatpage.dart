@@ -128,7 +128,7 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String senderName = isMe ? 'You' : 'admin'; 
+    String senderName = isMe ? 'You' : 'Patient'; 
     if (sender == 'admin') {
       senderName = 'Admin'; 
     }
