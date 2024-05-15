@@ -34,23 +34,42 @@ class _LoginScreenState extends State<LoginScreen> {
     final String? userId = prefs.getString('userId');
 
     if (userId != null) {
-      DocumentSnapshot patientSnapshot = await FirebaseFirestore.instance.collection('patient').doc(userId).get();
-      if (patientSnapshot.exists) {
-        // User is a patient, redirect to the patient dashboard.
-        Navigator.pushNamed(context, '/dashboard');
-      } else {
-        // Check if the user exists in the admin collection.
-        DocumentSnapshot adminSnapshot = await FirebaseFirestore.instance.collection('admin').doc(userId).get();
-        if (adminSnapshot.exists) {
-          // User is an admin, redirect to the admin page.
-          Navigator.pushNamed(context, '/admin');
-        } else {
-          showErrorDialog(context, 'User not found in patient or admin collection');
-        
+      // Define a list of collections to check
+      List<String> collectionsToCheck = ['patient', 'admin', 'receptionist',
+      'dentist'];
+
+      // Flag to check if user is found
+      bool userFound = false;
+
+      // Iterate over each collection
+      for (String collection in collectionsToCheck) {
+        DocumentSnapshot snapshot = await FirebaseFirestore.instance
+            .collection(collection)
+            .doc(userId)
+            .get();
+        if (snapshot.exists) {
+          // User found, navigate to respective dashboard
+          userFound = true;
+          if (collection == 'patient') {
+            Navigator.pushNamed(context, '/dashboard');
+          } else if (collection == 'admin') {
+            Navigator.pushNamed(context, '/admin');
+          } else if (collection == 'receptionist') {
+            Navigator.pushNamed(context, '/receptionist');
+          } else if (collection=='dentist'){
+            Navigator.pushNamed(context, '/dentist');
+          }
+          break; // Exit loop once user is found
+        }
+      }
+
+      // If user not found, show error dialog
+      if (!userFound) {
+        showErrorDialog(context, 'User not found');
+      }
     }
   }
-    }
-  }
+
   // Method to persist user ID locally
   Future<void> persistUser(String userId) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -75,19 +94,18 @@ class _LoginScreenState extends State<LoginScreen> {
                 : Expanded(
                     child: Container(
                       height: height,
-                        color:  Colors.lightBlue,
+                      color: Colors.lightBlue,
                       child: Center(
                         child: Container(
-                            child: Image.asset(
+                          child: Image.asset(
                             'assets/images/logo.png',
-                            width: width*0.4,
-                            height: height*0.4,
-                            ),
+                            width: width * 0.4,
+                            height: height * 0.4,
+                          ),
                         ),
-                      
+                      ),
                     ),
                   ),
-            ),
             Expanded(
               child: Container(
                 height: height,
@@ -156,7 +174,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: ReusableTextField('Enter email',
                             AppIcons.emailIcon, false, _emailTextController),
                       ),
-                      SizedBox(height:20),
+                      SizedBox(height: 20),
                       Padding(
                         padding: const EdgeInsets.only(left: 16.0),
                         child: Text(
@@ -170,12 +188,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 6.0),
                       Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16.0),
-                          color: AppColors.whiteColor,
-                        ),
-                        child: ReusableTextField('Enter password', AppIcons.lockIcon, true, _passwordTextController)
-                      ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16.0),
+                            color: AppColors.whiteColor,
+                          ),
+                          child: ReusableTextField(
+                              'Enter password',
+                              AppIcons.lockIcon,
+                              true,
+                              _passwordTextController)),
                       SizedBox(height: height * 0.03),
                       Container(
                         height: 50.0,
@@ -189,7 +210,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: InkWell(
                             onTap: () async {
                               try {
-                                UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                                UserCredential userCredential =
+                                    await FirebaseAuth.instance
+                                        .signInWithEmailAndPassword(
                                   email: _emailTextController.text,
                                   password: _passwordTextController.text,
                                 );
@@ -199,30 +222,58 @@ class _LoginScreenState extends State<LoginScreen> {
                                   await persistUser(userCredential.user!.uid);
 
                                   // Check if the user exists in the patient collection.
-                                  DocumentSnapshot patientSnapshot = await FirebaseFirestore.instance.collection('patient').doc(userCredential.user!.uid).get();
+                                  DocumentSnapshot patientSnapshot =
+                                      await FirebaseFirestore.instance
+                                          .collection('patient')
+                                          .doc(userCredential.user!.uid)
+                                          .get();
+                                  DocumentSnapshot adminSnapshot =
+                                      await FirebaseFirestore.instance
+                                          .collection('admin')
+                                          .doc(userCredential.user!.uid)
+                                          .get();
+                                  DocumentSnapshot receptionistSnapshot =
+                                      await FirebaseFirestore.instance
+                                          .collection('receptionist')
+                                          .doc(userCredential.user!.uid)
+                                          .get();
+                                  DocumentSnapshot dentistSnapshot =
+                                      await FirebaseFirestore.instance
+                                          .collection('dentist')
+                                          .doc(userCredential.user!.uid)
+                                          .get();
                                   if (patientSnapshot.exists) {
                                     // User is a patient, redirect to the patient dashboard.
                                     Navigator.pushNamed(context, '/dashboard');
+                                  } else if (adminSnapshot.exists) {
+                                    // User is an admin, redirect to the admin page.
+                                    Navigator.pushNamed(context, '/admin');
+                                  } else if (receptionistSnapshot.exists) {
+                                    // User is a receptionist, redirect to the receptionist page.
+                                    Navigator.pushNamed(
+                                        context, '/receptionist');
+                                  } else if (dentistSnapshot.exists) {
+                                    // User is a receptionist, redirect to the receptionist page.
+                                    Navigator.pushNamed(
+                                        context, '/dentist');
                                   } else {
-                                    // Check if the user exists in the admin collection.
-                                    DocumentSnapshot adminSnapshot = await FirebaseFirestore.instance.collection('admin').doc(userCredential.user!.uid).get();
-                                    if (adminSnapshot.exists) {
-                                      // User is an admin, redirect to the admin page.
-                                      Navigator.pushNamed(context, '/admin');
-                                    } else {
-                                      showErrorDialog(context, 'User not found in patient or admin collection');
-                                    }
+                                    showErrorDialog(context, 'User not found');
                                   }
                                 }
                               } catch (e) {
-                                if (_emailTextController.text == '' || _passwordTextController.text == '') {
-                                  showErrorDialog(context, 'Please fill all the fields');
-                                } else if (_emailTextController.text != FirebaseAuth.instance.currentUser!.email) {
+                                if (_emailTextController.text == '' ||
+                                    _passwordTextController.text == '') {
+                                  showErrorDialog(
+                                      context, 'Please fill all the fields');
+                                } else if (_emailTextController.text !=
+                                    FirebaseAuth.instance.currentUser!.email) {
                                   showErrorDialog(context, 'Invalid email');
-                                } else if (_passwordTextController.text != FirebaseAuth.instance.currentUser!.email) {
+                                } else if (_passwordTextController.text !=
+                                    FirebaseAuth.instance.currentUser!.email) {
                                   showErrorDialog(context, 'Invalid password');
                                 } else {
-                                  showErrorDialog(context, 'Unknown error occurred. Please try again.');
+                                  showErrorDialog(context,
+                                      'Unknown error occurred. Please try again.');
                                 }
                               }
                             },
@@ -326,7 +377,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               child: IconButton(
                                 onPressed: () async {
-                                   await signInWithGoogle(context);
+                                  await signInWithGoogle(context);
                                 },
                                 icon: SvgPicture.asset(
                                   AppIcons.googleIcon,

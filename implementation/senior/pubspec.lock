@@ -222,6 +222,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_colorpicker:
+    dependency: "direct main"
+    description:
+      name: flutter_colorpicker
+      sha256: "458a6ed8ea480eb16ff892aedb4b7092b2804affd7e046591fb03127e8d8ef8b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.3"
   flutter_facebook_auth:
     dependency: "direct main"
     description:
@@ -282,10 +290,17 @@ packages:
     dependency: transitive
     description:
       name: flutter_secure_storage_platform_interface
+secondAdmin
+      sha256: cf91ad32ce5adef6fba4d736a542baca9daf3beac4db2d04be350b87f69ac4a8
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.2"
+
       sha256: "301f67ee9b87f04aef227f57f13f126fa7b13543c8e7a93f25c5d2d534c28a4a"
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
+ main
   flutter_secure_storage_web:
     dependency: transitive
     description:
@@ -697,26 +712,47 @@ packages:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_calendar
+ secondAdmin
+      sha256: bc96dbc3089d4172ef259a3ae3f254bdb07e71ef6ce3f8a3532a9b575490e45e
+      url: "https://pub.dev"
+    source: hosted
+    version: "25.2.4"
+
       sha256: "286ff7a451cebc8f21cc0fc7d0032040957851a2535616178bf54e8e488a833f"
       url: "https://pub.dev"
     source: hosted
     version: "25.2.3"
+ main
   syncfusion_flutter_core:
     dependency: transitive
     description:
       name: syncfusion_flutter_core
+ secondAdmin
+      sha256: "9e8bac2367d03bd902844f59e866c0e7b1e10b0b8fa5a6a926c0d8ae8c344533"
+      url: "https://pub.dev"
+    source: hosted
+    version: "25.2.4"
+
       sha256: "6c534bb282e1429ac082354ace1b7c6d4496a258e62c948b7ca2b52acca8a514"
       url: "https://pub.dev"
     source: hosted
     version: "25.2.3"
+ main
   syncfusion_flutter_datepicker:
     dependency: transitive
     description:
       name: syncfusion_flutter_datepicker
+ secondAdmin
+      sha256: "88ef2e85f5ccc7cb521c5784e646b5c5d4aecf2d9373e543719a14d7bcfaae4a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "25.2.4"
+
       sha256: "50c8d4b5029313a1774f85a71a49319a840dc8fb12096ae041b20da4fbb9e58a"
       url: "https://pub.dev"
     source: hosted
     version: "25.2.3"
+ main
   table_calendar:
     dependency: "direct main"
     description:
@@ -745,10 +781,10 @@ packages:
     dependency: transitive
     description:
       name: timezone
-      sha256: "1cfd8ddc2d1cfd836bc93e67b9be88c3adaeca6f40a00ca999104c30693cdca0"
+      sha256: a6ccda4a69a442098b602c44e61a1e2b4bf6f5516e875bbf0f427d5df14745d5
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.2"
+    version: "0.9.3"
   typed_data:
     dependency: transitive
     description:
