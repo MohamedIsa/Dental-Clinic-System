@@ -51,18 +51,17 @@ class _SignUpState extends State<SignUp> {
                 : Expanded(
                     child: Container(
                       height: height,
-                        color:  Colors.lightBlue,
+                      color: Colors.lightBlue,
                       child: Center(
                         child: Container(
-                            child: Image.asset(
+                          child: Image.asset(
                             'assets/images/logo.png',
-                            width: width*0.4,
-                            height: height*0.4,
-                            ),
+                            width: width * 0.4,
+                            height: height * 0.4,
+                          ),
                         ),
-                      
+                      ),
                     ),
-                  ),
                   ),
             Expanded(
               child: Container(
@@ -233,8 +232,8 @@ class _SignUpState extends State<SignUp> {
                             borderRadius: BorderRadius.circular(16.0),
                             color: AppColors.whiteColor,
                           ),
-                          child: ReusableTextField('Ente Date of Birth', AppIcons.birthIcon,
-                              false,_dobTextController)),
+                          child: ReusableTextField('Ente Date of Birth',
+                              AppIcons.birthIcon, false, _dobTextController)),
                       SizedBox(height: height * 0.014),
                       Padding(
                         padding: const EdgeInsets.only(left: 16.0),
@@ -255,8 +254,8 @@ class _SignUpState extends State<SignUp> {
                           borderRadius: BorderRadius.circular(16.0),
                           color: AppColors.whiteColor,
                         ),
-                        child: ReusableTextField('Enter CPR',
-                            AppIcons.idicon, false, _cprTextController),
+                        child: ReusableTextField('Enter CPR', AppIcons.idicon,
+                            false, _cprTextController),
                       ),
                       SizedBox(height: height * 0.014),
                       Padding(
@@ -322,7 +321,6 @@ class _SignUpState extends State<SignUp> {
                                   String password =
                                       _passwordTextController.text;
                                   String Phone = _PhoneTextController.text;
-                                
 
                                   // Check if email is valid
                                   if (!RegExp(emailPattern).hasMatch(email)) {
@@ -443,7 +441,8 @@ class _SignUpState extends State<SignUp> {
                                         .set({
                                       'uid': uid,
                                     });
-
+                                    showErrorDialog(context,
+                                        'Account created successfully');
                                     Navigator.of(context).push(
                                       MaterialPageRoute(
                                         builder: (context) => WelcomePage(),
@@ -513,7 +512,7 @@ class _SignUpState extends State<SignUp> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                               Container(
+                            Container(
                               height: 50.0,
                               width: 50.0,
                               decoration: BoxDecoration(
@@ -522,7 +521,7 @@ class _SignUpState extends State<SignUp> {
                               ),
                               child: IconButton(
                                 onPressed: () async {
-                                   await signInWithGoogle(context);
+                                  await signInWithGoogle(context);
                                 },
                                 icon: SvgPicture.asset(
                                   AppIcons.googleIcon,
