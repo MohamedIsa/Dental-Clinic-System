@@ -55,8 +55,6 @@ dependencies:
   flex_color_picker: ^3.4.1
   flutter_material_color_picker: ^1.2.0
 
-
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
