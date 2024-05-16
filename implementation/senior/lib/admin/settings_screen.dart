@@ -165,19 +165,6 @@ class DentistColorSettingsScreen extends StatefulWidget {
 
 class _DentistColorSettingsScreenState
     extends State<DentistColorSettingsScreen> {
-  List<String> famousColors = [
-    'Red1',
-    'Green1',
-    'Blue1',
-    'Yellow1',
-    'Orange1',
-    'Purple1',
-    'Pink1',
-    'Brown1',
-    'White1',
-    'Gray1'
-  ];
-
   Map<String, String> userColors = {}; // Store color values for each user
 
   @override
@@ -312,12 +299,13 @@ class _DentistColorSettingsScreenState
                                     return AlertDialog(
                                       title: Text('Select a color'),
                                       content: SingleChildScrollView(
-                                        child: ColorPicker(onColorChanged: (Color color) {
-                                          setState(() {
-                                            selectedColor = color;
-                                          });
-                                        },
-                                        color: selectedColor,
+                                        child: ColorPicker(
+                                          onColorChanged: (Color color) {
+                                            setState(() {
+                                              selectedColor = color;
+                                            });
+                                          },
+                                          color: selectedColor,
                                         ),
                                       ),
                                       actions: <Widget>[
@@ -330,9 +318,9 @@ class _DentistColorSettingsScreenState
                                         TextButton(
                                           onPressed: () {
                                             setState(() {
-                                              userColors[dentistUID] = selectedColor
-                                                  .value
-                                                  .toString(); // Update color value in userColors map
+                                              userColors[dentistUID] =
+                                                  selectedColor.value
+                                                      .toString();
                                             });
                                             Navigator.of(context).pop();
                                           },
@@ -388,24 +376,22 @@ class _DentistColorSettingsScreenState
                       8), // Optional: adjust the border radius
                 ),
                 child: TextButton(
-                  onPressed: () {
-                    () async {
-                      // Iterate through userColors map to update colors in Firebase
-                      userColors.forEach((dentistUID, color) async {
-                        try {
-                          // Update color for the dentist in Firebase
-                          await FirebaseFirestore.instance
-                              .collection('dentist')
-                              .doc(dentistUID)
-                              .update({'color': color});
-                          print(
-                              'Color updated successfully for dentist $dentistUID');
-                        } catch (e) {
-                          print(
-                              'Error updating color for dentist $dentistUID: $e');
-                        }
-                      });
-                    };
+                  onPressed: () async {
+                    // Iterate through userColors map to update colors in Firebase
+                    userColors.forEach((dentistUID, color) async {
+                      try {
+                        // Update color for the dentist in Firebase
+                        await FirebaseFirestore.instance
+                            .collection('dentist')
+                            .doc(dentistUID)
+                            .update({'color': color});
+                        print(
+                            'Color updated successfully for dentist $dentistUID');
+                      } catch (e) {
+                        print(
+                            'Error updating color for dentist $dentistUID: $e');
+                      }
+                    });
                   },
                   child: Text(
                     'Update',

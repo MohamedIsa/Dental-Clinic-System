@@ -53,6 +53,7 @@ dependencies:
   table_calendar: ^3.1.1
   firebase_messaging: ^14.9.2
   flex_color_picker: ^3.4.1
+  image_picker: ^1.1.1
 
 
 
