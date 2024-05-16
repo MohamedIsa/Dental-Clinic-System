@@ -38,6 +38,9 @@ class PatientDetailsPage extends StatelessWidget {
                 user: user,
                 otherUserId: patient.id, 
                 isAdmin: false, 
+                isReceptionist: true,
+                isPatient: false,
+                conversationId: patient.id,
               ),
             ),
           );

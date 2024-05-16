@@ -84,6 +84,9 @@ class ReceptionistMainScreen extends StatelessWidget {
                   ),
                   onPressed: () {
                     FirebaseAuth.instance.signOut();
+                    Navigator.of(context).pushNamed(
+                      '/login'
+                    );
                   },
                 ),
               ],

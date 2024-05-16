@@ -300,12 +300,19 @@ class _DentistColorSettingsScreenState
                                       title: Text('Select a color'),
                                       content: SingleChildScrollView(
                                         child: ColorPicker(
+ secondAdmin
+
+                                          borderColor: selectedColor,
+ main
                                           onColorChanged: (Color color) {
                                             setState(() {
                                               selectedColor = color;
                                             });
                                           },
+ secondAdmin
                                           color: selectedColor,
+
+ main
                                         ),
                                       ),
                                       actions: <Widget>[

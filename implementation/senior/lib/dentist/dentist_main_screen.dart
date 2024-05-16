@@ -71,6 +71,9 @@ class DentistMainScreen extends StatelessWidget {
                   ),
                   onPressed: () {
                     FirebaseAuth.instance.signOut();
+                    Navigator.of(context).pushNamed(
+                      '/login'
+                    );
                   },
                 ),
               ],
