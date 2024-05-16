@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
+import 'package:intl/intl.dart';
 import 'package:senior/dentist/add_treatment.dart';
 import 'package:senior/dentist/edit_treatment.dart';
 import 'package:senior/dentist/treatment_record_model.dart';
@@ -9,21 +11,53 @@ class TreatmentRecordPage extends StatefulWidget {
 }
 
 class _TreatmentRecordPageState extends State<TreatmentRecordPage> {
-  // Dummy data for treatment records
-  List<TreatmentRecord> treatmentRecords = [
-    TreatmentRecord(
-      date: '2024-04-27',
-      time: '10:00',
-      patientname: 'Ali Mohamed',
-      CPR: '020709773',
-      dentist: 'Dr. Fatima Ali',
-      treatmentType: 'Tooth Extraction',
-      notes: 'Patient experienced mild discomfort during the procedure.',
-      attachments: [], // Initialize attachments list
-    ),
-    // Add more treatment records here...
-  ];
+  // Firestore instance
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  // List to store treatment records
+  List<TreatmentRecord> treatmentRecords = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Call method to fetch treatment records from Firestore
+    fetchTreatmentRecords();
+  }
+
+  // Method to fetch treatment records from Firestore
+ void fetchTreatmentRecords() async {
+  try {
+    // Get the treatment collection
+    QuerySnapshot querySnapshot = await _firestore.collection('treatment').get();
+
+    // Iterate through the documents
+    for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+      // Convert Timestamp to DateTime
+      DateTime date = doc['date'].toDate(); // Convert timestamp to DateTime
+      // Format the date to display just the date portion
+      String formattedDate = DateFormat('dd-MM-yyyy').format(date);
+      // Create a TreatmentRecord object from the document data
+      TreatmentRecord record = TreatmentRecord(
+        date: formattedDate,
+        time: doc['time'],
+        patientname: doc['patientname'],
+        CPR: doc['CPR'],
+        dentist: doc['dentist'],
+        treatmentType: doc['treatmentType'],
+        notes: doc['note'],
+        attachments: [], // Initialize attachments list
+      );
+      // Add the record to the list
+      treatmentRecords.add(record);
+    }
+
+    // Update the state to rebuild the UI with the fetched data
+    setState(() {});
+  } catch (e) {
+    // Handle errors
+    print("Error fetching treatment records: $e");
+  }
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(

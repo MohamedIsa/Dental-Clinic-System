@@ -53,7 +53,13 @@ dependencies:
   table_calendar: ^3.1.1
   firebase_messaging: ^14.9.2
   flex_color_picker: ^3.4.1
+ secondAdmin
+  image_picker: ^1.1.1
+
+
+
   flutter_material_color_picker: ^1.2.0
+ main
 
 dev_dependencies:
   flutter_test:
