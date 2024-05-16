@@ -13,6 +13,18 @@ class WelcomePage extends StatefulWidget {
 
 class _WelcomePageState extends State<WelcomePage> {
   int _selectedIndex = 0;
+  Future<List<String>> getAllAdminUIDs() async {
+    try {
+      QuerySnapshot querySnapshot =
+          await FirebaseFirestore.instance.collection('admin').get();
+
+      List<String> adminUIDs = querySnapshot.docs.map((doc) => doc.id).toList();
+      return adminUIDs;
+    } catch (e) {
+      print('Error retrieving admin UIDs: $e');
+      return []; // Return an empty list if there's an error
+    }
+  }
 
   Future<String> getFullName() async {
     User? user = FirebaseAuth.instance.currentUser;
@@ -44,7 +56,17 @@ class _WelcomePageState extends State<WelcomePage> {
       for (DocumentSnapshot appointment in querySnapshot.docs) {
         DateTime appointmentDate =
             (appointment.get('date') as Timestamp).toDate();
-        int appointmentHour = appointment['hour'] ?? 0;
+
+        dynamic hourValue = appointment['hour'];
+        int appointmentHour;
+        if (hourValue is int) {
+          appointmentHour = hourValue;
+        } else if (hourValue is String) {
+          appointmentHour = int.parse(hourValue);
+        } else {
+          // Handle the case where hourValue is neither int nor String
+          appointmentHour = 0; // or any default value you prefer
+        }
 
         // Calculate the appointment time in DateTime format
         DateTime appointmentTime = DateTime(
@@ -66,12 +88,10 @@ class _WelcomePageState extends State<WelcomePage> {
               .get();
           String dentist = dentistDoc.get('FullName') ?? '';
           String dentistfirst = dentist.split(' ').first;
-
-          // Format the appointment information
           String formattedDate =
-              DateFormat.yMd().add_jm().format(appointmentTime);
+              DateFormat('yyyy-MM-dd').format(appointmentDate);
           String formattedAppointment =
-              '\nDentist: Dr.$dentistfirst,\nTime: $formattedDate';
+              '\nDate: $formattedDate\nDentist: Dr.$dentistfirst,\nTime: ${appointmentHour.toString()}:00';
 
           return formattedAppointment;
         }
@@ -83,15 +103,20 @@ class _WelcomePageState extends State<WelcomePage> {
 
   @override
   Widget build(BuildContext context) {
-     double width = MediaQuery.of(context).size.width;
+    double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return ResponsiveWidget(
       largeScreen: Scaffold(
         appBar: AppBar(
           title: Row(
             children: <Widget>[
-              Image.asset( 'assets/images/logoh.png', width:width*0.09 , height: height*0.09, ),
-               SizedBox(width: ResponsiveWidget.isLargeScreen(context) ? 800 : 40),
+              Image.asset(
+                'assets/images/logoh.png',
+                width: width * 0.09,
+                height: height * 0.09,
+              ),
+              SizedBox(
+                  width: ResponsiveWidget.isLargeScreen(context) ? 800 : 40),
               FutureBuilder<String>(
                 future: getFullName(),
                 builder: (context, snapshot) {
@@ -305,7 +330,10 @@ class _WelcomePageState extends State<WelcomePage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: ResponsiveWidget.isLargeScreen(context)? 80:0),
+                            padding: EdgeInsets.only(
+                                left: ResponsiveWidget.isLargeScreen(context)
+                                    ? 80
+                                    : 0),
                             child: Container(
                               margin: EdgeInsets.only(
                                   top: 80,
@@ -315,9 +343,7 @@ class _WelcomePageState extends State<WelcomePage> {
                                   right: ResponsiveWidget.isLargeScreen(context)
                                       ? 300
                                       : 20),
-                                  
                               padding: const EdgeInsets.all(20),
-                              
                               height: 200,
                               width: 400,
                               decoration: BoxDecoration(
@@ -325,7 +351,8 @@ class _WelcomePageState extends State<WelcomePage> {
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   FutureBuilder<String>(
                                     future: getUpcomingAppointment(
@@ -376,15 +403,19 @@ class _WelcomePageState extends State<WelcomePage> {
           },
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
+          onPressed: () async {
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => ChatPage(
                   key: Key('chatPage'),
                   user: FirebaseAuth.instance.currentUser!,
-                  otherUserId: 'admin',
+                  otherUserId: '', // Use admin UID as the other user ID
                   isAdmin: false,
+                  isReceptionist: false,
+                  isPatient: true,
+                  conversationId: FirebaseAuth.instance.currentUser!
+                      .uid, // Use current user's ID as the conversation ID
                 ),
               ),
             );

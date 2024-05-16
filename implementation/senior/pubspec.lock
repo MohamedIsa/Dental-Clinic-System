@@ -217,19 +217,27 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.8.5"
+  flex_color_picker:
+    dependency: "direct main"
+    description:
+      name: flex_color_picker
+      sha256: "5c846437069fb7afdd7ade6bf37e628a71d2ab0787095ddcb1253bf9345d5f3a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.4.1"
+  flex_seed_scheme:
+    dependency: transitive
+    description:
+      name: flex_seed_scheme
+      sha256: "4cee2f1d07259f77e8b36f4ec5f35499d19e74e17c7dce5b819554914082bc01"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.5.0"
   flutter:
     dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_colorpicker:
-    dependency: "direct main"
-    description:
-      name: flutter_colorpicker
-      sha256: "458a6ed8ea480eb16ff892aedb4b7092b2804affd7e046591fb03127e8d8ef8b"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.3"
   flutter_facebook_auth:
     dependency: "direct main"
     description:
@@ -262,6 +270,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
+  flutter_material_color_picker:
+    dependency: "direct main"
+    description:
+      name: flutter_material_color_picker
+      sha256: ca1e7749d228c9155ea24bce98e647cdbffa350e6f334f6c001f841cd3d9c987
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   flutter_secure_storage:
     dependency: transitive
     description:
@@ -290,17 +306,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_secure_storage_platform_interface
-secondAdmin
       sha256: cf91ad32ce5adef6fba4d736a542baca9daf3beac4db2d04be350b87f69ac4a8
       url: "https://pub.dev"
     source: hosted
     version: "1.1.2"
-
-      sha256: "301f67ee9b87f04aef227f57f13f126fa7b13543c8e7a93f25c5d2d534c28a4a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.1"
- main
   flutter_secure_storage_web:
     dependency: transitive
     description:
@@ -712,47 +721,26 @@ secondAdmin
     dependency: "direct main"
     description:
       name: syncfusion_flutter_calendar
- secondAdmin
       sha256: bc96dbc3089d4172ef259a3ae3f254bdb07e71ef6ce3f8a3532a9b575490e45e
       url: "https://pub.dev"
     source: hosted
     version: "25.2.4"
-
-      sha256: "286ff7a451cebc8f21cc0fc7d0032040957851a2535616178bf54e8e488a833f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "25.2.3"
- main
   syncfusion_flutter_core:
     dependency: transitive
     description:
       name: syncfusion_flutter_core
- secondAdmin
       sha256: "9e8bac2367d03bd902844f59e866c0e7b1e10b0b8fa5a6a926c0d8ae8c344533"
       url: "https://pub.dev"
     source: hosted
     version: "25.2.4"
-
-      sha256: "6c534bb282e1429ac082354ace1b7c6d4496a258e62c948b7ca2b52acca8a514"
-      url: "https://pub.dev"
-    source: hosted
-    version: "25.2.3"
- main
   syncfusion_flutter_datepicker:
     dependency: transitive
     description:
       name: syncfusion_flutter_datepicker
- secondAdmin
       sha256: "88ef2e85f5ccc7cb521c5784e646b5c5d4aecf2d9373e543719a14d7bcfaae4a"
       url: "https://pub.dev"
     source: hosted
     version: "25.2.4"
-
-      sha256: "50c8d4b5029313a1774f85a71a49319a840dc8fb12096ae041b20da4fbb9e58a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "25.2.3"
- main
   table_calendar:
     dependency: "direct main"
     description:
@@ -861,10 +849,10 @@ secondAdmin
     dependency: transitive
     description:
       name: win32
-      sha256: "0eaf06e3446824099858367950a813472af675116bf63f008a4c2a75ae13e9cb"
+      sha256: a79dbe579cb51ecd6d30b17e0cae4e0ea15e2c0e66f69ad4198f22a6789e94f4
       url: "https://pub.dev"
     source: hosted
-    version: "5.5.0"
+    version: "5.5.1"
   xdg_directories:
     dependency: transitive
     description:
@@ -882,5 +870,5 @@ secondAdmin
     source: hosted
     version: "6.5.0"
 sdks:
-  dart: ">=3.4.0-282.1.beta <4.0.0"
+  dart: ">=3.4.0 <4.0.0"
   flutter: ">=3.19.2"

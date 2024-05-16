@@ -312,12 +312,13 @@ class _DentistColorSettingsScreenState
                                     return AlertDialog(
                                       title: Text('Select a color'),
                                       content: SingleChildScrollView(
-                                        child: ColorPicker(onColorChanged: (Color color) {
-                                          setState(() {
-                                            selectedColor = color;
-                                          });
-                                        },
-                                        color: selectedColor,
+                                        child: ColorPicker(
+                                          borderColor: selectedColor,
+                                          onColorChanged: (Color color) {
+                                            setState(() {
+                                              selectedColor = color;
+                                            });
+                                          },
                                         ),
                                       ),
                                       actions: <Widget>[
