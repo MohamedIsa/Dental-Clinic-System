@@ -37,7 +37,10 @@ class PatientDetailsPage extends StatelessWidget {
                 key: Key('chatPage'),
                 user: user,
                 otherUserId: patient.id, 
-                isAdmin: false, 
+                isAdmin: true, 
+                isReceptionist: false,
+                isPatient: false,
+                conversationId: patient.id,
               ),
             ),
           );

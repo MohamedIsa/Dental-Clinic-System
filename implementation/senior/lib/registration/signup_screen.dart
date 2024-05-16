@@ -419,7 +419,7 @@ class _SignUpState extends State<SignUp> {
                                       password: password,
                                     );
 
-                                    print('User created successfully');
+                                   showMessagealert(context, 'Account created successfully');
 
                                     String uid = userCredential.user!.uid;
 
@@ -441,8 +441,7 @@ class _SignUpState extends State<SignUp> {
                                         .set({
                                       'uid': uid,
                                     });
-                                    showErrorDialog(context,
-                                        'Account created successfully');
+                                    showMessagealert(context, 'Account created successfully');
                                     Navigator.of(context).push(
                                       MaterialPageRoute(
                                         builder: (context) => WelcomePage(),
