@@ -1,6 +1,6 @@
+import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class SettingsPage extends StatelessWidget {
   final Function(String) navigateToSettings;
@@ -165,19 +165,18 @@ class DentistColorSettingsScreen extends StatefulWidget {
 
 class _DentistColorSettingsScreenState
     extends State<DentistColorSettingsScreen> {
-List<String> famousColors = [
-  'Red1',
-  'Green1',
-  'Blue1',
-  'Yellow1',
-  'Orange1',
-  'Purple1',
-  'Pink1',
-  'Brown1',
-  'White1',
-  'Gray1'
-];
-
+  List<String> famousColors = [
+    'Red1',
+    'Green1',
+    'Blue1',
+    'Yellow1',
+    'Orange1',
+    'Purple1',
+    'Pink1',
+    'Brown1',
+    'White1',
+    'Gray1'
+  ];
 
   Map<String, String> userColors = {}; // Store color values for each user
 
@@ -299,54 +298,53 @@ List<String> famousColors = [
                             ),
                           ),
                           DataCell(
- TextButton(
-  onPressed: () {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        Color selectedColor = userColors[dentistUID] != null
-            ? Color(int.parse(userColors[dentistUID]!))
-            : Colors.blue; // Default color
+                            TextButton(
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    Color selectedColor =
+                                        userColors[dentistUID] != null
+                                            ? Color(int.parse(
+                                                userColors[dentistUID]!))
+                                            : Colors.blue; // Default color
 
-        return AlertDialog(
-          title: Text('Select a color'),
-          content: SingleChildScrollView(
-            child: ColorPicker(
-              pickerColor: selectedColor,
-              onColorChanged: (Color color) {
-                setState(() {
-                  selectedColor = color;
-                });
-              },
-              showLabel: true, // Show color labels
-              pickerAreaHeightPercent: 0.8, // Adjust picker area height
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  userColors[dentistUID] =
-                      selectedColor.value.toString(); // Update color value in userColors map
-                });
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  },
-  child: Text('Choose Color'),
-),
-
+                                    return AlertDialog(
+                                      title: Text('Select a color'),
+                                      content: SingleChildScrollView(
+                                        child: ColorPicker(onColorChanged: (Color color) {
+                                          setState(() {
+                                            selectedColor = color;
+                                          });
+                                        },
+                                        color: selectedColor,
+                                        ),
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              userColors[dentistUID] = selectedColor
+                                                  .value
+                                                  .toString(); // Update color value in userColors map
+                                            });
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text('OK'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                              child: Text('Choose Color'),
+                            ),
                           ),
                         ]);
                       }).toList(),
