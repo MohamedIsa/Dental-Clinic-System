@@ -45,7 +45,8 @@ Future<List<Map<String, dynamic>>> getDentists() async {
   return dentists;
 }
 
-Future<bool> checkAvailability(String selectedDentistId, DateTime date, int hour) async {
+Future<bool> checkAvailability(
+    String selectedDentistId, DateTime date, int hour) async {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final QuerySnapshot snapshot = await _firestore
       .collection('appointments')
@@ -178,9 +179,8 @@ class _UpdateappointmentState extends State<Updateappointment> {
     super.initState();
     getDentists().then((dentists) {
       setState(() {
-        dentistFirstNames = dentists
-            .map((dentist) => dentist['firstName'] as String)
-            .toList();
+        dentistFirstNames =
+            dentists.map((dentist) => dentist['firstName'] as String).toList();
       });
     });
   }
@@ -197,451 +197,483 @@ class _UpdateappointmentState extends State<Updateappointment> {
   @override
   Widget build(BuildContext context) {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
-   final appointmentId = ModalRoute.of(context)?.settings.arguments as String;
-   if(kIsWeb){
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Update Appointment',
-          style: TextStyle(color: Colors.blue),
+    final appointmentId = ModalRoute.of(context)?.settings.arguments as String;
+    if (kIsWeb) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            'Update Appointment',
+            style: TextStyle(color: Colors.blue),
+          ),
+          backgroundColor: Colors.grey[150],
         ),
-        backgroundColor: Colors.grey[150],
-      ),
-      backgroundColor: Colors.grey[200],
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Container(
-              padding: const EdgeInsets.only(left: 50, top: 30),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Align(
-                      alignment: AlignmentDirectional.topStart,
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 430,
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: Colors.blue,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Please select a dentist from the list below.',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-FutureBuilder<List<Map<String, dynamic>>>(
-  future: getDentists(),
-  builder: (context, snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return const Padding(
-        padding: EdgeInsets.only(top: 10),
-        child: SpinKitFadingCube(
-          color: Colors.white,
-          size: 20.0,
-        ),
-      ); // Show loading indicator while fetching data
-    } else if (snapshot.hasError) {
-      return Text('Error: ${snapshot.error}');
-    } else {
-      List<Map<String, dynamic>> dentists = snapshot.data ?? [];
-      return Column(
-        children: [
-          for (int i = 0; i < dentists.length; i += 3)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                for (int j = i; j < i + 3 && j < dentists.length; j++)
-                  Container(
-                    width: 120,
-                    height: 40,
-                    margin: const EdgeInsets.all(5),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          selectedDentistId = dentists[j]['id'];
-                          selectedDentistFirstName = dentists[j]['firstName'];
-                          showDate = true;
-                        });
-                      },
-                      style: ButtonStyle(
-                        shape: MaterialStateProperty.all<
-                            RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Text(
-                          'Dr. ${dentists[j]['firstName']}',
-                          textAlign: TextAlign.center,
-                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                              ],
-                                            ),
-                                        ],
-                                      );
-                                    }
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 200),
-                          if (showTime)
-                            Container(
-                              width: 430,
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Please select a time from the list below.',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      FutureBuilder<List<List<int>>>(
-                                        future: getAvailableTimeSlots(
-                                            selectedDentistId, selectedDate),
-                                        builder: (context, snapshot) {
-                                          if (snapshot.connectionState ==
-                                              ConnectionState.waiting) {
-                                            return const Padding(
-                                              padding: EdgeInsets.only(top: 10),
-                                              child: SpinKitFadingCube(
-                                                color: Colors.white,
-                                                size: 20.0,
-                                              ),
-                                            ); // Show loading indicator while fetching data
-                                          } else if (snapshot.hasError) {
-                                            return Text(
-                                                'Error: ${snapshot.error}');
-                                          } else {
-                                            List<List<int>> availableSlotsRows =
-                                                snapshot.data ?? [];
-
-                                            if (availableSlotsRows.isEmpty) {
-                                              return const Text(
-                                                'No available time slots for selected date.',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 20.0,
-                                                ),
-                                              ); // Display message when no time slots are available
-                                            } else {
-                                              return Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  for (var slotsRow
-                                                      in availableSlotsRows)
-                                                    Row(
-                                                      children: [
-                                                        for (var slot
-                                                            in slotsRow)
-                                                          Align(
-                                                            alignment: Alignment
-                                                                .centerLeft,
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(8),
-                                                              child: SizedBox(
-                                                                width: 120,
-                                                                height: 40,
-                                                                child:
-                                                                    ElevatedButton(
-                                                                  onPressed:
-                                                                      () async {
-                                                                    bool
-                                                                        appointmentAvailable =
-                                                                        await checkAvailability(
-                                                                      selectedDentistId,
-                                                                      selectedDate,
-                                                                      slot,
-                                                                    );
-                                                                    if (appointmentAvailable) {
-                                                                      setState(
-                                                                          () {
-                                                                        selectedHour =
-                                                                            slot;
-                                                                        showcontainer =
-                                                                            true;
-                                                                      });
-                                                                    }
-                                                                  },
-                                                                  style:
-                                                                      ButtonStyle(
-                                                                    shape: WidgetStateProperty
-                                                                        .all<
-                                                                            RoundedRectangleBorder>(
-                                                                      RoundedRectangleBorder(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(10),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  child: Text(
-                                                                      '$slot:00'),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                      ],
-                                                    ),
-                                                ],
-                                              );
-                                            }
-                                          }
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    if (showDate)
+        backgroundColor: Colors.grey[200],
+        body: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Container(
+                padding: const EdgeInsets.only(left: 50, top: 30),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
                       Align(
                         alignment: AlignmentDirectional.topStart,
                         child: Row(
                           children: [
                             Container(
                               width: 430,
-                              height: 170,
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
                                 color: Colors.blue,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Text(
-                                    'Please select a date from the list below.',
+                                    'Please select a dentist from the list below.',
                                     style: TextStyle(color: Colors.white),
                                   ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      FutureBuilder<List<List<DateTime>>>(
-                                        future:
-                                            getAvailableDates(selectedDentistId),
-                                        builder: (context, snapshot) {
-                                          if (snapshot.connectionState ==
-                                              ConnectionState.waiting) {
-                                            return const Padding(
-                                              padding: EdgeInsets.only(top: 50),
-                                              child: SpinKitFadingCube(
-                                                color: Colors.white,
-                                                size: 20.0,
-                                              ),
-                                            ); // Show loading indicator while fetching data
-                                          } else if (snapshot.hasError) {
-                                            return Text(
-                                                'Error: ${snapshot.error}');
-                                          } else {
-                                            List<List<DateTime>>
-                                                availableDatesRows =
-                                                snapshot.data ?? [];
-
-                                            if (availableDatesRows.isEmpty) {
-                                              return const Text(
-                                                'No available dates for selected dentist.',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 20.0,
-                                                ),
-                                              ); // Display message when no dates are available
-                                            } else {
-                                              List<Widget> dateRows = [];
-                                              for (var datesRow
-                                                  in availableDatesRows) {
-                                                List<Widget> buttonsInRow = [];
-                                                for (var date in datesRow) {
-                                                  buttonsInRow.add(
-                                                    Padding(
-                                                      padding:
+                                  FutureBuilder<List<Map<String, dynamic>>>(
+                                    future: getDentists(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const Padding(
+                                          padding: EdgeInsets.only(top: 10),
+                                          child: SpinKitFadingCube(
+                                            color: Colors.white,
+                                            size: 20.0,
+                                          ),
+                                        ); // Show loading indicator while fetching data
+                                      } else if (snapshot.hasError) {
+                                        return Text('Error: ${snapshot.error}');
+                                      } else {
+                                        List<Map<String, dynamic>> dentists =
+                                            snapshot.data ?? [];
+                                        return Column(
+                                          children: [
+                                            for (int i = 0;
+                                                i < dentists.length;
+                                                i += 3)
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: <Widget>[
+                                                  for (int j = i;
+                                                      j < i + 3 &&
+                                                          j < dentists.length;
+                                                      j++)
+                                                    Container(
+                                                      width: 120,
+                                                      height: 40,
+                                                      margin:
                                                           const EdgeInsets.all(
-                                                              8.0),
-                                                      child: SizedBox(
-                                                        width: 120,
-                                                        height: 40,
-                                                        child: ElevatedButton(
-                                                          onPressed: () {
-                                                            setState(() {
-                                                              selectedDate = date;
-                                                              showTime = true;
-                                                            });
-                                                          },
-                                                          style: ButtonStyle(
-                                                            shape: WidgetStateProperty
-                                                                .all<
-                                                                    RoundedRectangleBorder>(
-                                                              RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
-                                                              ),
+                                                              5),
+                                                      child: ElevatedButton(
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            selectedDentistId =
+                                                                dentists[j]
+                                                                    ['id'];
+                                                            selectedDentistFirstName =
+                                                                dentists[j][
+                                                                    'firstName'];
+                                                            showDate = true;
+                                                          });
+                                                        },
+                                                        style: ButtonStyle(
+                                                          shape: MaterialStateProperty
+                                                              .all<
+                                                                  RoundedRectangleBorder>(
+                                                            RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
                                                             ),
                                                           ),
+                                                        ),
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  vertical:
+                                                                      8.0),
                                                           child: Text(
-                                                            DateFormat('MM/dd')
-                                                                .format(date),
-                                                            style:
-                                                                const TextStyle(
-                                                                    fontSize:
-                                                                        16.0),
+                                                            'Dr. ${dentists[j]['firstName']}',
+                                                            textAlign: TextAlign
+                                                                .center,
                                                           ),
                                                         ),
                                                       ),
                                                     ),
-                                                  );
-                                                }
-                                                dateRows.add(Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceAround,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: buttonsInRow,
-                                                ));
-                                              }
-                                              return Column(
-                                                children: dateRows,
-                                              );
-                                            }
-                                          }
-                                        },
-                                      ),
-                                    ],
+                                                ],
+                                              ),
+                                          ],
+                                        );
+                                      }
+                                    },
                                   ),
                                 ],
                               ),
                             ),
                             const SizedBox(width: 200),
-                            Visibility(
-                              visible: showcontainer && showTime,
-                              child: SizedBox(
-                                width: 400,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                        color: AppColors.bccolor, width: 2),
-                                    color: Colors.blue,
-                                  ),
-                                  width: 140,
-                                  height: 170,
-                                  child: Column(
-                                    children: [
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      const Text(
-                                        'Your Appointment Details',
-                                        style: TextStyle(color: Colors.black),
-                                      ),
-                                      const SizedBox(height: 10),
-                                      Text(
-                                        'Selected Dentist: Dr.$selectedDentistFirstName\nSelected Date: ${DateFormat('MM/dd').format(selectedDate)}\nSelected Time: $selectedHour:00\n',
-                                        style: const TextStyle(
-                                            color: Colors.white),
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () async {
-                                          FirebaseAuth _auth =
-                                              FirebaseAuth.instance;
-                                          User? user = _auth.currentUser;
-                                          if (user != null) {
-                                            // Create a new DateTime object with only year, month, and day
-                                            DateTime dateOnly = DateTime(
-                                              selectedDate.year,
-                                              selectedDate.month,
-                                              selectedDate.day,
-                                            );
-
-                                            // Check if an appointment already exists at the selected time
-                                            var existingAppointment =
-                                                await firestore
-                                                    .collection('appointments')
-                                                    .where('did',
-                                                        isEqualTo:
-                                                            selectedDentistId)
-                                                    .where('date',
-                                                        isEqualTo: dateOnly)
-                                                    .where('hour',
-                                                        isEqualTo: selectedHour)
-                                                    .get();
-
-                                            if (existingAppointment
-                                                .docs.isEmpty) {
-
-                                                await firestore
-                                                  .collection('appointments')
-                                                  .doc(appointmentId)
-                                                  .update({
-                                                'did': selectedDentistId,
-                                                'date': dateOnly,
-                                                'hour': selectedHour,
-                                                });
-                                              Navigator.pushNamed(
-                                                  context, '/dashboard');
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                const SnackBar(
-                                                  content: Text(
-                                                      'Appointment Updated successfully!'),
+                            if (showTime)
+                              Container(
+                                width: 430,
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Please select a time from the list below.',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        FutureBuilder<List<List<int>>>(
+                                          future: getAvailableTimeSlots(
+                                              selectedDentistId, selectedDate),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return const Padding(
+                                                padding:
+                                                    EdgeInsets.only(top: 10),
+                                                child: SpinKitFadingCube(
+                                                  color: Colors.white,
+                                                  size: 20.0,
                                                 ),
-                                              );
+                                              ); // Show loading indicator while fetching data
+                                            } else if (snapshot.hasError) {
+                                              return Text(
+                                                  'Error: ${snapshot.error}');
+                                            } else {
+                                              List<List<int>>
+                                                  availableSlotsRows =
+                                                  snapshot.data ?? [];
+
+                                              if (availableSlotsRows.isEmpty) {
+                                                return const Text(
+                                                  'No available time slots for selected date.',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 20.0,
+                                                  ),
+                                                ); // Display message when no time slots are available
+                                              } else {
+                                                return Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    for (var slotsRow
+                                                        in availableSlotsRows)
+                                                      Row(
+                                                        children: [
+                                                          for (var slot
+                                                              in slotsRow)
+                                                            Align(
+                                                              alignment: Alignment
+                                                                  .centerLeft,
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(8),
+                                                                child: SizedBox(
+                                                                  width: 120,
+                                                                  height: 40,
+                                                                  child:
+                                                                      ElevatedButton(
+                                                                    onPressed:
+                                                                        () async {
+                                                                      bool
+                                                                          appointmentAvailable =
+                                                                          await checkAvailability(
+                                                                        selectedDentistId,
+                                                                        selectedDate,
+                                                                        slot,
+                                                                      );
+                                                                      if (appointmentAvailable) {
+                                                                        setState(
+                                                                            () {
+                                                                          selectedHour =
+                                                                              slot;
+                                                                          showcontainer =
+                                                                              true;
+                                                                        });
+                                                                      }
+                                                                    },
+                                                                    style:
+                                                                        ButtonStyle(
+                                                                      shape: WidgetStateProperty
+                                                                          .all<
+                                                                              RoundedRectangleBorder>(
+                                                                        RoundedRectangleBorder(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(10),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    child: Text(
+                                                                        '$slot:00'),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                        ],
+                                                      ),
+                                                  ],
+                                                );
+                                              }
                                             }
-                                          }
-                                        },
-                                        child: const Text('Update appointment'),
-                                      ),
-                                    ],
-                                  ),
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
                           ],
                         ),
                       ),
-                  ],
+                      const SizedBox(height: 20),
+                      if (showDate)
+                        Align(
+                          alignment: AlignmentDirectional.topStart,
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 430,
+                                height: 170,
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Please select a date from the list below.',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        FutureBuilder<List<List<DateTime>>>(
+                                          future: getAvailableDates(
+                                              selectedDentistId),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return const Padding(
+                                                padding:
+                                                    EdgeInsets.only(top: 50),
+                                                child: SpinKitFadingCube(
+                                                  color: Colors.white,
+                                                  size: 20.0,
+                                                ),
+                                              ); // Show loading indicator while fetching data
+                                            } else if (snapshot.hasError) {
+                                              return Text(
+                                                  'Error: ${snapshot.error}');
+                                            } else {
+                                              List<List<DateTime>>
+                                                  availableDatesRows =
+                                                  snapshot.data ?? [];
+
+                                              if (availableDatesRows.isEmpty) {
+                                                return const Text(
+                                                  'No available dates for selected dentist.',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 20.0,
+                                                  ),
+                                                ); // Display message when no dates are available
+                                              } else {
+                                                List<Widget> dateRows = [];
+                                                for (var datesRow
+                                                    in availableDatesRows) {
+                                                  List<Widget> buttonsInRow =
+                                                      [];
+                                                  for (var date in datesRow) {
+                                                    buttonsInRow.add(
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: SizedBox(
+                                                          width: 120,
+                                                          height: 40,
+                                                          child: ElevatedButton(
+                                                            onPressed: () {
+                                                              setState(() {
+                                                                selectedDate =
+                                                                    date;
+                                                                showTime = true;
+                                                              });
+                                                            },
+                                                            style: ButtonStyle(
+                                                              shape: WidgetStateProperty
+                                                                  .all<
+                                                                      RoundedRectangleBorder>(
+                                                                RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            child: Text(
+                                                              DateFormat(
+                                                                      'MM/dd')
+                                                                  .format(date),
+                                                              style:
+                                                                  const TextStyle(
+                                                                      fontSize:
+                                                                          16.0),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }
+                                                  dateRows.add(Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceAround,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: buttonsInRow,
+                                                  ));
+                                                }
+                                                return Column(
+                                                  children: dateRows,
+                                                );
+                                              }
+                                            }
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 200),
+                              Visibility(
+                                visible: showcontainer && showTime,
+                                child: SizedBox(
+                                  width: 400,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                          color: AppColors.bccolor, width: 2),
+                                      color: Colors.blue,
+                                    ),
+                                    width: 140,
+                                    height: 170,
+                                    child: Column(
+                                      children: [
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        const Text(
+                                          'Your Appointment Details',
+                                          style: TextStyle(color: Colors.black),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Text(
+                                          'Selected Dentist: Dr.$selectedDentistFirstName\nSelected Date: ${DateFormat('MM/dd').format(selectedDate)}\nSelected Time: $selectedHour:00\n',
+                                          style: const TextStyle(
+                                              color: Colors.white),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () async {
+                                            FirebaseAuth _auth =
+                                                FirebaseAuth.instance;
+                                            User? user = _auth.currentUser;
+                                            if (user != null) {
+                                              // Create a new DateTime object with only year, month, and day
+                                              DateTime dateOnly = DateTime(
+                                                selectedDate.year,
+                                                selectedDate.month,
+                                                selectedDate.day,
+                                              );
+
+                                              // Check if an appointment already exists at the selected time
+                                              var existingAppointment =
+                                                  await firestore
+                                                      .collection(
+                                                          'appointments')
+                                                      .where('did',
+                                                          isEqualTo:
+                                                              selectedDentistId)
+                                                      .where('date',
+                                                          isEqualTo: dateOnly)
+                                                      .where('hour',
+                                                          isEqualTo:
+                                                              selectedHour)
+                                                      .get();
+
+                                              if (existingAppointment
+                                                  .docs.isEmpty) {
+                                                await firestore
+                                                    .collection('appointments')
+                                                    .doc(appointmentId)
+                                                    .update({
+                                                  'did': selectedDentistId,
+                                                  'date': dateOnly,
+                                                  'hour': selectedHour,
+                                                });
+                                                Navigator.pushNamed(
+                                                    context, '/dashboard');
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                    content: Text(
+                                                        'Appointment Updated successfully!'),
+                                                  ),
+                                                );
+                                              }
+                                            }
+                                          },
+                                          child:
+                                              const Text('Update appointment'),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
-   } else{
+      );
+    } else {
       return Container();
-   }
+    }
   }
 }
