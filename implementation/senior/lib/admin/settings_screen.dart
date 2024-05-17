@@ -153,6 +153,8 @@ class SettingsScreen extends StatelessWidget {
   }
 }
 
+
+
 class DentistColorSettingsScreen extends StatefulWidget {
   const DentistColorSettingsScreen({Key? key, this.uid});
 
@@ -300,19 +302,12 @@ class _DentistColorSettingsScreenState
                                       title: Text('Select a color'),
                                       content: SingleChildScrollView(
                                         child: ColorPicker(
- secondAdmin
-
-                                          borderColor: selectedColor,
- main
+                                          color: selectedColor,
                                           onColorChanged: (Color color) {
                                             setState(() {
                                               selectedColor = color;
                                             });
                                           },
- secondAdmin
-                                          color: selectedColor,
-
- main
                                         ),
                                       ),
                                       actions: <Widget>[
@@ -325,9 +320,9 @@ class _DentistColorSettingsScreenState
                                         TextButton(
                                           onPressed: () {
                                             setState(() {
-                                              userColors[dentistUID] =
-                                                  selectedColor.value
-                                                      .toString();
+                                              userColors[dentistUID] = selectedColor
+                                                  .value
+                                                  .toString(); // Update color value in userColors map
                                             });
                                             Navigator.of(context).pop();
                                           },
