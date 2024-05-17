@@ -1,4 +1,5 @@
 class TreatmentRecord {
+  final String treatmentId;
   final String date;
   final String time;
   final String patientname;
@@ -9,6 +10,7 @@ class TreatmentRecord {
   final List<String> attachments;
 
   TreatmentRecord({
+    required this.treatmentId,
     required this.date,
     required this.time,
     required this.patientname,

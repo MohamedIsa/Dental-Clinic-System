@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
-import 'package:intl/intl.dart';
 import 'package:senior/dentist/add_treatment.dart';
 import 'package:senior/dentist/edit_treatment.dart';
 import 'package:senior/dentist/treatment_record_model.dart';
@@ -25,39 +24,37 @@ class _TreatmentRecordPageState extends State<TreatmentRecordPage> {
   }
 
   // Method to fetch treatment records from Firestore
- void fetchTreatmentRecords() async {
-  try {
-    // Get the treatment collection
-    QuerySnapshot querySnapshot = await _firestore.collection('treatment').get();
+  void fetchTreatmentRecords() async {
+    try {
+      // Get the treatment collection
+      QuerySnapshot querySnapshot =
+          await _firestore.collection('treatment').get();
 
-    // Iterate through the documents
-    for (QueryDocumentSnapshot doc in querySnapshot.docs) {
-      // Convert Timestamp to DateTime
-      DateTime date = doc['date'].toDate(); // Convert timestamp to DateTime
-      // Format the date to display just the date portion
-      String formattedDate = DateFormat('dd-MM-yyyy').format(date);
-      // Create a TreatmentRecord object from the document data
-      TreatmentRecord record = TreatmentRecord(
-        date: formattedDate,
-        time: doc['time'],
-        patientname: doc['patientname'],
-        CPR: doc['CPR'],
-        dentist: doc['dentist'],
-        treatmentType: doc['treatmentType'],
-        notes: doc['note'],
-        attachments: [], // Initialize attachments list
-      );
-      // Add the record to the list
-      treatmentRecords.add(record);
+      // Iterate through the documents
+      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+        TreatmentRecord record = TreatmentRecord(
+          treatmentId: doc.id,
+          date: doc['date'],
+          time: doc['time'],
+          patientname: doc['patientName'],
+          CPR: doc['CPR'],
+          dentist: doc['dentist'],
+          treatmentType: doc['treatmentType'],
+          notes: doc['notes'],
+          attachments: ['attachment'], // Initialize attachments list
+        );
+        // Add the record to the list
+        treatmentRecords.add(record);
+      }
+
+      // Update the state to rebuild the UI with the fetched data
+      setState(() {});
+    } catch (e) {
+      // Handle errors
+      print("Error fetching treatment records: $e");
     }
-
-    // Update the state to rebuild the UI with the fetched data
-    setState(() {});
-  } catch (e) {
-    // Handle errors
-    print("Error fetching treatment records: $e");
   }
-}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -147,6 +144,7 @@ class _TreatmentRecordPageState extends State<TreatmentRecordPage> {
       MaterialPageRoute(
         builder: (context) => EditTreatmentRecordPage(
           treatmentRecord: record,
+          treatmentId: record.treatmentId,
         ),
       ),
     );
@@ -176,12 +174,16 @@ class TreatmentRecordDetailsPage extends StatelessWidget {
             Text('Dentist: ${treatmentRecord.dentist}'),
             Text('Treatment Type: ${treatmentRecord.treatmentType}'),
             Text('Description: ${treatmentRecord.notes}'),
-            // Display attachments if available
             if (treatmentRecord.attachments.isNotEmpty) ...[
               SizedBox(height: 16), // Add some space
               Text('Attachments:'),
               for (var attachment in treatmentRecord.attachments)
-                Text('- $attachment'),
+                Image.network(
+                  attachment, // Assuming the attachment is a URL to an image
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.contain,
+                ),
             ],
             SizedBox(height: 16), // Add some space
             Align(
@@ -200,4 +202,3 @@ class TreatmentRecordDetailsPage extends StatelessWidget {
     );
   }
 }
-

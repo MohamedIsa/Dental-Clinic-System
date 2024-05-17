@@ -1,36 +1,34 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PatientData {
+  final String id;
   final String fullName;
   final String cpr;
   final String birthDay;
   final String gender;
   final String phoneNumber;
   final String email;
-  final String id;
 
   PatientData({
+    required this.id,
     required this.fullName,
     required this.cpr,
     required this.birthDay,
     required this.gender,
     required this.phoneNumber,
     required this.email,
-    required this.id,
   });
 
-  get FullName => null;
-
-  static PatientData fromSnapshot(DocumentSnapshot patientSnapshot) {
-    Map<String, dynamic> data = patientSnapshot.data() as Map<String, dynamic>;
+  factory PatientData.fromSnapshot(DocumentSnapshot snapshot) {
+    final data = snapshot.data() as Map<String, dynamic>;
     return PatientData(
-      fullName: data['name'] ?? '',
-      cpr: data['cpr'] ?? '',
-      birthDay: data['birthDay'] ?? '',
-      gender: data['gender'] ?? '',
-      phoneNumber: data['phoneNumber'] ?? '',
-      email: data['email'] ?? '',
-      id: patientSnapshot.id ,
+      id: snapshot.id,
+      fullName: data['FullName'],
+      cpr: data['CPR'],
+      birthDay: data['DOB'],
+      gender: data['Gender'],
+      phoneNumber: data['Phone'],
+      email: data['Email'],
     );
   }
 }

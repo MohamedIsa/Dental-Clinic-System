@@ -1,6 +1,9 @@
+import 'dart:math';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:universal_html/html.dart';
 
 class SettingsPage extends StatelessWidget {
   final Function(String) navigateToSettings;
@@ -302,12 +305,14 @@ class _DentistColorSettingsScreenState
                                       title: Text('Select a color'),
                                       content: SingleChildScrollView(
                                         child: ColorPicker(
+                                          borderColor: selectedColor,
                                           color: selectedColor,
                                           onColorChanged: (Color color) {
                                             setState(() {
                                               selectedColor = color;
                                             });
                                           },
+                                          color: selectedColor,
                                         ),
                                       ),
                                       actions: <Widget>[
@@ -409,7 +414,6 @@ class _DentistColorSettingsScreenState
     );
   }
 }
-
 class StaffManagementScreen extends StatefulWidget {
   const StaffManagementScreen({Key? key}) : super(key: key);
 
@@ -418,7 +422,6 @@ class StaffManagementScreen extends StatefulWidget {
 }
 
 class _StaffManagementScreenState extends State<StaffManagementScreen> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController cprController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -578,51 +581,75 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
                     child: Text('Cancel'),
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      // Save staff member data to Firestore
-                      _firestore.collection('user').add({
-                        'FullName': fullNameController.text,
-                        'CPR': cprController.text,
-                        'Email': emailController.text,
-                        'Phone': phoneNumberController.text,
-                        'DOB': birthdayController.text,
-                        'Gender': selectedGender,
-                      }).then((documentReference) {
-                        // Get the ID of the newly added document
-                        String userId = documentReference.id;
+                    onPressed: () async {
+                      if (fullNameController.text.isNotEmpty &&
+                          cprController.text.isNotEmpty &&
+                          emailController.text.isNotEmpty &&
+                          phoneNumberController.text.isNotEmpty &&
+                          birthdayController.text.isNotEmpty) {
+                        try {
+                          // Generate a random password
+                          String randomPassword = generateRandomPassword();
 
-                        // Determine the role collection based on selectedRole
-                        String roleCollection;
-                        Map<String, dynamic> userData = {
-                          'uid': userId
-                        }; // Data to add in each role collection
+                          // Create the user in Firebase Authentication
+                          UserCredential userCredential = await FirebaseAuth.instance
+                              .createUserWithEmailAndPassword(
+                            email: emailController.text,
+                            password: randomPassword,
+                          );
 
-                        if (selectedRole == 'Dentist') {
-                          roleCollection = 'dentist';
-                          userData['color'] =
-                              'blue'; // Add color if role is Dentist
-                        } else if (selectedRole == 'Admin') {
-                          roleCollection = 'admin';
-                        } else {
-                          roleCollection = 'receptionist';
+                          // Send a password reset email to the user
+                          await userCredential.user?.sendEmailVerification();
+                          await FirebaseAuth.instance.sendPasswordResetEmail(email: emailController.text);
+
+                          // Add data to 'user' collection in Firestore
+                          DocumentReference userRef = FirebaseFirestore.instance
+                              .collection('user')
+                              .doc(userCredential.user?.uid);
+
+                          await userRef.set({
+                            'FullName': fullNameController.text,
+                            'CPR': cprController.text,
+                            'Email': emailController.text,
+                            'Phone': phoneNumberController.text,
+                            'DOB': birthdayController.text,
+                            'Gender': selectedGender,
+                          });
+
+                          // Add UID to the respective role collection in Firestore
+                          String roleCollection;
+                          Map<String, dynamic> userData = {'uid': userCredential.user?.uid};
+
+                          if (selectedRole == 'Dentist') {
+                            roleCollection = 'dentist';
+                            userData['color'] = 'blue'; // Add color if role is Dentist
+                          } else if (selectedRole == 'Admin') {
+                            roleCollection = 'admin';
+                          } else {
+                            roleCollection = 'receptionist';
+                          }
+
+                          await FirebaseFirestore.instance
+                              .collection(roleCollection)
+                              .doc(userCredential.user?.uid)
+                              .set(userData);
+
+                          Navigator.of(context).pop();
+                        } catch (e) {
+                          print('Error: $e');
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('An error occurred. Please try again later.'),
+                            ),
+                          );
                         }
-
-                        // Add user ID and color (if Dentist) to the respective role collection
-                        _firestore
-                            .collection(roleCollection)
-                            .doc(userId)
-                            .set(userData)
-                            .then((_) {
-                          Navigator.of(context)
-                              .pop(); // Close the dialog after saving
-                        }).catchError((error) {
-                          print('Error saving staff member: $error');
-                          // Handle error here
-                        });
-                      }).catchError((error) {
-                        print('Error saving staff member: $error');
-                        // Handle error here
-                      });
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please fill in all fields.'),
+                          ),
+                        );
+                      }
                     },
                     child: Text('Save'),
                   ),
@@ -638,22 +665,15 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
   Future<String?> _getUserRole(String userId) async {
     String? role;
 
-    var adminDoc =
-        await FirebaseFirestore.instance.collection('admin').doc(userId).get();
+    var adminDoc = await FirebaseFirestore.instance.collection('admin').doc(userId).get();
     if (adminDoc.exists) {
       role = 'Admin';
     } else {
-      var dentistDoc = await FirebaseFirestore.instance
-          .collection('dentist')
-          .doc(userId)
-          .get();
+      var dentistDoc = await FirebaseFirestore.instance.collection('dentist').doc(userId).get();
       if (dentistDoc.exists) {
         role = 'Dentist';
       } else {
-        var receptionistDoc = await FirebaseFirestore.instance
-            .collection('receptionist')
-            .doc(userId)
-            .get();
+        var receptionistDoc = await FirebaseFirestore.instance.collection('receptionist').doc(userId).get();
         if (receptionistDoc.exists) {
           role = 'Receptionist';
         }
@@ -663,34 +683,25 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
     return role;
   }
 
-  Future<void> _deleteUser(String userId, String role) async {
-    try {
-      // Delete the user document
-      await FirebaseFirestore.instance.collection('user').doc(userId).delete();
+ Future<void> _deleteUser(String userId, String role) async {
+  try {
+    // Delete the user document
+    await FirebaseFirestore.instance.collection('user').doc(userId).delete();
 
-      // Depending on the user's role, delete from respective collections
-      if (role.toLowerCase() == 'admin') {
-        await FirebaseFirestore.instance
-            .collection('admin')
-            .doc(userId)
-            .delete();
-      } else if (role.toLowerCase() == 'dentist') {
-        await FirebaseFirestore.instance
-            .collection('dentist')
-            .doc(userId)
-            .delete();
-      } else if (role.toLowerCase() == 'receptionist') {
-        await FirebaseFirestore.instance
-            .collection('receptionist')
-            .doc(userId)
-            .delete();
-      }
-    } catch (e) {
-      print('Error deleting user: $e');
+    // Depending on the user's role, delete from respective collections
+    if (role.toLowerCase() == 'admin') {
+      await FirebaseFirestore.instance.collection('admin').doc(userId).delete();
+    } else if (role.toLowerCase() == 'dentist') {
+      await FirebaseFirestore.instance.collection('dentist').doc(userId).delete();
+    } else if (role.toLowerCase() == 'receptionist') {
+      await FirebaseFirestore.instance.collection('receptionist').doc(userId).delete();
     }
+  } catch (e) {
+    print('Error deleting user: $e');
+    // Handle error here
   }
 }
-
+}
 class EditMessageScreen extends StatefulWidget {
   @override
   _EditWelcomeMessageScreenState createState() =>
@@ -826,3 +837,14 @@ class _EditWelcomeMessageScreenState extends State<EditMessageScreen> {
     );
   }
 }
+  String generateRandomPassword({int length = 12}) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    Random random = Random();
+    return String.fromCharCodes(
+      Iterable.generate(
+        length,
+        (_) => characters.codeUnitAt(random.nextInt(characters.length)),
+      ),
+    );
+  }
+
