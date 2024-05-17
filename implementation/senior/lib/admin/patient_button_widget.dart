@@ -41,10 +41,11 @@ class PatientButtonsWidget extends StatelessWidget {
   }
 
   void showSearchDialog(BuildContext context) {
+     String searchCpr = '';
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        String searchCpr = '';
+       
 
         return AlertDialog(
           title: const Text('Search Patient'),

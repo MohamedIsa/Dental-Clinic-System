@@ -5,9 +5,7 @@ import 'package:senior/dentist/patient_model.dart';
 class DentistPatientDetailsPage extends StatelessWidget {
   final PatientData patient;
 
-  const DentistPatientDetailsPage({
-    required this.patient,
-  });
+  const DentistPatientDetailsPage({required this.patient});
 
   @override
   Widget build(BuildContext context) {

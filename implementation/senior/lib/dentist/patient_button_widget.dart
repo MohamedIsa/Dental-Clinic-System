@@ -32,11 +32,13 @@ class PatientButtonsWidget extends StatelessWidget {
     );
   }
 
+
   void showSearchDialog(BuildContext context) {
+     String searchCpr = '';
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        String searchCpr = '';
+       
 
         return AlertDialog(
           title: const Text('Search Patient'),
@@ -94,9 +96,8 @@ class PatientButtonsWidget extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => DentistPatientDetailsPage(
-                              patient: patientData
+                              patient: patientData),
                         ),
-                      ),
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(

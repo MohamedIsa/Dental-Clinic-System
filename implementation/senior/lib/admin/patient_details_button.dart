@@ -36,8 +36,8 @@ class PatientDetailsPage extends StatelessWidget {
               builder: (context) => ChatPage(
                 key: Key('chatPage'),
                 user: user,
-                otherUserId: patient.id, 
-                isAdmin: true, 
+                otherUserId: patient.id,
+                isAdmin: true,
                 isReceptionist: false,
                 isPatient: false,
                 conversationId: patient.id,
@@ -45,7 +45,7 @@ class PatientDetailsPage extends StatelessWidget {
             ),
           );
         },
-        child: Icon(Icons.chat, color: Colors.blue,),
+        child: Icon(Icons.chat),
       ),
     );
   }
