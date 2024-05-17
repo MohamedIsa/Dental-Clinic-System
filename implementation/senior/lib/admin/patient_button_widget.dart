@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:senior/admin/patient_details_button.dart';
 import 'package:senior/admin/patient_model.dart';
+import 'dart:math';
 
 class PatientButtonsWidget extends StatelessWidget {
   final VoidCallback? onAddPatientPressed;
@@ -41,12 +42,10 @@ class PatientButtonsWidget extends StatelessWidget {
   }
 
   void showSearchDialog(BuildContext context) {
-     String searchCpr = '';
+    String searchCpr = '';
     showDialog(
       context: context,
       builder: (BuildContext context) {
-       
-
         return AlertDialog(
           title: const Text('Search Patient'),
           content: Column(
@@ -73,38 +72,27 @@ class PatientButtonsWidget extends StatelessWidget {
               onPressed: () async {
                 if (searchCpr.isNotEmpty) {
                   try {
-                    // Search for user based on CPR
-                    QuerySnapshot querySnapshot = await FirebaseFirestore
-                        .instance
+                    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
                         .collection('user')
                         .where('CPR', isEqualTo: searchCpr)
                         .get();
 
                     if (querySnapshot.docs.isNotEmpty) {
-                      // Retrieve the first matching user document
                       DocumentSnapshot userSnapshot = querySnapshot.docs.first;
-
-                      // Get the UID from the user document
                       String uid = userSnapshot.id;
+                      DocumentSnapshot userDataSnapshot = await FirebaseFirestore.instance
+                          .collection('user')
+                          .doc(uid)
+                          .get();
+                      PatientData patientData = PatientData.fromSnapshot(userDataSnapshot);
 
-                      // Retrieve the user data from the user collection
-                      DocumentSnapshot userDataSnapshot =
-                          await FirebaseFirestore.instance
-                              .collection('user')
-                              .doc(uid)
-                              .get();
-
-                      // Create a PatientData object from the retrieved user data
-                      PatientData patientData =
-                          PatientData.fromSnapshot(userDataSnapshot);
-
-                      // Navigate to the PatientDetailsPage and pass the patientData
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => PatientDetailsPage(
-                              patient: patientData,
-                              user: FirebaseAuth.instance.currentUser!),
+                            patient: patientData,
+                            user: FirebaseAuth.instance.currentUser!,
+                          ),
                         ),
                       );
                     } else {
@@ -118,8 +106,7 @@ class PatientButtonsWidget extends StatelessWidget {
                     print('Error: $e');
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content:
-                            Text('An error occurred. Please try again later.'),
+                        content: Text('An error occurred. Please try again later.'),
                       ),
                     );
                   }
@@ -143,14 +130,13 @@ class PatientButtonsWidget extends StatelessWidget {
     String name = '';
     String cpr = '';
     String birthDay = '';
-    String gender = '';
     String phoneNumber = '';
     String email = '';
+    String? selectedGender;
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        var selectedGender;
         return AlertDialog(
           title: const Text('Add New Patient'),
           content: SingleChildScrollView(
@@ -182,17 +168,18 @@ class PatientButtonsWidget extends StatelessWidget {
                   ),
                 ),
                 DropdownButtonFormField<String>(
-                    value: selectedGender,
-                    decoration: InputDecoration(labelText: 'Gender'),
-                    items: ['Male', 'Female']
-                        .map((gender) => DropdownMenuItem(
-                              value: gender,
-                              child: Text(gender),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      selectedGender = value!;
-                    }),
+                  value: selectedGender,
+                  decoration: const InputDecoration(labelText: 'Gender'),
+                  items: ['Male', 'Female']
+                      .map((gender) => DropdownMenuItem(
+                            value: gender,
+                            child: Text(gender),
+                          ))
+                      .toList(),
+                  onChanged: (value) {
+                    selectedGender = value!;
+                  },
+                ),
                 TextField(
                   onChanged: (value) {
                     phoneNumber = value;
@@ -224,31 +211,44 @@ class PatientButtonsWidget extends StatelessWidget {
                 if (name.isNotEmpty &&
                     cpr.isNotEmpty &&
                     birthDay.isNotEmpty &&
-                    gender.isNotEmpty &&
+                    selectedGender != null &&
                     phoneNumber.isNotEmpty &&
                     email.isNotEmpty) {
                   try {
-                    // Add data to 'user' collection
-                    DocumentReference userRef = await FirebaseFirestore.instance
+                    // Generate a random password
+                    String randomPassword = generateRandomPassword();
+
+                    // Create the user in Firebase Authentication
+                    UserCredential userCredential = await FirebaseAuth.instance
+                        .createUserWithEmailAndPassword(
+                      email: email,
+                      password: randomPassword,
+                    );
+
+                    // Send a password reset email to the user
+                    await userCredential.user?.sendEmailVerification();
+                    await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+
+                    // Add data to 'user' collection in Firestore
+                    DocumentReference userRef = FirebaseFirestore.instance
                         .collection('user')
-                        .add({
+                        .doc(userCredential.user?.uid);
+
+                    await userRef.set({
                       'FullName': name,
                       'CPR': cpr,
                       'DOB': birthDay,
-                      'Gender': gender,
-                      'phone': phoneNumber,
+                      'Gender': selectedGender,
+                      'Phone': phoneNumber,
                       'Email': email,
                     });
 
-                    // Get the UID of the added user
-                    String uid = userRef.id;
-
-                    // Add UID to 'patient' collection
+                    // Add UID to 'patient' collection in Firestore
                     await FirebaseFirestore.instance
                         .collection('patient')
-                        .doc(uid)
+                        .doc(userCredential.user?.uid)
                         .set({
-                      'uid': uid,
+                      'uid': userCredential.user?.uid,
                     });
 
                     // Invoke the onAddPatientPressed callback
@@ -261,8 +261,7 @@ class PatientButtonsWidget extends StatelessWidget {
                     print('Error: $e');
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content:
-                            Text('An error occurred. Please try again later.'),
+                        content: Text('An error occurred. Please try again later.'),
                       ),
                     );
                   }
@@ -279,6 +278,17 @@ class PatientButtonsWidget extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+
+  String generateRandomPassword({int length = 12}) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    Random random = Random();
+    return String.fromCharCodes(
+      Iterable.generate(
+        length,
+        (_) => characters.codeUnitAt(random.nextInt(characters.length)),
+      ),
     );
   }
 }
