@@ -11,13 +11,13 @@ class AddTreatmentRecordPage extends StatefulWidget {
 }
 
 class _AddTreatmentRecordPageState extends State<AddTreatmentRecordPage> {
-  TextEditingController _dateController = TextEditingController();
-  TextEditingController _timeController = TextEditingController();
-  TextEditingController _patientNameController = TextEditingController();
-  TextEditingController _cprController = TextEditingController();
-  TextEditingController _dentistController = TextEditingController();
-  TextEditingController _treatmentTypeController = TextEditingController();
-  TextEditingController _notesController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
+  final TextEditingController _patientNameController = TextEditingController();
+  final TextEditingController _cprController = TextEditingController();
+  final TextEditingController _dentistController = TextEditingController();
+  final TextEditingController _treatmentTypeController = TextEditingController();
+  final TextEditingController _notesController = TextEditingController();
   String _attachment = ''; // Variable to store the attachment path
 
   @override
@@ -137,53 +137,48 @@ class _AddTreatmentRecordPageState extends State<AddTreatmentRecordPage> {
     );
   }
 
-  void saveChanges() async {
+ void saveChanges() async {
+  final userSnapshot = await FirebaseFirestore.instance
+      .collection('user')
+      .where('CPR', isEqualTo: _cprController.text)
+      .get();
 
-    final userSnapshot = await FirebaseFirestore.instance
-        .collection('user')
-        .where('CPR', isEqualTo: _cprController.text)
-        .get();
-    final patientSnapshot = await FirebaseFirestore.instance
-        .collection('patient')
-        .where(userSnapshot.docs)
-        .get();
-
-    if (userSnapshot.docs.isNotEmpty && patientSnapshot.docs.isNotEmpty) {
-      final patientDocId = userSnapshot.docs.first.id;
-      final treatmentData = {
-        'did': FirebaseAuth.instance.currentUser!.uid,
-        'uid': patientDocId,
-        'date': _dateController.text,
-        'time': _timeController.text,
-        'patientName': _patientNameController.text,
-        'CPR': _cprController.text,
-        'dentist': _dentistController.text,
-        'treatmentType': _treatmentTypeController.text,
-        'notes': _notesController.text,
-        'attachment': _attachment, // Include attachment path in data
-        // Add more fields as needed
-      };
-      await FirebaseFirestore.instance
-          .collection('treatment')
-          .add(treatmentData);
-      Navigator.pop(context); // Close the page after adding treatment record
-    } else {
-      // CPR does not exist, show an error message or handle accordingly
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Error'),
-          content: Text('Patient CPR not found.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
-    }
+  if (userSnapshot.docs.isNotEmpty) {
+    final patientDocId = userSnapshot.docs.first.id;
+    final treatmentData = {
+      'did': FirebaseAuth.instance.currentUser!.uid,
+      'uid': patientDocId,
+      'date': _dateController.text,
+      'time': _timeController.text,
+      'patientName': _patientNameController.text,
+      'CPR': _cprController.text,
+      'dentist': _dentistController.text,
+      'treatmentType': _treatmentTypeController.text,
+      'notes': _notesController.text,
+      'attachment': _attachment, // Include attachment path in data
+      // Add more fields as needed
+    };
+    await FirebaseFirestore.instance
+        .collection('treatment')
+        .add(treatmentData);
+    Navigator.pop(context); // Close the page after adding treatment record
+  } else {
+    // CPR does not exist, show an error message or handle accordingly
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Error'),
+        content: Text('Patient CPR not found.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
+}
 }
