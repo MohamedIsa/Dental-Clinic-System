@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:senior/reuseable_widget.dart';
 
 class AppointmentButtonsWidget extends StatefulWidget {
   final VoidCallback? onCreateAppointmentPressed;
@@ -28,53 +30,49 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
   TextEditingController _cprController = TextEditingController();
   TextEditingController _statController = TextEditingController();
   TextEditingController _endController = TextEditingController();
-  List<String> _dentists = []; // List of dentists
-
+  List<String> dentistName = [];
+  String selectedDentistId = '';
+  String selectedDentistName = '';
+  int selectedDentistIndex = -1;
   @override
   void initState() {
     super.initState();
-    fetchDentists(); // Fetch dentists when the widget initializes
+    fetchDentists().then((dentists) {
+      setState(() {
+        dentistName =
+            dentists.map((dentist) => dentist['Name'] as String).toList();
+      });
+    });
   }
 
-  void fetchDentists() async {
+  Future<List<Map<String, dynamic>>> fetchDentists() async {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    List<Map<String, dynamic>> dentists = [];
+
     try {
-      // Fetch all documents from "dentist" collection
-      QuerySnapshot querySnapshot =
-          await FirebaseFirestore.instance.collection('dentist').get();
+      QuerySnapshot dentistSnapshot =
+          await firestore.collection('dentist').get();
 
-      // Temporary list to hold dentist names
-      List<String> tempList = [];
+      for (QueryDocumentSnapshot doc in dentistSnapshot.docs) {
+        String dentistId = doc.id;
 
-      // Loop through the documents and add dentist names to the temporary list
-      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
-        String userId = doc.id;
-        // Check if the user exists in the "user" collection
-        DocumentSnapshot<Object?> userSnapshot = await FirebaseFirestore
-            .instance
-            .collection('user')
-            .doc(userId)
-            .get();
-        if (userSnapshot.exists && userSnapshot.data() != null) {
-          // Cast the data to the desired type
-          Map<String, dynamic> userData =
-              userSnapshot.data()! as Map<String, dynamic>;
-          // If user is found and widget is still mounted, get their full name
-          if (userData.containsKey('FullName')) {
-            String dentistName = userData['FullName'];
-            tempList.add(dentistName);
-          }
+        DocumentSnapshot userSnapshot =
+            await firestore.collection('user').doc(dentistId).get();
+
+        if (userSnapshot.exists &&
+            userSnapshot.data() != null &&
+            (userSnapshot.data() as Map<String, dynamic>)
+                .containsKey('FullName')) {
+          String fullName =
+              (userSnapshot.data() as Map<String, dynamic>)['FullName'];
+
+          dentists.add({'id': dentistId, 'name': fullName});
         }
       }
-
-      // Update the _dentists list only if the widget is still mounted
-      if (mounted) {
-        setState(() {
-          _dentists = tempList;
-        });
-      }
     } catch (e) {
-      print("Error fetching dentists: $e");
+      print('Error fetching dentists: $e');
     }
+    return dentists;
   }
 
   @override
@@ -151,98 +149,178 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Book Appointment'),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextField(
-                  controller: _cprControllerbook,
-                  decoration: InputDecoration(labelText: 'Enter Patient CPR'),
-                ),
-                const SizedBox(height: 20),
-                GestureDetector(
-                  onTap: () {
-                    _selectDate(context);
-                  },
-                  child: Row(
+        return FutureBuilder<List<Map<String, dynamic>>>(
+          future: fetchDentists(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return AlertDialog(
+                title: const Text('Book Appointment'),
+                content: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.calendar_today),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: TextFormField(
-                          controller: _dateController,
-                          style: const TextStyle(fontSize: 16),
-                          decoration: InputDecoration(
-                            labelText: 'Select Appointment Date',
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.black),
-                            ),
-                            enabled: false,
-                          ),
+                      const Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child: SpinKitFadingCube(
+                          color: Colors.black,
+                          size: 20.0,
                         ),
                       ),
                     ],
                   ),
                 ),
-                TextField(
-                  controller: _statController,
-                  decoration: InputDecoration(labelText: 'Start appointment'),
-                ),
-                const SizedBox(height: 20),
-                TextField(
-                  controller: _endController,
-                  decoration: InputDecoration(labelText: 'End appointment'),
-                ),
-                const SizedBox(height: 20),
-                DropdownButtonFormField(
-                  value: _dentists.isNotEmpty
-                      ? _dentists[0]
-                      : null, // Provide default value or null if list is empty
-                  items: _dentists.map((dentist) {
-                    return DropdownMenuItem(
-                      value: dentist,
-                      child: Text(dentist),
-                    );
-                  }).toList(),
-                  onChanged: (selectedDentist) {
-                    setState(() {
-                      // Handle dentist selection
-                    });
-                  },
-                  decoration: const InputDecoration(
-                    labelText: 'Select Dentist',
-                    border: OutlineInputBorder(),
+              );
+            } else if (snapshot.hasError) {
+              return AlertDialog(
+                title: const Text('Book Appointment'),
+                content: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Error: ${snapshot.error}'),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                // Save edited appointment details
-                String patientCPR = _cprControllerbook.text;
-                DateTime appointmentDate = _selectedDate;
-                String selectedDentist =
-                    _dentists[0]; // Placeholder, update with selected dentist
-                // Save to Firestore or perform desired action
-                Navigator.of(context).pop();
-              },
-              child: const Text('Save'),
-            ),
-          ],
+              );
+            } else {
+              List<Map<String, dynamic>> dentists = snapshot.data ?? [];
+              return AlertDialog(
+                title: const Text('Book Appointment'),
+                content: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextField(
+                        controller: _cprControllerbook,
+                        decoration:
+                            InputDecoration(labelText: 'Enter Patient CPR'),
+                      ),
+                      const SizedBox(height: 20),
+                      GestureDetector(
+                        onTap: () {
+                          _selectDate(context);
+                        },
+                        child: Row(
+                          children: [
+                            const Icon(Icons.calendar_today),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: TextFormField(
+                                controller: _dateController,
+                                style: const TextStyle(fontSize: 16),
+                                decoration: InputDecoration(
+                                  labelText: 'Select Appointment Date',
+                                  border: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.black),
+                                  ),
+                                  enabled: false,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      TextField(
+                        controller: _statController,
+                        decoration:
+                            InputDecoration(labelText: 'Start appointment'),
+                      ),
+                      const SizedBox(height: 20),
+                      TextField(
+                        controller: _endController,
+                        decoration:
+                            InputDecoration(labelText: 'End appointment'),
+                      ),
+                      const SizedBox(height: 20),
+                      DropdownButtonFormField<int>(
+                        value: selectedDentistIndex >= 0
+                            ? selectedDentistIndex
+                            : null,
+                        items: dentists.asMap().entries.map((entry) {
+                          int index = entry.key;
+                          Map<String, dynamic> dentist = entry.value;
+                          return DropdownMenuItem<int>(
+                            value: index,
+                            child: Text(dentist['name']),
+                          );
+                        }).toList(),
+                        onChanged: (int? index) {
+                          setState(() {
+                            if (index != null) {
+                              selectedDentistIndex = index;
+                              selectedDentistId = dentists[index]['id'];
+                              selectedDentistName = dentists[index]['name'];
+                            }
+                          });
+                        },
+                        decoration: const InputDecoration(
+                          labelText: 'Select Dentist',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Cancel'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      saveAppointment();
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Save'),
+                  ),
+                ],
+              );
+            }
+          },
         );
       },
     );
   }
+
+
+void saveAppointment() async {
+  try {
+    String uid = '';
+
+    QuerySnapshot userSnapshot = await FirebaseFirestore.instance
+        .collection('user')
+        .where('CPR', isEqualTo: _cprControllerbook.text)
+        .get();
+
+    if (userSnapshot.docs.isNotEmpty) {
+      uid = userSnapshot.docs.first.id;
+    }
+
+    // Convert start and end times to numbers
+    int startHour = int.parse(_statController.text);
+    int endHour = int.parse(_endController.text);
+
+    // Parse date string with custom format
+    DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+    DateTime date = dateFormat.parse(_dateController.text);
+
+    // Convert date to a Firestore timestamp
+    Timestamp dateTimestamp = Timestamp.fromDate(date);
+
+    await FirebaseFirestore.instance.collection('appointments').add({
+      'uid': uid,
+      'did': selectedDentistId,
+      'hour': startHour,
+      'end': endHour,
+      'date': dateTimestamp,
+    });
+  } catch (e) {
+    print("Error saving appointment: $e");
+  }
+}
+
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -260,13 +338,8 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
     }
   }
 
-  void showAppointmentInfoDialog(BuildContext context) {
-    // Simulated appointment information
-    String appointmentTime = "10:00 AM";
-    String appointmentDate = "13/5/2024";
-    String selectedDentist = _dentists[0];
-    String patientName = "Mohamed Ali"; // Replace with actual patient name
-
+  void showAppointmentInfoDialog(BuildContext context, String patientName,
+      String appointmentDate, String appointmentTime, String dentistName) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -279,7 +352,7 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
                 Text('Patient Name: $patientName'),
                 Text('Appointment Date: $appointmentDate'),
                 Text('Appointment Time: $appointmentTime'),
-                Text('Dentist: $selectedDentist'),
+                Text('Dentist:Dr.$dentistName'),
               ],
             ),
           ),
@@ -296,9 +369,9 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
     );
   }
 
-  void showSearchAppointmentDialog(BuildContext context) {
+  void showSearchAppointmentDialog(BuildContext parentContext) {
     showDialog(
-      context: context,
+      context: parentContext,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Search Appointment by CPR'),
@@ -321,15 +394,70 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
               child: const Text('Cancel'),
             ),
             ElevatedButton(
-              onPressed: () {
-                // Search for appointment by CPR
+              onPressed: () async {
+                // Search for user by CPR to get UID
                 String cpr = _cprController.text;
-                // Simulate appointment found
-                bool appointmentFound =
-                    true; // You need to implement the logic to check if appointment exists
-                if (appointmentFound) {
-                  // Show appointment information dialog
-                  showAppointmentInfoDialog(context);
+                QuerySnapshot userSnapshot = await FirebaseFirestore.instance
+                    .collection('user')
+                    .where('CPR', isEqualTo: cpr)
+                    .get();
+
+                if (userSnapshot.docs.isNotEmpty) {
+                  // Get UID
+                  String uid = userSnapshot.docs.first.id;
+
+                  // Query Firestore to get appointment data using UID
+                  QuerySnapshot appointmentsSnapshot = await FirebaseFirestore
+                      .instance
+                      .collection('appointments')
+                      .where('uid', isEqualTo: uid)
+                      .where('date',
+                          isGreaterThan: DateTime
+                              .now()) // Filter out appointments that have passed
+                      .get();
+
+                  // Check if appointment found
+                  if (appointmentsSnapshot.docs.isNotEmpty) {
+                    // Get appointment data
+                    var (appointmentData as Map<String, dynamic>) =
+                        appointmentsSnapshot.docs.first.data();
+                    Timestamp timestamp = appointmentData[
+                        'date']; // Assuming 'date' field is a Timestamp
+                    DateTime dateTime = timestamp.toDate();
+                    String formattedDate =
+                        DateFormat('yyyy-MM-dd').format(dateTime);
+
+                    String appointmentTime = appointmentData['hour'].toString();
+                    String dentistId = appointmentData['did'];
+
+                    // Query Firestore to get the name of the dentist using dentistId
+                    DocumentSnapshot dentistSnapshot = await FirebaseFirestore
+                        .instance
+                        .collection('user')
+                        .doc(dentistId)
+                        .get();
+
+                    if (dentistSnapshot.exists) {
+                      String dentistName = (dentistSnapshot.data()
+                          as Map<String, dynamic>)['FullName'];
+
+                      // Query Firestore to get the patient's name using UID
+                      DocumentSnapshot patientSnapshot = await FirebaseFirestore
+                          .instance
+                          .collection('user')
+                          .doc(uid)
+                          .get();
+
+                      if (patientSnapshot.exists) {
+                        String patientName = (patientSnapshot.data()
+                            as Map<String, dynamic>)['FullName'];
+
+                        // Show appointment information dialog
+                        showAppointmentInfoDialog(context, patientName,
+                            formattedDate, appointmentTime, dentistName);
+                      }
+                    }
+                  }
                 }
               },
               child: const Text('Search'),
@@ -343,6 +471,7 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
   void showEditAppointmentDialog(BuildContext context) {
     TextEditingController cprController =
         TextEditingController(); // Controller for CPR input
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -368,18 +497,16 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
                     ),
                     const SizedBox(width: 8), // Add some space between buttons
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         // Check CPR validity or existence in the system
                         String patientCPR = cprController.text;
-                        if (isValidCPR(patientCPR)) {
+                        if (await isValidCPR(patientCPR)) {
                           // CPR is valid, proceed to show appointment form
                           Navigator.of(context).pop();
                           showAppointmentForm(context, patientCPR);
                         } else {
                           // Handle invalid CPR input
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text('Invalid CPR'),
-                          ));
+                          showErrorDialog(context, 'Invalid CPR');
                         }
                       },
                       child: const Text('Next'),
@@ -394,8 +521,51 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
     );
   }
 
-  void showAppointmentForm(BuildContext context, String patientCPR) {
-    // Function to display appointment form with patient CPR
+  Future<bool> isValidCPR(String cpr) async {
+    // Replace with your actual user collection path
+    final userSnapshot = await FirebaseFirestore.instance
+        .collection('user')
+        .where('CPR', isEqualTo: cpr)
+        .get();
+
+    return userSnapshot.docs.isNotEmpty;
+  }
+
+  void showAppointmentForm(BuildContext context, String patientCPR) async {
+    // Retrieve the user ID based on CPR
+    final userSnapshot = await FirebaseFirestore.instance
+        .collection('user')
+        .where('CPR', isEqualTo: patientCPR)
+        .get();
+
+    if (userSnapshot.docs.isEmpty) {
+      showErrorDialog(context, 'User not found');
+      return;
+    }
+
+    String userId = userSnapshot.docs.first.id;
+
+    // Retrieve upcoming appointments for the user
+    final now =
+        Timestamp.fromDate(DateTime.now().toUtc().add(Duration(hours: 3)));
+    print('Current Timestamp: $now'); // Debugging line
+
+    final appointmentsSnapshot = await FirebaseFirestore.instance
+        .collection('appointments')
+        .where('uid', isEqualTo: userId)
+        .where('date', isGreaterThanOrEqualTo: now)
+        .get();
+
+    print('Appointments Snapshot: ${appointmentsSnapshot.docs.length}');
+
+    if (appointmentsSnapshot.docs.isEmpty) {
+      showErrorDialog(context, 'No upcoming appointments found');
+      return;
+    }
+
+    // Proceed to show the first appointment form (or adapt to show a list of appointments)
+    final appointment = appointmentsSnapshot.docs.first;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -432,15 +602,17 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
                   ),
                 ),
                 TextField(
+                  controller: TextEditingController(text: appointment['hour']),
                   decoration: InputDecoration(labelText: 'Start appointment'),
                 ),
                 const SizedBox(height: 20),
                 TextField(
+                  controller: TextEditingController(text: appointment['end']),
                   decoration: InputDecoration(labelText: 'End appointment'),
                 ),
                 const SizedBox(height: 20),
                 DropdownButtonFormField(
-                  value: _dentists[0],
+                  value: appointment['did'], // Assuming 'did' is the dentist ID
                   items: _dentists.map((dentist) {
                     return DropdownMenuItem(
                       value: dentist,
@@ -448,9 +620,7 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
                     );
                   }).toList(),
                   onChanged: (selectedDentist) {
-                    setState(() {
-                      // Handle dentist selection
-                    });
+                    appointment.reference.update({'did': selectedDentist});
                   },
                   decoration: const InputDecoration(
                     labelText: 'Select Dentist',
@@ -468,12 +638,14 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
               child: const Text('Cancel'),
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 // Save edited appointment details
-                DateTime appointmentDate = _selectedDate;
-                String selectedDentist =
-                    _dentists[0]; // Placeholder, update with selected dentist
-                // Save to Firestore or perform desired action
+                await appointment.reference.update({
+                  'date': Timestamp.fromDate(_selectedDate),
+                  'hour': appointment['hour'],
+                  'end': appointment['end'],
+                  'did': appointment['did'],
+                });
                 Navigator.of(context).pop();
               },
               child: const Text('Save'),
@@ -482,11 +654,6 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
         );
       },
     );
-  }
-
-  bool isValidCPR(String cpr) {
-    // Add your CPR validation logic here
-    return true; // Placeholder, replace with actual validation
   }
 
   void showCancelAppointmentDialog(BuildContext context) {
@@ -516,14 +683,75 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
               child: const Text('Cancel'),
             ),
             ElevatedButton(
-              onPressed: () {
-                // Search for appointment by CPR
-                String cpr = cprControllerCancel.text;
-                // Simulate appointment found
-                bool appointmentFound =
-                    true; // You need to implement the logic to check if appointment exists
-                if (appointmentFound) {
-                  showAppointmentInfoCancelDialog(context);
+              onPressed: () async {
+                QuerySnapshot userSnapshot = await FirebaseFirestore.instance
+                    .collection('user')
+                    .where('CPR', isEqualTo: cprControllerCancel.text)
+                    .get();
+
+                if (userSnapshot.docs.isNotEmpty) {
+                  // Get UID
+                  String uid = userSnapshot.docs.first.id;
+
+                  // Query Firestore to get appointment data using UID
+                  QuerySnapshot appointmentsSnapshot = await FirebaseFirestore
+                      .instance
+                      .collection('appointments')
+                      .where('uid', isEqualTo: uid)
+                      .where('date',
+                          isGreaterThan: DateTime
+                              .now()) // Filter out appointments that have passed
+                      .get();
+
+                  // Check if appointment found
+                  if (appointmentsSnapshot.docs.isNotEmpty) {
+                    // Get appointment data
+                    var (appointmentData as Map<String, dynamic>) =
+                        appointmentsSnapshot.docs.first.data();
+                    String appointmentId = appointmentsSnapshot
+                        .docs.first.id; // Get appointment ID
+                    Timestamp timestamp = appointmentData[
+                        'date']; // Assuming 'date' field is a Timestamp
+                    DateTime dateTime = timestamp.toDate();
+                    String formattedDate =
+                        DateFormat('yyyy-MM-dd').format(dateTime);
+
+                    String appointmentTime = appointmentData['hour'].toString();;
+                    String dentistId = appointmentData['did'];
+
+                    // Query Firestore to get the name of the dentist using dentistId
+                    DocumentSnapshot dentistSnapshot = await FirebaseFirestore
+                        .instance
+                        .collection('user')
+                        .doc(dentistId)
+                        .get();
+
+                    if (dentistSnapshot.exists) {
+                      String dentistName = (dentistSnapshot.data()
+                          as Map<String, dynamic>)['FullName'];
+
+                      // Query Firestore to get the patient's name using UID
+                      DocumentSnapshot patientSnapshot = await FirebaseFirestore
+                          .instance
+                          .collection('user')
+                          .doc(uid)
+                          .get();
+
+                      if (patientSnapshot.exists) {
+                        String patientName = (patientSnapshot.data()
+                            as Map<String, dynamic>)['FullName'];
+
+                        // Show appointment information dialog
+                        showAppointmentInfoCancelDialog(
+                            context,
+                            patientName,
+                            formattedDate,
+                            appointmentTime as String,
+                            dentistName,
+                            appointmentId);
+                      }
+                    }
+                  }
                 }
               },
               child: const Text('Next'),
@@ -534,13 +762,13 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
     );
   }
 
-  void showAppointmentInfoCancelDialog(BuildContext context) {
-    // Simulated appointment information
-    String appointmentTime = "10:00 AM";
-    String appointmentDate = "13/5/2024";
-    String selectedDentist = _dentists[0];
-    String patientName = "Mohamed Ali";
-
+  showAppointmentInfoCancelDialog(
+      BuildContext context,
+      String patientName,
+      String formattedDate,
+      String appointmentTime,
+      String dentistName,
+      String appointmentId) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -551,9 +779,9 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Patient Name: $patientName'),
-                Text('Appointment Date: $appointmentDate'),
+                Text('Appointment Date: $formattedDate'),
                 Text('Appointment Time: $appointmentTime'),
-                Text('Dentist: $selectedDentist'),
+                Text('Dentist:Dr. $dentistName'),
               ],
             ),
           ),
@@ -565,8 +793,19 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
               child: const Text('Close'),
             ),
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
+              onPressed: () async {
+                // Remove appointment from Firestore
+                await FirebaseFirestore.instance
+                    .collection('appointments')
+                    .doc(appointmentId)
+                    .delete();
+
+                Navigator.of(context).pop(); // Close the dialog
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Appointment canceled successfully'),
+                  ),
+                );
               },
               child: const Text(
                 'Confirm',
@@ -579,4 +818,8 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
       },
     );
   }
+}
+
+class _dentists {
+  static map(DropdownMenuItem<Object> Function(dynamic dentist) param0) {}
 }
