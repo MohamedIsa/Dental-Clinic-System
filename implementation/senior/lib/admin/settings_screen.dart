@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:universal_html/html.dart';
+
 
 class SettingsPage extends StatelessWidget {
   final Function(String) navigateToSettings;
@@ -312,7 +312,6 @@ class _DentistColorSettingsScreenState
                                               selectedColor = color;
                                             });
                                           },
-                                          color: selectedColor,
                                         ),
                                       ),
                                       actions: <Widget>[

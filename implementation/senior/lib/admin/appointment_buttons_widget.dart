@@ -24,7 +24,6 @@ class AppointmentButtonsWidget extends StatefulWidget {
 }
 
 class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
-  DateTime _selectedDate = DateTime.now(); // To store selected appointment date
   TextEditingController _dateController = TextEditingController();
   TextEditingController _cprControllerbook = TextEditingController();
   TextEditingController _cprController = TextEditingController();
@@ -38,10 +37,12 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
   void initState() {
     super.initState();
     fetchDentists().then((dentists) {
-      setState(() {
-        dentistName =
-            dentists.map((dentist) => dentist['Name'] as String).toList();
-      });
+      if (mounted) {
+        setState(() {
+          dentistName =
+              dentists.map((dentist) => dentist['name'] as String).toList();
+        });
+      }
     });
   }
 
@@ -66,13 +67,23 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
           String fullName =
               (userSnapshot.data() as Map<String, dynamic>)['FullName'];
 
-          dentists.add({'id': dentistId, 'name': fullName});
+          dentists.add({'id': dentistId, 'name': 'Dr. ${fullName}'});
         }
       }
     } catch (e) {
       print('Error fetching dentists: $e');
     }
     return dentists;
+  }
+
+  Future<bool> isValidCPR(String cpr) async {
+    // Replace with your actual user collection path
+    final userSnapshot = await FirebaseFirestore.instance
+        .collection('user')
+        .where('CPR', isEqualTo: cpr)
+        .get();
+
+    return userSnapshot.docs.isNotEmpty;
   }
 
   @override
@@ -198,7 +209,7 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
                       const SizedBox(height: 20),
                       GestureDetector(
                         onTap: () {
-                          _selectDate(context);
+                          _selectDate(context, _dateController);
                         },
                         child: Row(
                           children: [
@@ -220,16 +231,35 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
                           ],
                         ),
                       ),
+                      const SizedBox(height: 20),
                       TextField(
                         controller: _statController,
-                        decoration:
-                            InputDecoration(labelText: 'Start appointment'),
+                        onTap: () {
+                          _selectTime(context,
+                              isStartTime: true,
+                              timeController: _statController);
+                        },
+                        decoration: InputDecoration(
+                          labelText: 'Select Start Time (9 AM - 5 PM)',
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 20),
                       TextField(
                         controller: _endController,
-                        decoration:
-                            InputDecoration(labelText: 'End appointment'),
+                        onTap: () {
+                          _selectTime(context,
+                              isStartTime: false,
+                              timeController: _endController);
+                        },
+                        decoration: InputDecoration(
+                          labelText: 'Select End Time (10 AM - 6 PM)',
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 20),
                       DropdownButtonFormField<int>(
@@ -265,13 +295,13 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pop();
+                      clearControllers();
                     },
                     child: const Text('Cancel'),
                   ),
                   ElevatedButton(
                     onPressed: () {
                       saveAppointment();
-                      Navigator.of(context).pop();
                     },
                     child: const Text('Save'),
                   ),
@@ -284,57 +314,117 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
     );
   }
 
-
-void saveAppointment() async {
-  try {
-    String uid = '';
-
-    QuerySnapshot userSnapshot = await FirebaseFirestore.instance
-        .collection('user')
-        .where('CPR', isEqualTo: _cprControllerbook.text)
-        .get();
-
-    if (userSnapshot.docs.isNotEmpty) {
-      uid = userSnapshot.docs.first.id;
-    }
-
-    // Convert start and end times to numbers
-    int startHour = int.parse(_statController.text);
-    int endHour = int.parse(_endController.text);
-
-    // Parse date string with custom format
-    DateFormat dateFormat = DateFormat('dd/MM/yyyy');
-    DateTime date = dateFormat.parse(_dateController.text);
-
-    // Convert date to a Firestore timestamp
-    Timestamp dateTimestamp = Timestamp.fromDate(date);
-
-    await FirebaseFirestore.instance.collection('appointments').add({
-      'uid': uid,
-      'did': selectedDentistId,
-      'hour': startHour,
-      'end': endHour,
-      'date': dateTimestamp,
-    });
-  } catch (e) {
-    print("Error saving appointment: $e");
+  void clearControllers() {
+    _cprControllerbook.clear();
+    _dateController.clear();
+    _statController.clear();
+    _endController.clear();
   }
-}
 
+  void saveAppointment() async {
+    try {
+      String uid = '';
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime.now().subtract(const Duration(days: 365)),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-    );
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-        _dateController.text = DateFormat('dd/MM/yyyy')
-            .format(picked); // Format date and set text in text field
+      // Validate CPR input
+      if (_cprControllerbook.text.isEmpty) {
+        throw Exception("CPR cannot be empty");
+      }
+
+      QuerySnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('user')
+          .where('CPR', isEqualTo: _cprControllerbook.text)
+          .get();
+
+      if (userSnapshot.docs.isNotEmpty) {
+        uid = userSnapshot.docs.first.id;
+      } else {
+        throw Exception("No user found with the given CPR");
+      }
+
+      print("Start Time: ${_statController.text}");
+      print("End Time: ${_endController.text}");
+
+      // Validate and parse start and end times
+      if (_statController.text.isEmpty || _endController.text.isEmpty) {
+        throw Exception("Start and end times cannot be empty");
+      }
+
+      int startHour = int.parse(_statController.text);
+      int endHour = int.parse(_endController.text);
+
+      if (startHour < 9 || startHour > 17 || endHour < 10 || endHour > 18) {
+        throw Exception(
+            "Invalid start or end time. Start time should be between 09:00 AM and 05:59 PM, and end time should be between 10:00 AM and 06:59 PM.");
+      }
+
+      // Validate and parse date
+      if (_dateController.text.isEmpty) {
+        throw Exception("Appointment date cannot be empty");
+      }
+      DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+      DateTime date;
+      try {
+        date = dateFormat.parseStrict(_dateController.text);
+      } catch (e) {
+        throw Exception("Invalid date format, should be dd/MM/yyyy");
+      }
+
+      // Convert date to a Firestore timestamp
+      Timestamp dateTimestamp = Timestamp.fromDate(date);
+
+      if (selectedDentistId.isEmpty) {
+        throw Exception("Please select a dentist");
+      }
+
+      // Save the appointment to Firestore
+      await FirebaseFirestore.instance.collection('appointments').add({
+        'uid': uid,
+        'did': selectedDentistId,
+        'hour': startHour,
+        'end': endHour,
+        'date': dateTimestamp,
       });
+
+      showMessagealert(context, 'Appointment booked successfully');
+      clearControllers();
+      Navigator.of(context).pop();
+    } catch (e) {
+      print("Error saving appointment: $e");
+      showErrorDialog(context, 'Error saving appointment: ${e.toString()}');
+    }
+  }
+
+  Future<void> _selectTime(BuildContext context,
+      {required bool isStartTime,
+      required TextEditingController timeController}) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: isStartTime
+          ? TimeOfDay(hour: 9, minute: 0)
+          : TimeOfDay(hour: 10, minute: 0),
+    );
+    if (picked != null) {
+      final int selectedHour = picked.hour;
+      setState(() {
+        if (isStartTime) {
+          timeController.text = selectedHour.toString();
+        } else {
+          timeController.text = selectedHour.toString();
+        }
+      });
+    }
+  }
+
+  void _selectDate(
+      BuildContext context, TextEditingController dateController) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now().subtract(Duration(days: 1)),
+      lastDate: DateTime(2101),
+    );
+    if (pickedDate != null) {
+      dateController.text = DateFormat('dd/MM/yyyy').format(pickedDate);
     }
   }
 
@@ -352,7 +442,7 @@ void saveAppointment() async {
                 Text('Patient Name: $patientName'),
                 Text('Appointment Date: $appointmentDate'),
                 Text('Appointment Time: $appointmentTime'),
-                Text('Dentist:Dr.$dentistName'),
+                Text('Dentist: Dr.$dentistName'),
               ],
             ),
           ),
@@ -395,8 +485,14 @@ void saveAppointment() async {
             ),
             ElevatedButton(
               onPressed: () async {
-                // Search for user by CPR to get UID
+                // Check if CPR field is not empty
                 String cpr = _cprController.text;
+                if (cpr.isEmpty) {
+                  showErrorDialog(context, 'CPR cannot be empty');
+                  return;
+                }
+
+                // Search for user by CPR to get UID
                 QuerySnapshot userSnapshot = await FirebaseFirestore.instance
                     .collection('user')
                     .where('CPR', isEqualTo: cpr)
@@ -406,29 +502,37 @@ void saveAppointment() async {
                   // Get UID
                   String uid = userSnapshot.docs.first.id;
 
+                  // Ensure UID is not empty
+                  if (uid.isEmpty) {
+                    showErrorDialog(context, 'User ID is invalid');
+                    return;
+                  }
+
                   // Query Firestore to get appointment data using UID
                   QuerySnapshot appointmentsSnapshot = await FirebaseFirestore
                       .instance
                       .collection('appointments')
                       .where('uid', isEqualTo: uid)
-                      .where('date',
-                          isGreaterThan: DateTime
-                              .now()) // Filter out appointments that have passed
+                      .where('date', isGreaterThan: DateTime.now())
                       .get();
 
                   // Check if appointment found
                   if (appointmentsSnapshot.docs.isNotEmpty) {
-                    // Get appointment data
-                    var (appointmentData as Map<String, dynamic>) =
-                        appointmentsSnapshot.docs.first.data();
-                    Timestamp timestamp = appointmentData[
-                        'date']; // Assuming 'date' field is a Timestamp
+                    var appointmentData = appointmentsSnapshot.docs.first.data()
+                        as Map<String, dynamic>;
+                    Timestamp timestamp = appointmentData['date'];
                     DateTime dateTime = timestamp.toDate();
                     String formattedDate =
                         DateFormat('yyyy-MM-dd').format(dateTime);
 
                     String appointmentTime = appointmentData['hour'].toString();
                     String dentistId = appointmentData['did'];
+
+                    // Ensure dentistId is not empty
+                    if (dentistId.isEmpty) {
+                      showErrorDialog(context, 'Dentist ID is invalid');
+                      return;
+                    }
 
                     // Query Firestore to get the name of the dentist using dentistId
                     DocumentSnapshot dentistSnapshot = await FirebaseFirestore
@@ -455,9 +559,17 @@ void saveAppointment() async {
                         // Show appointment information dialog
                         showAppointmentInfoDialog(context, patientName,
                             formattedDate, appointmentTime, dentistName);
+                      } else {
+                        showErrorDialog(context, 'Patient not found');
                       }
+                    } else {
+                      showErrorDialog(context, 'Dentist not found');
                     }
+                  } else {
+                    showErrorDialog(context, 'No upcoming appointments found');
                   }
+                } else {
+                  showErrorDialog(context, 'No user found with this CPR');
                 }
               },
               child: const Text('Search'),
@@ -468,13 +580,13 @@ void saveAppointment() async {
     );
   }
 
-  void showEditAppointmentDialog(BuildContext context) {
+  void showEditAppointmentDialog(BuildContext parentContext) {
     TextEditingController cprController =
         TextEditingController(); // Controller for CPR input
 
     showDialog(
-      context: context,
-      builder: (BuildContext context) {
+      context: parentContext,
+      builder: (BuildContext parentContext) {
         return AlertDialog(
           title: const Text('Edit Appointment'),
           content: SingleChildScrollView(
@@ -491,21 +603,18 @@ void saveAppointment() async {
                   children: [
                     TextButton(
                       onPressed: () {
-                        Navigator.of(context).pop();
+                        Navigator.of(parentContext).pop();
                       },
                       child: const Text('Close'),
                     ),
-                    const SizedBox(width: 8), // Add some space between buttons
+                    const SizedBox(width: 8),
                     ElevatedButton(
                       onPressed: () async {
-                        // Check CPR validity or existence in the system
                         String patientCPR = cprController.text;
                         if (await isValidCPR(patientCPR)) {
-                          // CPR is valid, proceed to show appointment form
                           Navigator.of(context).pop();
                           showAppointmentForm(context, patientCPR);
                         } else {
-                          // Handle invalid CPR input
                           showErrorDialog(context, 'Invalid CPR');
                         }
                       },
@@ -521,18 +630,7 @@ void saveAppointment() async {
     );
   }
 
-  Future<bool> isValidCPR(String cpr) async {
-    // Replace with your actual user collection path
-    final userSnapshot = await FirebaseFirestore.instance
-        .collection('user')
-        .where('CPR', isEqualTo: cpr)
-        .get();
-
-    return userSnapshot.docs.isNotEmpty;
-  }
-
   void showAppointmentForm(BuildContext context, String patientCPR) async {
-    // Retrieve the user ID based on CPR
     final userSnapshot = await FirebaseFirestore.instance
         .collection('user')
         .where('CPR', isEqualTo: patientCPR)
@@ -544,11 +642,7 @@ void saveAppointment() async {
     }
 
     String userId = userSnapshot.docs.first.id;
-
-    // Retrieve upcoming appointments for the user
-    final now =
-        Timestamp.fromDate(DateTime.now().toUtc().add(Duration(hours: 3)));
-    print('Current Timestamp: $now'); // Debugging line
+    final now = Timestamp.fromDate(DateTime.now());
 
     final appointmentsSnapshot = await FirebaseFirestore.instance
         .collection('appointments')
@@ -556,104 +650,257 @@ void saveAppointment() async {
         .where('date', isGreaterThanOrEqualTo: now)
         .get();
 
-    print('Appointments Snapshot: ${appointmentsSnapshot.docs.length}');
-
     if (appointmentsSnapshot.docs.isEmpty) {
       showErrorDialog(context, 'No upcoming appointments found');
       return;
     }
-
-    // Proceed to show the first appointment form (or adapt to show a list of appointments)
     final appointment = appointmentsSnapshot.docs.first;
+
+    TextEditingController _dateController = TextEditingController(
+      text: DateFormat('dd/MM/yyyy')
+          .format((appointment['date'] as Timestamp).toDate()),
+    );
+    TextEditingController _statController = TextEditingController(
+      text: appointment['hour'].toString(),
+    );
+    TextEditingController _endController = TextEditingController(
+      text: appointment['end'].toString(),
+    );
+    String appointmentId = appointment.id;
+    String DentistId = appointment['did'];
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Edit Appointment'),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Patient CPR: $patientCPR'),
-                const SizedBox(height: 20),
-                GestureDetector(
-                  onTap: () {
-                    _selectDate(context); // Function to show date picker dialog
-                  },
-                  child: Row(
-                    children: [
-                      const Icon(Icons.calendar_today),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: TextFormField(
-                          controller: _dateController,
-                          style: const TextStyle(fontSize: 16),
-                          decoration: InputDecoration(
-                            labelText: 'Select Appointment Date',
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.black),
-                            ),
-                            enabled: false,
-                          ),
+        return FutureBuilder<List<Map<String, dynamic>>>(
+          future: fetchDentists(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return AlertDialog(
+                title: const Text('Update Appointment'),
+                content: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child: SpinKitFadingCube(
+                          color: Colors.black,
+                          size: 20.0,
                         ),
                       ),
                     ],
                   ),
                 ),
-                TextField(
-                  controller: TextEditingController(text: appointment['hour']),
-                  decoration: InputDecoration(labelText: 'Start appointment'),
-                ),
-                const SizedBox(height: 20),
-                TextField(
-                  controller: TextEditingController(text: appointment['end']),
-                  decoration: InputDecoration(labelText: 'End appointment'),
-                ),
-                const SizedBox(height: 20),
-                DropdownButtonFormField(
-                  value: appointment['did'], // Assuming 'did' is the dentist ID
-                  items: _dentists.map((dentist) {
-                    return DropdownMenuItem(
-                      value: dentist,
-                      child: Text(dentist),
-                    );
-                  }).toList(),
-                  onChanged: (selectedDentist) {
-                    appointment.reference.update({'did': selectedDentist});
-                  },
-                  decoration: const InputDecoration(
-                    labelText: 'Select Dentist',
-                    border: OutlineInputBorder(),
+              );
+            } else if (snapshot.hasError) {
+              return AlertDialog(
+                title: const Text('Update Appointment'),
+                content: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Error: ${snapshot.error}'),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                // Save edited appointment details
-                await appointment.reference.update({
-                  'date': Timestamp.fromDate(_selectedDate),
-                  'hour': appointment['hour'],
-                  'end': appointment['end'],
-                  'did': appointment['did'],
-                });
-                Navigator.of(context).pop();
-              },
-              child: const Text('Save'),
-            ),
-          ],
+              );
+            } else {
+              return AlertDialog(
+                title: const Text('Update Appointment'),
+                content: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextField(
+                        controller: TextEditingController(text: patientCPR),
+                        decoration: InputDecoration(labelText: 'Patient CPR'),
+                        readOnly: true, // Make the CPR field read-only
+                      ),
+                      const SizedBox(height: 20),
+                      GestureDetector(
+                        onTap: () {
+                          _selectDate(context, _dateController);
+                        },
+                        child: Row(
+                          children: [
+                            const Icon(Icons.calendar_today),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: TextField(
+                                controller: _dateController,
+                                style: const TextStyle(fontSize: 16),
+                                decoration: InputDecoration(
+                                  labelText: 'Select Appointment Date',
+                                  border: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.black),
+                                  ),
+                                  enabled: true,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      TextField(
+                        controller: _statController,
+                        onTap: () {
+                          _selectTime(context,
+                              isStartTime: true,
+                              timeController: _statController);
+                        },
+                        decoration: InputDecoration(
+                          labelText: 'Select Start Time (9 AM - 5 PM)',
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      TextField(
+                        controller: _endController,
+                        onTap: () {
+                          _selectTime(context,
+                              isStartTime: false,
+                              timeController: _endController);
+                        },
+                        decoration: InputDecoration(
+                          labelText: 'Select End Time (10 AM - 6 PM)',
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      FutureBuilder<List<Map<String, dynamic>>>(
+                        future: fetchDentists(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            selectedDentistIndex = snapshot.data!.indexWhere(
+                                (dentist) => dentist['id'] == DentistId);
+                            return DropdownButtonFormField<int>(
+                              value: selectedDentistIndex >= 0
+                                  ? selectedDentistIndex
+                                  : null,
+                              items:
+                                  snapshot.data!.asMap().entries.map((entry) {
+                                int index = entry.key;
+                                Map<String, dynamic> dentist = entry.value;
+                                return DropdownMenuItem<int>(
+                                  value: index,
+                                  child: Text(dentist['name']),
+                                );
+                              }).toList(),
+                              onChanged: (int? index) {
+                                if (index != null) {
+                                  selectedDentistIndex = index;
+                                  selectedDentistId =
+                                      snapshot.data![index]['id'];
+                                  selectedDentistName =
+                                      snapshot.data![index]['name'];
+                                }
+                              },
+                              decoration: const InputDecoration(
+                                labelText: 'Select Dentist',
+                                border: OutlineInputBorder(),
+                              ),
+                            );
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            return const CircularProgressIndicator();
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Cancel'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      UpdateAppointments(patientCPR, appointmentId,
+                          _statController, _endController, _dateController);
+                    },
+                    child: const Text('Update'),
+                  ),
+                ],
+              );
+            }
+          },
         );
       },
     );
+  }
+
+  void UpdateAppointments(patientCPR, AppointmentId, _statController,
+      _endController, _dateController) async {
+    try {
+      QuerySnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('user')
+          .where('CPR', isEqualTo: patientCPR)
+          .get();
+
+      String uid = userSnapshot.docs.first.id;
+
+      print("Start Time: ${_statController.text}");
+      print("End Time: ${_endController.text}");
+
+      // Validate and parse start and end times
+      if (_statController.text.isEmpty || _endController.text.isEmpty) {
+        throw Exception("Start and end times cannot be empty");
+      }
+
+      int startHour = int.parse(_statController.text);
+      int endHour = int.parse(_endController.text);
+
+      if (startHour < 9 || startHour > 17 || endHour < 10 || endHour > 18) {
+        throw Exception(
+            "Invalid start or end time. Start time should be between 09:00 AM and 05:59 PM, and end time should be between 10:00 AM and 06:59 PM.");
+      }
+
+      // Validate and parse date
+      if (_dateController.text.isEmpty) {
+        throw Exception("Appointment date cannot be empty");
+      }
+      DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+      DateTime date;
+      try {
+        date = dateFormat.parseStrict(_dateController.text);
+      } catch (e) {
+        throw Exception("Invalid date format, should be dd/MM/yyyy");
+      }
+
+      // Convert date to a Firestore timestamp
+      Timestamp dateTimestamp = Timestamp.fromDate(date);
+      if (selectedDentistId.isEmpty) {
+        throw Exception("Please select a dentist");
+      }
+      // Save the appointment to Firestore
+      await FirebaseFirestore.instance
+          .collection('appointments')
+          .doc(AppointmentId)
+          .update({
+        'uid': uid,
+        'did': selectedDentistId,
+        'hour': startHour,
+        'end': endHour,
+        'date': dateTimestamp,
+      });
+
+      showMessagealert(context, 'Appointment updated successfully');
+      clearControllers();
+      Navigator.of(context).pop();
+    } catch (e) {
+      print("Error Updating appointment: $e");
+      showErrorDialog(context, 'Error Updating appointment: ${e.toString()}');
+    }
   }
 
   void showCancelAppointmentDialog(BuildContext context) {
@@ -716,7 +963,8 @@ void saveAppointment() async {
                     String formattedDate =
                         DateFormat('yyyy-MM-dd').format(dateTime);
 
-                    String appointmentTime = appointmentData['hour'].toString();;
+                    String appointmentTime = appointmentData['hour'].toString();
+                    ;
                     String dentistId = appointmentData['did'];
 
                     // Query Firestore to get the name of the dentist using dentistId
@@ -746,7 +994,7 @@ void saveAppointment() async {
                             context,
                             patientName,
                             formattedDate,
-                            appointmentTime as String,
+                            appointmentTime,
                             dentistName,
                             appointmentId);
                       }
@@ -800,12 +1048,8 @@ void saveAppointment() async {
                     .doc(appointmentId)
                     .delete();
 
-                Navigator.of(context).pop(); // Close the dialog
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Appointment canceled successfully'),
-                  ),
-                );
+                Navigator.of(context).pop();
+                showMessagealert(context, 'Appointment canceled successfully');
               },
               child: const Text(
                 'Confirm',
@@ -818,8 +1062,4 @@ void saveAppointment() async {
       },
     );
   }
-}
-
-class _dentists {
-  static map(DropdownMenuItem<Object> Function(dynamic dentist) param0) {}
 }
