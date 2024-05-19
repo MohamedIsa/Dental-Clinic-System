@@ -77,7 +77,6 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
   }
 
   Future<bool> isValidCPR(String cpr) async {
-    // Replace with your actual user collection path
     final userSnapshot = await FirebaseFirestore.instance
         .collection('user')
         .where('CPR', isEqualTo: cpr)
@@ -98,11 +97,10 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
               onPressed: () => showCreateAppointmentDialog(context),
               child: const Text(
                 'Book Appointment',
-                style:
-                    TextStyle(color: Colors.white), // Set text color to white
+                style: TextStyle(color: Colors.white),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue, // Set background color to blue
+                backgroundColor: Colors.blue,
               ),
             ),
           ),
@@ -113,11 +111,10 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
               onPressed: () => showSearchAppointmentDialog(context),
               child: const Text(
                 'View Appointment',
-                style:
-                    TextStyle(color: Colors.white), // Set text color to white
+                style: TextStyle(color: Colors.white),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue, // Set background color to blue
+                backgroundColor: Colors.blue,
               ),
             ),
           ),
@@ -128,11 +125,10 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
               onPressed: () => showEditAppointmentDialog(context),
               child: const Text(
                 'Edit Appointment',
-                style:
-                    TextStyle(color: Colors.white), // Set text color to white
+                style: TextStyle(color: Colors.white),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue, // Set background color to blue
+                backgroundColor: Colors.blue,
               ),
             ),
           ),
@@ -143,11 +139,10 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
               onPressed: () => showCancelAppointmentDialog(context),
               child: const Text(
                 'Cancel Appointment',
-                style:
-                    TextStyle(color: Colors.white), // Set text color to white
+                style: TextStyle(color: Colors.white),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue, // Set background color to blue
+                backgroundColor: Colors.blue,
               ),
             ),
           ),
@@ -325,7 +320,6 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
     try {
       String uid = '';
 
-      // Validate CPR input
       if (_cprControllerbook.text.isEmpty) {
         throw Exception("CPR cannot be empty");
       }
@@ -344,7 +338,6 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
       print("Start Time: ${_statController.text}");
       print("End Time: ${_endController.text}");
 
-      // Validate and parse start and end times
       if (_statController.text.isEmpty || _endController.text.isEmpty) {
         throw Exception("Start and end times cannot be empty");
       }
@@ -357,7 +350,6 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
             "Invalid start or end time. Start time should be between 09:00 AM and 05:59 PM, and end time should be between 10:00 AM and 06:59 PM.");
       }
 
-      // Validate and parse date
       if (_dateController.text.isEmpty) {
         throw Exception("Appointment date cannot be empty");
       }
@@ -369,14 +361,12 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
         throw Exception("Invalid date format, should be dd/MM/yyyy");
       }
 
-      // Convert date to a Firestore timestamp
       Timestamp dateTimestamp = Timestamp.fromDate(date);
 
       if (selectedDentistId.isEmpty) {
         throw Exception("Please select a dentist");
       }
 
-      // Save the appointment to Firestore
       await FirebaseFirestore.instance.collection('appointments').add({
         'uid': uid,
         'did': selectedDentistId,
@@ -485,40 +475,51 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
             ),
             ElevatedButton(
               onPressed: () async {
-                // Check if CPR field is not empty
                 String cpr = _cprController.text;
                 if (cpr.isEmpty) {
                   showErrorDialog(context, 'CPR cannot be empty');
                   return;
                 }
 
-                // Search for user by CPR to get UID
                 QuerySnapshot userSnapshot = await FirebaseFirestore.instance
                     .collection('user')
                     .where('CPR', isEqualTo: cpr)
                     .get();
 
                 if (userSnapshot.docs.isNotEmpty) {
-                  // Get UID
                   String uid = userSnapshot.docs.first.id;
 
-                  // Ensure UID is not empty
                   if (uid.isEmpty) {
                     showErrorDialog(context, 'User ID is invalid');
                     return;
                   }
 
-                  // Query Firestore to get appointment data using UID
-                  QuerySnapshot appointmentsSnapshot = await FirebaseFirestore
-                      .instance
-                      .collection('appointments')
-                      .where('uid', isEqualTo: uid)
-                      .where('date', isGreaterThan: DateTime.now())
-                      .get();
+                  DateTime now = DateTime.now();
+                  int currentHour = TimeOfDay.now().hour;
+                  DateTime startOfToday =
+                      DateTime(now.year, now.month, now.day);
 
-                  // Check if appointment found
-                  if (appointmentsSnapshot.docs.isNotEmpty) {
-                    var appointmentData = appointmentsSnapshot.docs.first.data()
+                  QuerySnapshot futureAppointmentsSnapshot =
+                      await FirebaseFirestore.instance
+                          .collection('appointments')
+                          .where('uid', isEqualTo: uid)
+                          .where('date', isGreaterThan: startOfToday)
+                          .get();
+
+                  QuerySnapshot todayAppointmentsSnapshot =
+                      await FirebaseFirestore.instance
+                          .collection('appointments')
+                          .where('uid', isEqualTo: uid)
+                          .where('date', isEqualTo: startOfToday)
+                          .where('hour', isGreaterThan: currentHour)
+                          .get();
+
+                  List<QueryDocumentSnapshot> upcomingAppointments = [];
+                  upcomingAppointments.addAll(futureAppointmentsSnapshot.docs);
+                  upcomingAppointments.addAll(todayAppointmentsSnapshot.docs);
+
+                  if (upcomingAppointments.isNotEmpty) {
+                    var appointmentData = upcomingAppointments.first.data()
                         as Map<String, dynamic>;
                     Timestamp timestamp = appointmentData['date'];
                     DateTime dateTime = timestamp.toDate();
@@ -528,13 +529,11 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
                     String appointmentTime = appointmentData['hour'].toString();
                     String dentistId = appointmentData['did'];
 
-                    // Ensure dentistId is not empty
                     if (dentistId.isEmpty) {
                       showErrorDialog(context, 'Dentist ID is invalid');
                       return;
                     }
 
-                    // Query Firestore to get the name of the dentist using dentistId
                     DocumentSnapshot dentistSnapshot = await FirebaseFirestore
                         .instance
                         .collection('user')
@@ -545,7 +544,6 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
                       String dentistName = (dentistSnapshot.data()
                           as Map<String, dynamic>)['FullName'];
 
-                      // Query Firestore to get the patient's name using UID
                       DocumentSnapshot patientSnapshot = await FirebaseFirestore
                           .instance
                           .collection('user')
@@ -556,7 +554,6 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
                         String patientName = (patientSnapshot.data()
                             as Map<String, dynamic>)['FullName'];
 
-                        // Show appointment information dialog
                         showAppointmentInfoDialog(context, patientName,
                             formattedDate, appointmentTime, dentistName);
                       } else {
@@ -581,8 +578,7 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
   }
 
   void showEditAppointmentDialog(BuildContext parentContext) {
-    TextEditingController cprController =
-        TextEditingController(); // Controller for CPR input
+    TextEditingController cprController = TextEditingController();
 
     showDialog(
       context: parentContext,
@@ -642,19 +638,34 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
     }
 
     String userId = userSnapshot.docs.first.id;
-    final now = Timestamp.fromDate(DateTime.now());
 
-    final appointmentsSnapshot = await FirebaseFirestore.instance
+    DateTime now = DateTime.now();
+    int currentHour = TimeOfDay.now().hour;
+    DateTime startOfToday = DateTime(now.year, now.month, now.day);
+
+    QuerySnapshot futureAppointmentsSnapshot = await FirebaseFirestore.instance
         .collection('appointments')
         .where('uid', isEqualTo: userId)
-        .where('date', isGreaterThanOrEqualTo: now)
+        .where('date', isGreaterThan: startOfToday)
         .get();
 
-    if (appointmentsSnapshot.docs.isEmpty) {
+    QuerySnapshot todayAppointmentsSnapshot = await FirebaseFirestore.instance
+        .collection('appointments')
+        .where('uid', isEqualTo: userId)
+        .where('date', isEqualTo: startOfToday)
+        .where('hour', isGreaterThan: currentHour)
+        .get();
+
+    List<QueryDocumentSnapshot> upcomingAppointments = [];
+    upcomingAppointments.addAll(futureAppointmentsSnapshot.docs);
+    upcomingAppointments.addAll(todayAppointmentsSnapshot.docs);
+
+    if (upcomingAppointments.isEmpty) {
       showErrorDialog(context, 'No upcoming appointments found');
       return;
     }
-    final appointment = appointmentsSnapshot.docs.first;
+
+    final appointment = upcomingAppointments.first;
 
     TextEditingController _dateController = TextEditingController(
       text: DateFormat('dd/MM/yyyy')
@@ -715,7 +726,7 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
                       TextField(
                         controller: TextEditingController(text: patientCPR),
                         decoration: InputDecoration(labelText: 'Patient CPR'),
-                        readOnly: true, // Make the CPR field read-only
+                        readOnly: true,
                       ),
                       const SizedBox(height: 20),
                       GestureDetector(
@@ -849,10 +860,6 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
 
       String uid = userSnapshot.docs.first.id;
 
-      print("Start Time: ${_statController.text}");
-      print("End Time: ${_endController.text}");
-
-      // Validate and parse start and end times
       if (_statController.text.isEmpty || _endController.text.isEmpty) {
         throw Exception("Start and end times cannot be empty");
       }
@@ -865,7 +872,6 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
             "Invalid start or end time. Start time should be between 09:00 AM and 05:59 PM, and end time should be between 10:00 AM and 06:59 PM.");
       }
 
-      // Validate and parse date
       if (_dateController.text.isEmpty) {
         throw Exception("Appointment date cannot be empty");
       }
@@ -877,12 +883,11 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
         throw Exception("Invalid date format, should be dd/MM/yyyy");
       }
 
-      // Convert date to a Firestore timestamp
       Timestamp dateTimestamp = Timestamp.fromDate(date);
       if (selectedDentistId.isEmpty) {
         throw Exception("Please select a dentist");
       }
-      // Save the appointment to Firestore
+
       await FirebaseFirestore.instance
           .collection('appointments')
           .doc(AppointmentId)
@@ -904,8 +909,7 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
   }
 
   void showCancelAppointmentDialog(BuildContext context) {
-    TextEditingController cprControllerCancel =
-        TextEditingController(); // Controller for CPR input
+    TextEditingController cprControllerCancel = TextEditingController();
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -937,37 +941,43 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
                     .get();
 
                 if (userSnapshot.docs.isNotEmpty) {
-                  // Get UID
                   String uid = userSnapshot.docs.first.id;
 
-                  // Query Firestore to get appointment data using UID
-                  QuerySnapshot appointmentsSnapshot = await FirebaseFirestore
-                      .instance
-                      .collection('appointments')
-                      .where('uid', isEqualTo: uid)
-                      .where('date',
-                          isGreaterThan: DateTime
-                              .now()) // Filter out appointments that have passed
-                      .get();
+                  DateTime now = DateTime.now();
+                  int currentHour = TimeOfDay.now().hour;
+                  DateTime startOfToday =
+                      DateTime(now.year, now.month, now.day);
 
-                  // Check if appointment found
-                  if (appointmentsSnapshot.docs.isNotEmpty) {
-                    // Get appointment data
-                    var (appointmentData as Map<String, dynamic>) =
-                        appointmentsSnapshot.docs.first.data();
-                    String appointmentId = appointmentsSnapshot
-                        .docs.first.id; // Get appointment ID
-                    Timestamp timestamp = appointmentData[
-                        'date']; // Assuming 'date' field is a Timestamp
+                  QuerySnapshot futureAppointmentsSnapshot =
+                      await FirebaseFirestore.instance
+                          .collection('appointments')
+                          .where('uid', isEqualTo: uid)
+                          .where('date', isGreaterThan: startOfToday)
+                          .get();
+
+                  QuerySnapshot todayAppointmentsSnapshot =
+                      await FirebaseFirestore.instance
+                          .collection('appointments')
+                          .where('uid', isEqualTo: uid)
+                          .where('date', isEqualTo: startOfToday)
+                          .where('hour', isGreaterThan: currentHour)
+                          .get();
+
+                  List<QueryDocumentSnapshot> upcomingAppointments = [];
+                  upcomingAppointments.addAll(futureAppointmentsSnapshot.docs);
+                  upcomingAppointments.addAll(todayAppointmentsSnapshot.docs);
+
+                  if (upcomingAppointments.isNotEmpty) {
+                    var appointmentData = upcomingAppointments.first.data()
+                        as Map<String, dynamic>;
+                    String appointmentId = upcomingAppointments.first.id;
+                    Timestamp timestamp = appointmentData['date'];
                     DateTime dateTime = timestamp.toDate();
                     String formattedDate =
                         DateFormat('yyyy-MM-dd').format(dateTime);
-
                     String appointmentTime = appointmentData['hour'].toString();
-                    ;
                     String dentistId = appointmentData['did'];
 
-                    // Query Firestore to get the name of the dentist using dentistId
                     DocumentSnapshot dentistSnapshot = await FirebaseFirestore
                         .instance
                         .collection('user')
@@ -978,7 +988,6 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
                       String dentistName = (dentistSnapshot.data()
                           as Map<String, dynamic>)['FullName'];
 
-                      // Query Firestore to get the patient's name using UID
                       DocumentSnapshot patientSnapshot = await FirebaseFirestore
                           .instance
                           .collection('user')
@@ -989,7 +998,6 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
                         String patientName = (patientSnapshot.data()
                             as Map<String, dynamic>)['FullName'];
 
-                        // Show appointment information dialog
                         showAppointmentInfoCancelDialog(
                             context,
                             patientName,
@@ -999,7 +1007,11 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
                             appointmentId);
                       }
                     }
+                  } else {
+                    showErrorDialog(context, 'No upcoming appointments found');
                   }
+                } else {
+                  showErrorDialog(context, 'User not found');
                 }
               },
               child: const Text('Next'),
@@ -1042,7 +1054,6 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
             ),
             TextButton(
               onPressed: () async {
-                // Remove appointment from Firestore
                 await FirebaseFirestore.instance
                     .collection('appointments')
                     .doc(appointmentId)
@@ -1053,8 +1064,7 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
               },
               child: const Text(
                 'Confirm',
-                style:
-                    TextStyle(color: Colors.red), // Set the text color to red
+                style: TextStyle(color: Colors.red),
               ),
             ),
           ],
