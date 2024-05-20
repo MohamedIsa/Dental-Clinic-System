@@ -10,8 +10,7 @@ class TodayAppointmentPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Get the currently logged-in dentist's ID
     final currentUser = FirebaseAuth.instance.currentUser;
-    final String dentistId = currentUser?.uid ??
-        ''; // Assuming dentist ID is stored in Firebase Auth
+    final String dentistId = currentUser?.uid ?? '';
 
     return SafeArea(
       child: Scaffold(
@@ -48,7 +47,8 @@ class TodayAppointmentPage extends StatelessWidget {
                       return Center(child: Text('No appointments available'));
                     }
                     return FutureBuilder<List<Appointment>>(
-                      future: _fetchAppointments(snapshot.data!.docs),
+                      future:
+                          _fetchAppointments(snapshot.data!.docs, dentistId),
                       builder: (context, appointmentSnapshot) {
                         if (appointmentSnapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -83,24 +83,46 @@ class TodayAppointmentPage extends StatelessWidget {
   }
 
   Future<List<Appointment>> _fetchAppointments(
-      List<DocumentSnapshot> documents) async {
+      List<DocumentSnapshot> documents, String dentistId) async {
+    if (documents.isEmpty) {
+      return [];
+    }
+
     final List<Appointment> appointments = [];
 
     for (final doc in documents) {
       final data = doc.data() as Map<String, dynamic>;
-      final DateTime date = data['date'].toDate();
-      final int hour = data['hour'];
-      final DateTime startTime =
-          DateTime(date.year, date.month, date.day, hour);
-      final DateTime endTime = startTime.add(Duration(hours: 1));
-      final String patientId = data['uid'];
-      final String patientName = await getPatientName(patientId);
-      appointments.add(Appointment(
-        startTime: startTime,
-        endTime: endTime,
-        subject: 'Appointment with $patientName',
-        color: Colors.blue, // Use the blue color constant
-      ));
+      if (data.containsKey('date') && data['date'] != null) {
+        final DateTime date = data['date'].toDate();
+        final int hour = data['hour'];
+        final DateTime startTime =
+            DateTime(date.year, date.month, date.day, hour);
+        DateTime endTime;
+        if (data['end'] != null) {
+          endTime = DateTime(date.year, date.month, date.day, data['end']);
+        } else {
+          endTime = startTime
+              .add(Duration(minutes: 30)); // Default duration if end is null
+        }
+        final String patientId = data['uid'];
+        final String patientName = await getPatientName(patientId);
+        QuerySnapshot dentistDoc = await FirebaseFirestore.instance
+            .collection('dentist')
+            .where('uid', isEqualTo: dentistId)
+            .get();
+        String dentistColor =
+            (dentistDoc.docs[0].data() as Map<String, dynamic>)['color'];
+
+        String hexColor = decimalToHex(int.parse(dentistColor));
+        appointments.add(Appointment(
+          startTime: startTime,
+          endTime: endTime,
+          subject: 'Appointment with $patientName',
+          color: Color(int.parse(hexColor)),
+        ));
+      } else {
+        print('Invalid date format');
+      }
     }
     return appointments;
   }
@@ -128,4 +150,8 @@ class AppointmentDataSource extends CalendarDataSource {
   AppointmentDataSource(List<Appointment> source) {
     appointments = source;
   }
+}
+
+String decimalToHex(int decimalColor) {
+  return '0x${decimalColor.toRadixString(16).toUpperCase()}';
 }
