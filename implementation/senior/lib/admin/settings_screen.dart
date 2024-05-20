@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:senior/reuseable_widget.dart';
 
 class SettingsPage extends StatelessWidget {
   final Function(String) navigateToSettings;
@@ -155,8 +155,6 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 }
-
-
 
 class DentistColorSettingsScreen extends StatefulWidget {
   const DentistColorSettingsScreen({Key? key, this.uid});
@@ -391,11 +389,12 @@ class _DentistColorSettingsScreenState
                             .collection('dentist')
                             .doc(dentistUID)
                             .update({'color': color});
-                        print(
-                            'Color updated successfully for dentist $dentistUID');
+                        showMessagealert(context, 'Color Updated Successfully');
                       } catch (e) {
                         print(
                             'Error updating color for dentist $dentistUID: $e');
+                        showErrorDialog(
+                            context, 'Error updating color for dentist: $e');
                       }
                     });
                   },
@@ -413,6 +412,7 @@ class _DentistColorSettingsScreenState
     );
   }
 }
+
 class StaffManagementScreen extends StatefulWidget {
   const StaffManagementScreen({Key? key}) : super(key: key);
 
@@ -452,11 +452,17 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
               child: CircularProgressIndicator(),
             );
           } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
           }
 
-          if (!snapshot.hasData || snapshot.data == null) {
-            return Text('No staff data found');
+          if (!snapshot.hasData ||
+              snapshot.data == null ||
+              snapshot.data!.docs.isEmpty) {
+            return Center(
+              child: Text('No staff data found'),
+            );
           }
 
           final userDocs = snapshot.data!.docs;
@@ -470,15 +476,16 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
 
               return FutureBuilder<String?>(
                 future: _getUserRole(userDoc.id),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
+                builder: (context, roleSnapshot) {
+                  if (roleSnapshot.connectionState == ConnectionState.waiting) {
                     return SizedBox.shrink();
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
+                  } else if (roleSnapshot.hasError) {
+                    return Text('Error: ${roleSnapshot.error}');
                   } else {
-                    final role = snapshot.data;
-                    if (role == null) {
-                      // Skip rendering ListTile for roles other than admin, dentist, or receptionist
+                    final role = roleSnapshot.data;
+                    if (role == null ||
+                        !['admin', 'dentist', 'receptionist', 'unavailable']
+                            .contains(role.toLowerCase())) {
                       return SizedBox.shrink();
                     }
                     return ListTile(
@@ -490,11 +497,30 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
                           Text(role),
                         ],
                       ),
-                      trailing: IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () {
-                          _deleteUser(userDoc.id, role); // Pass role here
-                        },
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.hide_image),
+                            onPressed: () {
+                              _hideUser(context, userDoc.id, role);
+                            },
+                          ),
+                          SizedBox(width: 20),
+                          IconButton(
+                            icon: Icon(Icons.restore),
+                            onPressed: () {
+                              _restoreUser(context, userDoc.id);
+                            },
+                          ),
+                          SizedBox(width: 20),
+                          IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () {
+                              _deleteUser(context, userDoc.id, role);
+                            },
+                          ),
+                        ],
                       ),
                       onTap: () {
                         // Handle staff item tap
@@ -553,20 +579,28 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
                                 ))
                             .toList(),
                         onChanged: (value) {
-                          selectedGender = value!;
+                          setState(() {
+                            selectedGender = value!;
+                          });
                         },
                       ),
                       DropdownButtonFormField<String>(
                         value: selectedRole,
                         decoration: InputDecoration(labelText: 'Role'),
-                        items: ['Admin', 'Receptionist', 'Dentist']
+                        items: [
+                          'Admin',
+                          'Receptionist',
+                          'Dentist',
+                        ]
                             .map((role) => DropdownMenuItem(
                                   value: role,
                                   child: Text(role),
                                 ))
                             .toList(),
                         onChanged: (value) {
-                          selectedRole = value!;
+                          setState(() {
+                            selectedRole = value!;
+                          });
                         },
                       ),
                     ],
@@ -591,7 +625,8 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
                           String randomPassword = generateRandomPassword();
 
                           // Create the user in Firebase Authentication
-                          UserCredential userCredential = await FirebaseAuth.instance
+                          UserCredential userCredential = await FirebaseAuth
+                              .instance
                               .createUserWithEmailAndPassword(
                             email: emailController.text,
                             password: randomPassword,
@@ -599,7 +634,8 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
 
                           // Send a password reset email to the user
                           await userCredential.user?.sendEmailVerification();
-                          await FirebaseAuth.instance.sendPasswordResetEmail(email: emailController.text);
+                          await FirebaseAuth.instance.sendPasswordResetEmail(
+                              email: emailController.text);
 
                           // Add data to 'user' collection in Firestore
                           DocumentReference userRef = FirebaseFirestore.instance
@@ -617,11 +653,14 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
 
                           // Add UID to the respective role collection in Firestore
                           String roleCollection;
-                          Map<String, dynamic> userData = {'uid': userCredential.user?.uid};
+                          Map<String, dynamic> userData = {
+                            'uid': userCredential.user?.uid
+                          };
 
                           if (selectedRole == 'Dentist') {
                             roleCollection = 'dentist';
-                            userData['color'] = 'blue'; // Add color if role is Dentist
+                            userData['color'] =
+                                'blue'; // Add color if role is Dentist
                           } else if (selectedRole == 'Admin') {
                             roleCollection = 'admin';
                           } else {
@@ -631,20 +670,21 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
                           await FirebaseFirestore.instance
                               .collection(roleCollection)
                               .doc(userCredential.user?.uid)
-                              .set(userData);
+                              .get();
 
                           Navigator.of(context).pop();
                         } catch (e) {
                           print('Error: $e');
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('An error occurred. Please try again later.'),
+                            SnackBar(
+                              content: Text(
+                                  'An error occurred. Please try again later.'),
                             ),
                           );
                         }
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
+                          SnackBar(
                             content: Text('Please fill in all fields.'),
                           ),
                         );
@@ -660,47 +700,160 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
       ),
     );
   }
+}
 
-  Future<String?> _getUserRole(String userId) async {
-    String? role;
+Future<String?> _getUserRole(String userId) async {
+  String? role;
 
-    var adminDoc = await FirebaseFirestore.instance.collection('admin').doc(userId).get();
-    if (adminDoc.exists) {
-      role = 'Admin';
+  var adminDoc =
+      await FirebaseFirestore.instance.collection('admin').doc(userId).get();
+  if (adminDoc.exists) {
+    role = 'Admin';
+  } else {
+    var dentistDoc = await FirebaseFirestore.instance
+        .collection('dentist')
+        .doc(userId)
+        .get();
+    if (dentistDoc.exists) {
+      role = 'Dentist';
     } else {
-      var dentistDoc = await FirebaseFirestore.instance.collection('dentist').doc(userId).get();
-      if (dentistDoc.exists) {
-        role = 'Dentist';
+      var receptionistDoc = await FirebaseFirestore.instance
+          .collection('receptionist')
+          .doc(userId)
+          .get();
+      if (receptionistDoc.exists) {
+        role = 'Receptionist';
       } else {
-        var receptionistDoc = await FirebaseFirestore.instance.collection('receptionist').doc(userId).get();
-        if (receptionistDoc.exists) {
-          role = 'Receptionist';
+        var unavailableDoc = await FirebaseFirestore.instance
+            .collection('unavailable')
+            .doc(userId)
+            .get();
+        if (unavailableDoc.exists) {
+          role = 'Unavailable';
+        } else {
+          role = null;
         }
       }
     }
-
-    return role;
   }
 
- Future<void> _deleteUser(String userId, String role) async {
-  try {
-    // Delete the user document
-    await FirebaseFirestore.instance.collection('user').doc(userId).delete();
+  return role;
+}
 
+Future<void> _deleteUser(context, String userId, String role) async {
+  try {
     // Depending on the user's role, delete from respective collections
     if (role.toLowerCase() == 'admin') {
       await FirebaseFirestore.instance.collection('admin').doc(userId).delete();
     } else if (role.toLowerCase() == 'dentist') {
-      await FirebaseFirestore.instance.collection('dentist').doc(userId).delete();
+      await FirebaseFirestore.instance
+          .collection('dentist')
+          .doc(userId)
+          .delete();
     } else if (role.toLowerCase() == 'receptionist') {
-      await FirebaseFirestore.instance.collection('receptionist').doc(userId).delete();
+      await FirebaseFirestore.instance
+          .collection('receptionist')
+          .doc(userId)
+          .delete();
     }
+    showMessagealert(context, 'User Deleted Successfully');
   } catch (e) {
     print('Error deleting user: $e');
     // Handle error here
   }
 }
+
+Future<void> _hideUser(context, String userId, String role) async {
+  try {
+    // Depending on the user's role, delete from respective collections
+    if (role.toLowerCase() == 'admin') {
+      await FirebaseFirestore.instance.collection('admin').doc(userId).delete();
+      await FirebaseFirestore.instance
+          .collection('unavailable')
+          .doc(userId)
+          .set({'uid': userId, 'role': 'admin'});
+    } else if (role.toLowerCase() == 'dentist') {
+      await FirebaseFirestore.instance
+          .collection('dentist')
+          .doc(userId)
+          .delete();
+      await FirebaseFirestore.instance
+          .collection('unavailable')
+          .doc(userId)
+          .set({'uid': userId, 'role': 'dentist'});
+    } else if (role.toLowerCase() == 'receptionist') {
+      await FirebaseFirestore.instance
+          .collection('receptionist')
+          .doc(userId)
+          .delete();
+      await FirebaseFirestore.instance
+          .collection('unavailable')
+          .doc(userId)
+          .set({'uid': userId, 'role': 'receptionist'});
+    }
+    showMessagealert(context, 'User Hidden Successfully');
+  } catch (e) {
+    print('Error deleting user: $e');
+    // Handle error here
+  }
 }
+
+Future<void> _restoreUser(context, String userId) async {
+  try {
+    // Fetch the user document from the 'unavailable' collection based on the UID
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection('unavailable')
+        .where('uid', isEqualTo: userId)
+        .get();
+
+    if (snapshot.docs.isNotEmpty) {
+      // Extract user data from the fetched document
+      Map<String, dynamic> userData = snapshot.docs.first.data();
+
+      // Extract the UID and role from the user data
+      String? role = userData['role'];
+
+      if (role == null) {
+        throw Exception('Role not found for user');
+      }
+
+      // Create a new document with only the UID
+      Map<String, dynamic> newUserData = {'uid': userId};
+
+      // Determine the target collection based on the role
+      String targetCollection;
+      switch (role.toLowerCase()) {
+        case 'admin':
+          targetCollection = 'admin';
+          break;
+        case 'dentist':
+          targetCollection = 'dentist';
+          break;
+        case 'receptionist':
+          targetCollection = 'receptionist';
+          break;
+        default:
+          throw Exception('Invalid role specified');
+      }
+
+      // Write the new document to the target collection
+      await FirebaseFirestore.instance
+          .collection(targetCollection)
+          .doc(userId)
+          .set(newUserData);
+
+      // Delete the document from the 'unavailable' collection
+      await snapshot.docs.first.reference.delete();
+      showMessagealert(context, 'User Restored Successfully');
+    } else {
+      throw Exception('User not found in unavailable collection');
+    }
+  } catch (e) {
+    showErrorDialog(context, 'Error restoring user: $e');
+  }
+}
+
 class EditMessageScreen extends StatefulWidget {
   @override
   _EditWelcomeMessageScreenState createState() =>
@@ -759,33 +912,9 @@ class _EditWelcomeMessageScreenState extends State<EditMessageScreen> {
           .collection('welcome')
           .doc('mgAMaIIGgWZTnNl0d32B')
           .set({'message': newMessage});
-      print('Welcome message updated successfully!');
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(' '),
-            content: Text(
-              'The Welcome Message Updated Successfully',
-              style: TextStyle(color: Colors.white),
-            ),
-            backgroundColor: Colors.blue,
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text(
-                  'OK',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ],
-          );
-        },
-      );
+      showMessagealert(context, 'Welcome Message Updated Successfully');
     } catch (e) {
-      print('Error updating welcome message: $e');
+      showErrorDialog(context, 'Error updating welcome message: $e');
     }
   }
 
@@ -836,14 +965,15 @@ class _EditWelcomeMessageScreenState extends State<EditMessageScreen> {
     );
   }
 }
-  String generateRandomPassword({int length = 12}) {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    Random random = Random();
-    return String.fromCharCodes(
-      Iterable.generate(
-        length,
-        (_) => characters.codeUnitAt(random.nextInt(characters.length)),
-      ),
-    );
-  }
 
+String generateRandomPassword({int length = 12}) {
+  const characters =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  Random random = Random();
+  return String.fromCharCodes(
+    Iterable.generate(
+      length,
+      (_) => characters.codeUnitAt(random.nextInt(characters.length)),
+    ),
+  );
+}

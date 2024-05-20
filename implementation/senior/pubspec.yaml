@@ -55,6 +55,13 @@ dependencies:
   flex_color_picker: ^3.4.1
   image_picker: ^1.1.1
   flutter_material_color_picker: ^1.2.0
+  firebase_storage: ^11.7.5
+  firebase_storage_web: ^3.9.5
+  file_picker: ^8.0.3
+  webview_flutter: ^4.7.0
+  uuid: ^4.4.0
+  image_picker_for_web: ^3.0.4
+  url_strategy: ^0.2.0
 
 dev_dependencies:
   flutter_test:
