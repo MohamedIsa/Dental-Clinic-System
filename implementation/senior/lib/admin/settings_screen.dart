@@ -713,8 +713,7 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
 
                           if (selectedRole == 'Dentist') {
                             roleCollection = 'dentist';
-                            userData['color'] =
-                                'blue'; // Add color if role is Dentist
+                            userData['color'] = '4280391411';
                           } else if (selectedRole == 'Admin') {
                             roleCollection = 'admin';
                           } else {
@@ -812,27 +811,6 @@ Future<void> _deleteUser(
     // Show an error message
     showMessagealert(context, 'Error deleting user: $e');
   }
-}
-
-// Function to show alert messages
-void showMessagealert(BuildContext context, String message) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Alert'),
-        content: Text(message),
-        actions: <Widget>[
-          TextButton(
-            child: Text('OK'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
 }
 
 Future<void> _hideUser(context, String userId, String role) async {
