@@ -5,6 +5,8 @@ import 'package:senior/admin/patient_details_button.dart';
 import 'package:senior/admin/patient_model.dart';
 import 'dart:math';
 
+import 'package:senior/reuseable_widget.dart';
+
 class PatientButtonsWidget extends StatelessWidget {
   final VoidCallback? onAddPatientPressed;
   final void Function(String cpr)? onSearchPatientPressed;
@@ -43,6 +45,7 @@ class PatientButtonsWidget extends StatelessWidget {
 
   void showSearchDialog(BuildContext context) {
     String searchCpr = '';
+    String CPRPattern = r'^\d{2}(0[1-9]|1[0-2])\d{5}$';
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -72,7 +75,13 @@ class PatientButtonsWidget extends StatelessWidget {
               onPressed: () async {
                 if (searchCpr.isNotEmpty) {
                   try {
-                    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+                    if (!RegExp(CPRPattern).hasMatch(searchCpr)) {
+                      showErrorDialog(context, 'Invalid CPR format.');
+                      return;
+                    }
+
+                    QuerySnapshot querySnapshot = await FirebaseFirestore
+                        .instance
                         .collection('user')
                         .where('CPR', isEqualTo: searchCpr)
                         .get();
@@ -80,11 +89,13 @@ class PatientButtonsWidget extends StatelessWidget {
                     if (querySnapshot.docs.isNotEmpty) {
                       DocumentSnapshot userSnapshot = querySnapshot.docs.first;
                       String uid = userSnapshot.id;
-                      DocumentSnapshot userDataSnapshot = await FirebaseFirestore.instance
-                          .collection('user')
-                          .doc(uid)
-                          .get();
-                      PatientData patientData = PatientData.fromSnapshot(userDataSnapshot);
+                      DocumentSnapshot userDataSnapshot =
+                          await FirebaseFirestore.instance
+                              .collection('user')
+                              .doc(uid)
+                              .get();
+                      PatientData patientData =
+                          PatientData.fromSnapshot(userDataSnapshot);
 
                       Navigator.push(
                         context,
@@ -96,26 +107,15 @@ class PatientButtonsWidget extends StatelessWidget {
                         ),
                       );
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('User not found.'),
-                        ),
-                      );
+                      showErrorDialog(context, 'User not found.');
                     }
                   } catch (e) {
                     print('Error: $e');
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('An error occurred. Please try again later.'),
-                      ),
-                    );
+
+                    showErrorDialog(context, e.toString());
                   }
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Please enter a CPR.'),
-                    ),
-                  );
+                  showErrorDialog(context, 'Please enter a CPR.');
                 }
               },
               child: const Text('Search'),
@@ -129,11 +129,14 @@ class PatientButtonsWidget extends StatelessWidget {
   void showAddPatientDialog(BuildContext context) {
     String name = '';
     String cpr = '';
-    String birthDay = '';
+    String birthday = '';
     String phoneNumber = '';
     String email = '';
     String? selectedGender;
-
+    String emailPattern = r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$';
+    String CPRPattern = r'^\d{2}(0[1-9]|1[0-2])\d{5}$';
+    String PhonePattern = r'^(66\d{6}|3[2-9]\d{6})$';
+    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -161,10 +164,10 @@ class PatientButtonsWidget extends StatelessWidget {
                 ),
                 TextField(
                   onChanged: (value) {
-                    birthDay = value;
+                    birthday = value;
                   },
                   decoration: const InputDecoration(
-                    labelText: 'Birth Day',
+                    labelText: 'Birthday',
                   ),
                 ),
                 DropdownButtonFormField<String>(
@@ -210,13 +213,53 @@ class PatientButtonsWidget extends StatelessWidget {
               onPressed: () async {
                 if (name.isNotEmpty &&
                     cpr.isNotEmpty &&
-                    birthDay.isNotEmpty &&
+                    birthday.isNotEmpty &&
                     selectedGender != null &&
                     phoneNumber.isNotEmpty &&
                     email.isNotEmpty) {
                   try {
                     // Generate a random password
                     String randomPassword = generateRandomPassword();
+                    QuerySnapshot emailResult = await _firestore
+                        .collection('user')
+                        .where('Email', isEqualTo: email)
+                        .get();
+                    if (!RegExp(emailPattern).hasMatch(email)) {
+                      showErrorDialog(context, 'Invalid email format.');
+                      return;
+                    }
+
+                    if (emailResult.docs.isNotEmpty) {
+                      showErrorDialog(context, 'Email already exists.');
+                      return;
+                    }
+
+                    // Check if full name is not empty
+                    if (name.isEmpty) {
+                      showErrorDialog(context, 'Full name cannot be empty.');
+                      return;
+                    }
+
+                    if (!RegExp(PhonePattern).hasMatch(phoneNumber)) {
+                      showErrorDialog(context, 'Invalid Phone format.');
+                      return;
+                    }
+                    if (isValidBirthday(birthday) == false) {
+                      showErrorDialog(context, 'Invalid birthday.');
+                      return;
+                    }
+                    if (!RegExp(CPRPattern).hasMatch(cpr)) {
+                      showErrorDialog(context, 'Invalid CPR format.');
+                      return;
+                    }
+                    QuerySnapshot result = await _firestore
+                        .collection('user')
+                        .where('CPR', isEqualTo: cpr)
+                        .get();
+                    if (result.docs.isNotEmpty) {
+                      showErrorDialog(context, 'CPR already exists.');
+                      return;
+                    }
 
                     // Create the user in Firebase Authentication
                     UserCredential userCredential = await FirebaseAuth.instance
@@ -227,7 +270,8 @@ class PatientButtonsWidget extends StatelessWidget {
 
                     // Send a password reset email to the user
                     await userCredential.user?.sendEmailVerification();
-                    await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+                    await FirebaseAuth.instance
+                        .sendPasswordResetEmail(email: email);
 
                     // Add data to 'user' collection in Firestore
                     DocumentReference userRef = FirebaseFirestore.instance
@@ -237,7 +281,7 @@ class PatientButtonsWidget extends StatelessWidget {
                     await userRef.set({
                       'FullName': name,
                       'CPR': cpr,
-                      'DOB': birthDay,
+                      'DOB': birthday,
                       'Gender': selectedGender,
                       'Phone': phoneNumber,
                       'Email': email,
@@ -258,19 +302,16 @@ class PatientButtonsWidget extends StatelessWidget {
 
                     Navigator.pop(context);
                   } catch (e) {
-                    print('Error: $e');
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('An error occurred. Please try again later.'),
-                      ),
-                    );
+                    {
+                      print('Error: $e');
+
+                      showErrorDialog(context, e.toString());
+                    }
                   }
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Please fill in all fields.'),
-                    ),
-                  );
+                  print('Error: $e');
+
+                  showErrorDialog(context, 'Please fill in all fields.');
                 }
               },
               child: const Text('Add'),
@@ -282,7 +323,8 @@ class PatientButtonsWidget extends StatelessWidget {
   }
 
   String generateRandomPassword({int length = 12}) {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const characters =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     Random random = Random();
     return String.fromCharCodes(
       Iterable.generate(
@@ -291,4 +333,27 @@ class PatientButtonsWidget extends StatelessWidget {
       ),
     );
   }
+}
+
+bool isValidBirthday(String birthday) {
+  String birthdayPattern = r'^(0[1-9]|[12]\d|3[01])/(0[1-9]|1[0-2])/\d{4}$';
+  RegExp regExp = RegExp(birthdayPattern);
+
+  // Check if the birthday matches the pattern
+  if (!regExp.hasMatch(birthday)) {
+    return false;
+  }
+
+  // Parse the birthday string into a DateTime object
+  DateTime birthDate = DateTime.parse(birthday);
+
+  // Get the current date
+  DateTime currentDate = DateTime.now();
+
+  // Check if the birthDate is in the future
+  if (birthDate.isAfter(currentDate)) {
+    return false;
+  }
+
+  return true;
 }
