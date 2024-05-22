@@ -27,27 +27,31 @@ import 'package:senior/registration/signup_screen.dart';
 import 'package:senior/patient/mobile.dart';
 import 'package:senior/patient/editappointment.dart';
 import 'package:senior/services.dart';
-
+import 'package:url_strategy/url_strategy.dart';
 
 void main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
-  FirebaseOptions firebaseOptions = FirebaseOptions(
-apiKey: 'AIzaSyCuKUvQ9nZXLUF0NqsFDXSdGHwToawxyvQ',
+  FirebaseOptions firebaseOptions = const FirebaseOptions(
+    apiKey: 'AIzaSyCuKUvQ9nZXLUF0NqsFDXSdGHwToawxyvQ',
     appId: '1:351146855860:android:1d460bb507f7170d9276e1',
     messagingSenderId: '351146855860',
     projectId: 'endless-set-314517',
     authDomain: 'endless-set-314517.firebaseapp.com',
     storageBucket: 'endless-set-314517.appspot.com',
-    databaseURL: 'https://endless-set-314517-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL:
+        'https://endless-set-314517-default-rtdb.asia-southeast1.firebasedatabase.app',
     measurementId: 'G-Z479E0VRMN',
   );
   await Firebase.initializeApp(
     options: firebaseOptions,
   );
   await FirebaseAuth.instance.authStateChanges().first;
-   
+
   var firebaseUser = FirebaseAuth.instance.currentUser;
+  setPathUrlStrategy();
   runApp(MaterialApp(
+  
     debugShowCheckedModeBanner: false,
     initialRoute: '/',
     routes: {
@@ -61,12 +65,13 @@ apiKey: 'AIzaSyCuKUvQ9nZXLUF0NqsFDXSdGHwToawxyvQ',
       '/dashboard': (context) => WelcomePage(),
       '/signup': (context) => const SignUp(),
       '/bookingm': (context) => bookingm(),
-      '/update': (context) =>  UpdateAccountPage(),
+      '/update': (context) => UpdateAccountPage(),
       '/admin': (context) => const MainScreen(),
       '/receptionist': (context) => const ReceptionistMainScreen(),
       '/dentist': (context) => const DentistMainScreen(),
       '/appointment': (context) => const AppointmentPage(),
-      '/appointment_receptionist': (context) => const ReceptionistAppointmentPage(),
+      '/appointment_receptionist': (context) =>
+          const ReceptionistAppointmentPage(),
       '/patients': (context) => AdminPatientPage(),
       '/patients_Receptionist': (context) => ReceptionistPatientPage(),
       '/patients_dentist': (context) => DentistPatientPage(),
@@ -76,7 +81,7 @@ apiKey: 'AIzaSyCuKUvQ9nZXLUF0NqsFDXSdGHwToawxyvQ',
       '/updateappointment': (context) => Updateappointment(),
       '/updateppoim': (context) => Updateappomob(),
       '/aboutus': (context) => const Aboutus(),
-      '/service': (context) =>  Services(),
+      '/service': (context) => Services(),
     },
   ));
 }

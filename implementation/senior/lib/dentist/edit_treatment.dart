@@ -29,8 +29,7 @@ class _EditTreatmentRecordPageState extends State<EditTreatmentRecordPage> {
 
   Future<void> _pickImage() async {
     final ImagePicker _picker = ImagePicker();
-    final XFile? image =
-        await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
       setState(() {
         _attachment = image.path;
@@ -48,7 +47,7 @@ class _EditTreatmentRecordPageState extends State<EditTreatmentRecordPage> {
     _dentistController.text = widget.treatmentRecord.dentist;
     _treatmentTypeController.text = widget.treatmentRecord.treatmentType;
     _notesController.text = widget.treatmentRecord.notes;
-    _attachment = widget.treatmentRecord.attachments as String;
+    _attachment = widget.treatmentRecord.attachments.join(', ');
   }
 
   @override
@@ -100,7 +99,7 @@ class _EditTreatmentRecordPageState extends State<EditTreatmentRecordPage> {
                 ),
               ),
               controller: TextEditingController(text: _attachment),
-              readOnly: true,
+              readOnly:false,
             ),
             SizedBox(height: 16),
             Center(
