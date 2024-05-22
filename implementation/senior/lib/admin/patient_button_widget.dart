@@ -336,24 +336,32 @@ class PatientButtonsWidget extends StatelessWidget {
 }
 
 bool isValidBirthday(String birthday) {
+  // Check format with regex
   String birthdayPattern = r'^(0[1-9]|[12]\d|3[01])/(0[1-9]|1[0-2])/\d{4}$';
   RegExp regExp = RegExp(birthdayPattern);
-
-  // Check if the birthday matches the pattern
   if (!regExp.hasMatch(birthday)) {
     return false;
   }
 
-  // Parse the birthday string into a DateTime object
-  DateTime birthDate = DateTime.parse(birthday);
-
-  // Get the current date
-  DateTime currentDate = DateTime.now();
-
-  // Check if the birthDate is in the future
-  if (birthDate.isAfter(currentDate)) {
-    return false;
+  // Parse the date string to DateTime
+  List<String> parts = birthday.split('/');
+  int day = int.tryParse(parts[0]) ?? 0;
+  int month = int.tryParse(parts[1]) ?? 0;
+  int year = int.tryParse(parts[2]) ?? 0;
+  try {
+    DateTime date = DateTime(year, month, day);
+    // Check if the parsed date is valid
+    if (date.year == year && date.month == month && date.day == day) {
+      // Optionally, you can check if the date is not in the future
+      DateTime currentDate = DateTime.now();
+      if (date.isAfter(currentDate)) {
+        return false; // Date is in the future
+      }
+      return true; // Valid date
+    } else {
+      return false; // Date components don't match
+    }
+  } catch (e) {
+    return false; // Date parsing failed
   }
-
-  return true;
 }
