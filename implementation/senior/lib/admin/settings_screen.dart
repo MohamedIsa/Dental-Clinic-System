@@ -1,3 +1,4 @@
+import 'dart:js_interop_unsafe';
 import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
@@ -427,6 +428,11 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController birthdayController = TextEditingController();
 
+  String emailPattern = r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$';
+  String CPRPattern = r'^\d{2}(0[1-9]|1[0-2])\d{5}$';
+  String PhonePattern = r'^(66\d{6}|3[2-9]\d{6})$';
+
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   @override
   void dispose() {
     // Dispose controllers to avoid memory leaks
@@ -620,6 +626,54 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
                           emailController.text.isNotEmpty &&
                           phoneNumberController.text.isNotEmpty &&
                           birthdayController.text.isNotEmpty) {
+                        String cpr = cprController.text;
+                        String email = emailController.text;
+                        String phoneNumber = phoneNumberController.text;
+                        String birthday = birthdayController.text;
+                        String fullName = fullNameController.text;
+                        QuerySnapshot emailResult = await _firestore
+                            .collection('user')
+                            .where('Email', isEqualTo: email)
+                            .get();
+                        if (!RegExp(emailPattern).hasMatch(email)) {
+                          showErrorDialog(context, 'Invalid email format.');
+                          return;
+                        }
+
+                        if (emailResult.docs.isNotEmpty) {
+                          showErrorDialog(context, 'Email already exists.');
+                          return;
+                        }
+
+                        // Check if full name is not empty
+                        if (fullName.isEmpty) {
+                          showErrorDialog(
+                              context, 'Full name cannot be empty.');
+                          return;
+                        }
+
+                        if (!RegExp(PhonePattern).hasMatch(phoneNumber)) {
+                          showErrorDialog(context, 'Invalid Phone format.');
+                          return;
+                        }
+                        if (!RegExp(CPRPattern).hasMatch(cpr)) {
+                          showErrorDialog(context, 'Invalid CPR format.');
+                          return;
+                        }
+                        if (isValidBirthday(birthday) == false) {
+                          showErrorDialog(context, 'Invalid birthday.');
+                          return;
+                        }
+
+                        QuerySnapshot result = await _firestore
+                            .collection('user')
+                            .where('CPR', isEqualTo: cpr)
+                            .get();
+                        if (result.docs.isNotEmpty) {
+                          showErrorDialog(context, 'CPR already exists.');
+                          return;
+                        }
+
                         try {
                           // Generate a random password
                           String randomPassword = generateRandomPassword();
@@ -670,24 +724,16 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
                           await FirebaseFirestore.instance
                               .collection(roleCollection)
                               .doc(userCredential.user?.uid)
-                              .get();
+                              .set(userData);
 
                           Navigator.of(context).pop();
                         } catch (e) {
                           print('Error: $e');
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                  'An error occurred. Please try again later.'),
-                            ),
-                          );
+                          showErrorDialog(context,
+                              'An error occurred while saving the user.');
                         }
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Please fill in all fields.'),
-                          ),
-                        );
+                        showErrorDialog(context, 'Please fill in all fields.');
                       }
                     },
                     child: Text('Save'),
@@ -740,9 +786,12 @@ Future<String?> _getUserRole(String userId) async {
   return role;
 }
 
-Future<void> _deleteUser(context, String userId, String role) async {
+Future<void> _deleteUser(
+    BuildContext context, String userId, String role) async {
   try {
-    // Depending on the user's role, delete from respective collections
+    // Delete the user from the 'user' collection
+    await FirebaseFirestore.instance.collection('user').doc(userId).delete();
+    // Delete the user from the role-specific collection
     if (role.toLowerCase() == 'admin') {
       await FirebaseFirestore.instance.collection('admin').doc(userId).delete();
     } else if (role.toLowerCase() == 'dentist') {
@@ -756,11 +805,34 @@ Future<void> _deleteUser(context, String userId, String role) async {
           .doc(userId)
           .delete();
     }
+    // Show a success message
     showMessagealert(context, 'User Deleted Successfully');
   } catch (e) {
     print('Error deleting user: $e');
-    // Handle error here
+    // Show an error message
+    showMessagealert(context, 'Error deleting user: $e');
   }
+}
+
+// Function to show alert messages
+void showMessagealert(BuildContext context, String message) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Alert'),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            child: Text('OK'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
 }
 
 Future<void> _hideUser(context, String userId, String role) async {
@@ -793,8 +865,8 @@ Future<void> _hideUser(context, String userId, String role) async {
     }
     showMessagealert(context, 'User Hidden Successfully');
   } catch (e) {
-    print('Error deleting user: $e');
-    // Handle error here
+    print('Error: $e');
+    showErrorDialog(context, e.toString());
   }
 }
 
@@ -850,7 +922,8 @@ Future<void> _restoreUser(context, String userId) async {
       throw Exception('User not found in unavailable collection');
     }
   } catch (e) {
-    showErrorDialog(context, 'Error restoring user: $e');
+    print('Error: $e');
+    showErrorDialog(context, e.toString());
   }
 }
 
@@ -885,16 +958,20 @@ class _EditWelcomeMessageScreenState extends State<EditMessageScreen> {
           if (message is String) {
             _updateWelcomeMessageText(message);
           } else {
-            print('Welcome message is not a String: $message');
+            showErrorDialog(
+                context, 'Welcome message is not a String: $message');
           }
         } else {
-          print('Document does not contain a "message" field.');
+          showErrorDialog(
+              context, 'Document does not contain a "message" field.');
         }
       } else {
-        print('Document does not exist. Cannot fetch welcome message.');
+        showErrorDialog(
+            context, 'Document does not exist. Cannot fetch welcome message.');
       }
     } catch (e, stackTrace) {
-      print('Error fetching welcome message: $e\n$stackTrace');
+      showErrorDialog(
+          context, 'Error fetching welcome message: $e\n$stackTrace');
     }
   }
 
@@ -976,4 +1053,35 @@ String generateRandomPassword({int length = 12}) {
       (_) => characters.codeUnitAt(random.nextInt(characters.length)),
     ),
   );
+}
+
+bool isValidBirthday(String birthday) {
+  // Check format with regex
+  String birthdayPattern = r'^(0[1-9]|[12]\d|3[01])/(0[1-9]|1[0-2])/\d{4}$';
+  RegExp regExp = RegExp(birthdayPattern);
+  if (!regExp.hasMatch(birthday)) {
+    return false;
+  }
+
+  // Parse the date string to DateTime
+  List<String> parts = birthday.split('/');
+  int day = int.tryParse(parts[0]) ?? 0;
+  int month = int.tryParse(parts[1]) ?? 0;
+  int year = int.tryParse(parts[2]) ?? 0;
+  try {
+    DateTime date = DateTime(year, month, day);
+    // Check if the parsed date is valid
+    if (date.year == year && date.month == month && date.day == day) {
+      // Optionally, you can check if the date is not in the future
+      DateTime currentDate = DateTime.now();
+      if (date.isAfter(currentDate)) {
+        return false; // Date is in the future
+      }
+      return true; // Valid date
+    } else {
+      return false; // Date components don't match
+    }
+  } catch (e) {
+    return false; // Date parsing failed
+  }
 }
