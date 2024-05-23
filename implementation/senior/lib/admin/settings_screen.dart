@@ -1,4 +1,3 @@
-import 'dart:js_interop_unsafe';
 import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
@@ -786,24 +785,79 @@ Future<String?> _getUserRole(String userId) async {
 }
 
 Future<void> _deleteUser(
-    BuildContext context, String userId, String role) async {
+  BuildContext context, String userId, String role) async {
   try {
     // Delete the user from the 'user' collection
     await FirebaseFirestore.instance.collection('user').doc(userId).delete();
-    // Delete the user from the role-specific collection
-    if (role.toLowerCase() == 'admin') {
-      await FirebaseFirestore.instance.collection('admin').doc(userId).delete();
-    } else if (role.toLowerCase() == 'dentist') {
-      await FirebaseFirestore.instance
+
+    if (role.toLowerCase() == 'dentist') {
+      // Get the dentist's appointments
+      QuerySnapshot appointmentsSnapshot = await FirebaseFirestore.instance
+        .collection('appointments')
+        .where('did', isEqualTo: userId)
+        .get();
+      
+      List<QueryDocumentSnapshot> appointments = appointmentsSnapshot.docs;
+
+      for (var appointment in appointments) {
+        DateTime appointmentDate = appointment['date'].toDate();
+        int appointmentHour = appointment['hour'];
+        int appointmentEnd = appointment['end'];
+
+        // Find another dentist who is available at the same date and time
+        QuerySnapshot availableDentistsSnapshot = await FirebaseFirestore.instance
           .collection('dentist')
-          .doc(userId)
-          .delete();
+          .get();
+          
+        List<QueryDocumentSnapshot> availableDentists = availableDentistsSnapshot.docs;
+
+        String newDentistId = '';
+        bool foundAvailableDentist = false;
+
+        for (var dentist in availableDentists) {
+          String potentialDentistId = dentist.id;
+          
+          // Check if the potential dentist has any overlapping appointments
+          QuerySnapshot overlappingAppointmentsSnapshot = await FirebaseFirestore.instance
+            .collection('appointments')
+            .where('did', isEqualTo: potentialDentistId)
+            .where('date', isEqualTo: appointmentDate)
+            .get();
+
+          List<QueryDocumentSnapshot> overlappingAppointments = overlappingAppointmentsSnapshot.docs;
+
+          bool hasOverlap = overlappingAppointments.any((doc) {
+            int start = doc['hour'];
+            int end = doc['end'];
+
+            return (appointmentHour < end && appointmentEnd > start);
+          });
+
+          if (!hasOverlap) {
+            newDentistId = potentialDentistId;
+            foundAvailableDentist = true;
+            break;
+          }
+        }
+
+        if (foundAvailableDentist) {
+          // Update the appointment with the new dentist ID
+          await FirebaseFirestore.instance.collection('appointments')
+            .doc(appointment.id)
+            .update({'did': newDentistId});
+        } else {
+          throw Exception('No available dentist found for appointment on ${appointmentDate}');
+        }
+      }
+
+      // Delete the dentist document
+      await FirebaseFirestore.instance.collection('dentist').doc(userId).delete();
+    } else if (role.toLowerCase() == 'admin') {
+      await FirebaseFirestore.instance.collection('admin').doc(userId).delete();
     } else if (role.toLowerCase() == 'receptionist') {
-      await FirebaseFirestore.instance
-          .collection('receptionist')
-          .doc(userId)
-          .delete();
+      await FirebaseFirestore.instance.collection('receptionist').doc(userId).delete();
     }
+
     // Show a success message
     showMessagealert(context, 'User Deleted Successfully');
   } catch (e) {
@@ -812,6 +866,7 @@ Future<void> _deleteUser(
     showMessagealert(context, 'Error deleting user: $e');
   }
 }
+
 
 Future<void> _hideUser(context, String userId, String role) async {
   try {
