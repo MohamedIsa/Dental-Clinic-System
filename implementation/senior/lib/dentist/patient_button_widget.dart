@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:senior/dentist/patient_details_button_dentist.dart';
 import 'package:senior/dentist/patient_model.dart';
-
+import 'package:senior/reuseable_widget.dart';
 class PatientButtonsWidget extends StatelessWidget {
   final VoidCallback? onAddPatientPressed;
   final void Function(String cpr)? onSearchPatientPressed;
@@ -33,13 +33,12 @@ class PatientButtonsWidget extends StatelessWidget {
   }
 
 
-  void showSearchDialog(BuildContext context) {
-     String searchCpr = '';
+   void showSearchDialog(BuildContext context) {
+    String searchCpr = '';
+    String CPRPattern = r'^\d{2}(0[1-9]|1[0-2])\d{5}$';
     showDialog(
       context: context,
       builder: (BuildContext context) {
-       
-
         return AlertDialog(
           title: const Text('Search Patient'),
           content: Column(
@@ -66,7 +65,11 @@ class PatientButtonsWidget extends StatelessWidget {
               onPressed: () async {
                 if (searchCpr.isNotEmpty) {
                   try {
-                    // Search for user based on CPR
+                    if (!RegExp(CPRPattern).hasMatch(searchCpr)) {
+                      showErrorDialog(context, 'Invalid CPR format.');
+                      return;
+                    }
+
                     QuerySnapshot querySnapshot = await FirebaseFirestore
                         .instance
                         .collection('user')
@@ -74,53 +77,34 @@ class PatientButtonsWidget extends StatelessWidget {
                         .get();
 
                     if (querySnapshot.docs.isNotEmpty) {
-                      // Retrieve the first matching user document
                       DocumentSnapshot userSnapshot = querySnapshot.docs.first;
-
-                      // Get the UID from the user document
                       String uid = userSnapshot.id;
-
-                      // Retrieve the user data from the user collection
                       DocumentSnapshot userDataSnapshot =
                           await FirebaseFirestore.instance
                               .collection('user')
                               .doc(uid)
                               .get();
-
-                      // Create a PatientData object from the retrieved user data
                       PatientData patientData =
                           PatientData.fromSnapshot(userDataSnapshot);
 
-                      // Navigate to the PatientDetailsPage and pass the patientData
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => DentistPatientDetailsPage(
-                              patient: patientData),
+                            patient: patientData,
+                          ),
                         ),
                       );
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('User not found.'),
-                        ),
-                      );
+                      showErrorDialog(context, 'User not found.');
                     }
                   } catch (e) {
                     print('Error: $e');
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content:
-                            Text('An error occurred. Please try again later.'),
-                      ),
-                    );
+
+                    showErrorDialog(context, e.toString());
                   }
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Please enter a CPR.'),
-                    ),
-                  );
+                  showErrorDialog(context, 'Please enter a CPR.');
                 }
               },
               child: const Text('Search'),
