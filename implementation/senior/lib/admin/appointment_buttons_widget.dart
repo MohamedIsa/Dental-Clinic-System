@@ -316,73 +316,109 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
     _endController.clear();
   }
 
-  void saveAppointment() async {
-    try {
-      String uid = '';
+void saveAppointment() async {
+  try {
+    String uid = '';
 
-      if (_cprControllerbook.text.isEmpty) {
-        throw Exception("CPR cannot be empty");
-      }
-
-      QuerySnapshot userSnapshot = await FirebaseFirestore.instance
-          .collection('user')
-          .where('CPR', isEqualTo: _cprControllerbook.text)
-          .get();
-
-      if (userSnapshot.docs.isNotEmpty) {
-        uid = userSnapshot.docs.first.id;
-      } else {
-        throw Exception("No user found with the given CPR");
-      }
-
-      print("Start Time: ${_statController.text}");
-      print("End Time: ${_endController.text}");
-
-      if (_statController.text.isEmpty || _endController.text.isEmpty) {
-        throw Exception("Start and end times cannot be empty");
-      }
-
-      int startHour = int.parse(_statController.text);
-      int endHour = int.parse(_endController.text);
-
-      if (startHour < 9 || startHour > 17 || endHour < 10 || endHour > 18) {
-        throw Exception(
-            "Invalid start or end time. Start time should be between 09:00 AM and 05:59 PM, and end time should be between 10:00 AM and 06:59 PM.");
-      }
-
-      if (_dateController.text.isEmpty) {
-        throw Exception("Appointment date cannot be empty");
-      }
-      DateFormat dateFormat = DateFormat('dd/MM/yyyy');
-      DateTime date;
-      try {
-        date = dateFormat.parseStrict(_dateController.text);
-      } catch (e) {
-        throw Exception("Invalid date format, should be dd/MM/yyyy");
-      }
-
-      Timestamp dateTimestamp = Timestamp.fromDate(date);
-
-      if (selectedDentistId.isEmpty) {
-        throw Exception("Please select a dentist");
-      }
-
-      await FirebaseFirestore.instance.collection('appointments').add({
-        'uid': uid,
-        'did': selectedDentistId,
-        'hour': startHour,
-        'end': endHour,
-        'date': dateTimestamp,
-      });
-
-      showMessagealert(context, 'Appointment booked successfully');
-      clearControllers();
-      Navigator.of(context).pop();
-    } catch (e) {
-      print("Error saving appointment: $e");
-      showErrorDialog(context, 'Error saving appointment: ${e.toString()}');
+    if (_cprControllerbook.text.isEmpty) {
+      throw Exception("CPR cannot be empty");
     }
+
+    QuerySnapshot userSnapshot = await FirebaseFirestore.instance
+        .collection('user')
+        .where('CPR', isEqualTo: _cprControllerbook.text)
+        .get();
+
+    if (userSnapshot.docs.isNotEmpty) {
+      uid = userSnapshot.docs.first.id;
+    } else {
+      throw Exception("No user found with the given CPR");
+    }
+
+    print("Start Time: ${_statController.text}");
+    print("End Time: ${_endController.text}");
+
+    if (_statController.text.isEmpty || _endController.text.isEmpty) {
+      throw Exception("Start and end times cannot be empty");
+    }
+
+    int startHour = int.parse(_statController.text);
+    int endHour = int.parse(_endController.text);
+
+    if (startHour < 9 || startHour > 17 || endHour < 10 || endHour > 18) {
+      throw Exception(
+          "Invalid start or end time. Start time should be between 09:00 AM and 05:59 PM, and end time should be between 10:00 AM and 06:59 PM.");
+    }
+
+    if (_dateController.text.isEmpty) {
+      throw Exception("Appointment date cannot be empty");
+    }
+
+    DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+    DateTime date;
+    try {
+      date = dateFormat.parseStrict(_dateController.text);
+    } catch (e) {
+      throw Exception("Invalid date format, should be dd/MM/yyyy");
+    }
+
+    Timestamp dateTimestamp = Timestamp.fromDate(date);
+
+    if (selectedDentistId.isEmpty) {
+      throw Exception("Please select a dentist");
+    }
+
+    // Check if the dentist is available at the specified time
+    QuerySnapshot dentistAppointments = await FirebaseFirestore.instance
+        .collection('appointments')
+        .where('did', isEqualTo: selectedDentistId)
+        .where('date', isEqualTo: dateTimestamp)
+        .get();
+
+    for (var doc in dentistAppointments.docs) {
+      int existingStartHour = doc['hour'];
+      int existingEndHour = doc['end'];
+
+      if ((startHour >= existingStartHour && startHour < existingEndHour) ||
+          (endHour > existingStartHour && endHour <= existingEndHour) ||
+          (startHour <= existingStartHour && endHour >= existingEndHour)) {
+        throw Exception("The selected dentist is not available at the specified time.");
+      }
+    }
+
+    // Check if the patient already has an appointment within a week
+    DateTime weekBefore = date.subtract(Duration(days: 7));
+    DateTime weekAfter = date.add(Duration(days: 7));
+
+    QuerySnapshot patientAppointments = await FirebaseFirestore.instance
+        .collection('appointments')
+        .where('uid', isEqualTo: uid)
+        .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(weekBefore))
+        .where('date', isLessThanOrEqualTo: Timestamp.fromDate(weekAfter))
+        .get();
+
+    if (patientAppointments.docs.isNotEmpty) {
+      throw Exception("The patient already has an appointment within a week.");
+    }
+
+    // If all checks pass, save the appointment
+    await FirebaseFirestore.instance.collection('appointments').add({
+      'uid': uid,
+      'did': selectedDentistId,
+      'hour': startHour,
+      'end': endHour,
+      'date': dateTimestamp,
+    });
+
+    showMessagealert(context, 'Appointment booked successfully');
+    clearControllers();
+    Navigator.of(context).pop();
+  } catch (e) {
+    print("Error saving appointment: $e");
+    showErrorDialog(context, 'Error saving appointment: ${e.toString()}');
   }
+}
+
 
   Future<void> _selectTime(BuildContext context,
       {required bool isStartTime,
@@ -850,63 +886,101 @@ class _AppointmentButtonsWidgetState extends State<AppointmentButtonsWidget> {
     );
   }
 
-  void UpdateAppointments(patientCPR, AppointmentId, _statController,
-      _endController, _dateController) async {
-    try {
-      QuerySnapshot userSnapshot = await FirebaseFirestore.instance
-          .collection('user')
-          .where('CPR', isEqualTo: patientCPR)
-          .get();
+void UpdateAppointments(patientCPR, AppointmentId, _statController,
+    _endController, _dateController) async {
+  try {
+    QuerySnapshot userSnapshot = await FirebaseFirestore.instance
+        .collection('user')
+        .where('CPR', isEqualTo: patientCPR)
+        .get();
 
-      String uid = userSnapshot.docs.first.id;
+    String uid = userSnapshot.docs.first.id;
 
-      if (_statController.text.isEmpty || _endController.text.isEmpty) {
-        throw Exception("Start and end times cannot be empty");
-      }
-
-      int startHour = int.parse(_statController.text);
-      int endHour = int.parse(_endController.text);
-
-      if (startHour < 9 || startHour > 17 || endHour < 10 || endHour > 18) {
-        throw Exception(
-            "Invalid start or end time. Start time should be between 09:00 AM and 05:59 PM, and end time should be between 10:00 AM and 06:59 PM.");
-      }
-
-      if (_dateController.text.isEmpty) {
-        throw Exception("Appointment date cannot be empty");
-      }
-      DateFormat dateFormat = DateFormat('dd/MM/yyyy');
-      DateTime date;
-      try {
-        date = dateFormat.parseStrict(_dateController.text);
-      } catch (e) {
-        throw Exception("Invalid date format, should be dd/MM/yyyy");
-      }
-
-      Timestamp dateTimestamp = Timestamp.fromDate(date);
-      if (selectedDentistId.isEmpty) {
-        throw Exception("Please select a dentist");
-      }
-
-      await FirebaseFirestore.instance
-          .collection('appointments')
-          .doc(AppointmentId)
-          .update({
-        'uid': uid,
-        'did': selectedDentistId,
-        'hour': startHour,
-        'end': endHour,
-        'date': dateTimestamp,
-      });
-
-      showMessagealert(context, 'Appointment updated successfully');
-      clearControllers();
-      Navigator.of(context).pop();
-    } catch (e) {
-      print("Error Updating appointment: $e");
-      showErrorDialog(context, 'Error Updating appointment: ${e.toString()}');
+    if (_statController.text.isEmpty || _endController.text.isEmpty) {
+      throw Exception("Start and end times cannot be empty");
     }
+
+    int startHour = int.parse(_statController.text);
+    int endHour = int.parse(_endController.text);
+
+    if (startHour < 9 || startHour > 17 || endHour < 10 || endHour > 18) {
+      throw Exception(
+          "Invalid start or end time. Start time should be between 09:00 AM and 05:59 PM, and end time should be between 10:00 AM and 06:59 PM.");
+    }
+
+    if (_dateController.text.isEmpty) {
+      throw Exception("Appointment date cannot be empty");
+    }
+
+    DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+    DateTime date;
+    try {
+      date = dateFormat.parseStrict(_dateController.text);
+    } catch (e) {
+      throw Exception("Invalid date format, should be dd/MM/yyyy");
+    }
+
+    Timestamp dateTimestamp = Timestamp.fromDate(date);
+
+    if (selectedDentistId.isEmpty) {
+      throw Exception("Please select a dentist");
+    }
+
+    // Check if the dentist is available at the specified time
+    QuerySnapshot dentistAppointments = await FirebaseFirestore.instance
+        .collection('appointments')
+        .where('did', isEqualTo: selectedDentistId)
+        .where('date', isEqualTo: dateTimestamp)
+        .get();
+
+    for (var doc in dentistAppointments.docs) {
+      if (doc.id == AppointmentId) continue; // Skip the current appointment being updated
+      int existingStartHour = doc['hour'];
+      int existingEndHour = doc['end'];
+
+      if ((startHour >= existingStartHour && startHour < existingEndHour) ||
+          (endHour > existingStartHour && endHour <= existingEndHour) ||
+          (startHour <= existingStartHour && endHour >= existingEndHour)) {
+        throw Exception("The selected dentist is not available at the specified time.");
+      }
+    }
+
+    // Check if the patient already has an appointment within a week
+    DateTime weekBefore = date.subtract(Duration(days: 7));
+    DateTime weekAfter = date.add(Duration(days: 7));
+
+    QuerySnapshot patientAppointments = await FirebaseFirestore.instance
+        .collection('appointments')
+        .where('uid', isEqualTo: uid)
+        .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(weekBefore))
+        .where('date', isLessThanOrEqualTo: Timestamp.fromDate(weekAfter))
+        .get();
+
+    for (var doc in patientAppointments.docs) {
+      if (doc.id == AppointmentId) continue; // Skip the current appointment being updated
+      throw Exception("The patient already has an appointment within a week.");
+    }
+
+    // If all checks pass, update the appointment
+    await FirebaseFirestore.instance
+        .collection('appointments')
+        .doc(AppointmentId)
+        .update({
+      'uid': uid,
+      'did': selectedDentistId,
+      'hour': startHour,
+      'end': endHour,
+      'date': dateTimestamp,
+    });
+
+    showMessagealert(context, 'Appointment updated successfully');
+    clearControllers();
+    Navigator.of(context).pop();
+  } catch (e) {
+    print("Error Updating appointment: $e");
+    showErrorDialog(context, 'Error Updating appointment: ${e.toString()}');
   }
+}
 
   void showCancelAppointmentDialog(BuildContext context) {
     TextEditingController cprControllerCancel = TextEditingController();

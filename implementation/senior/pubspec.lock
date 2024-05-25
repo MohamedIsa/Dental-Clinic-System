@@ -153,6 +153,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.0"
+  file_picker:
+    dependency: "direct main"
+    description:
+      name: file_picker
+      sha256: "29c90806ac5f5fb896547720b73b17ee9aed9bba540dc5d91fe29f8c5745b10a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "8.0.3"
   file_selector_linux:
     dependency: transitive
     description:
@@ -257,6 +265,38 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.8.5"
+  firebase_storage:
+    dependency: "direct main"
+    description:
+      name: firebase_storage
+      sha256: da76ca9c11d795c4bae1bd13b31d54bb9eb9ccbee7eb5f6b86b8294370e9d488
+      url: "https://pub.dev"
+    source: hosted
+    version: "11.7.5"
+  firebase_storage_platform_interface:
+    dependency: transitive
+    description:
+      name: firebase_storage_platform_interface
+      sha256: be17bfa9110a6429b40dd3760c755034079fd734aa1dd2476d5638ab780cc508
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.1.20"
+  firebase_storage_web:
+    dependency: "direct main"
+    description:
+      name: firebase_storage_web
+      sha256: "5219c20c0768a8e2ffedf0a116b7bc80ab32fcc6e2cbd50cbde14f8c4575c3f4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.9.5"
+  fixnum:
+    dependency: transitive
+    description:
+      name: fixnum
+      sha256: "25517a4deb0c03aa0f32fd12db525856438902d9c16536311e76cdc57b31d7d1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   flex_color_picker:
     dependency: "direct main"
     description:
@@ -521,7 +561,7 @@ packages:
     source: hosted
     version: "0.8.12+1"
   image_picker_for_web:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: image_picker_for_web
       sha256: "5d6eb13048cd47b60dbf1a5495424dea226c5faf3950e20bf8120a58efb5b5f3"
@@ -813,6 +853,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.0"
+  sprintf:
+    dependency: transitive
+    description:
+      name: sprintf
+      sha256: "1fc9ffe69d4df602376b52949af107d8f5703b77cda567c4d7d86a0693120f23"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.0.0"
   stack_trace:
     dependency: transitive
     description:
@@ -917,6 +965,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.2"
+  url_strategy:
+    dependency: "direct main"
+    description:
+      name: url_strategy
+      sha256: "42b68b42a9864c4d710401add17ad06e28f1c1d5500c93b98c431f6b0ea4ab87"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.0"
+  uuid:
+    dependency: "direct main"
+    description:
+      name: uuid
+      sha256: "814e9e88f21a176ae1359149021870e87f7cddaf633ab678a5d2b0bff7fd1ba8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.4.0"
   vector_graphics:
     dependency: transitive
     description:
@@ -965,6 +1029,38 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.1"
+  webview_flutter:
+    dependency: "direct main"
+    description:
+      name: webview_flutter
+      sha256: "25e1b6e839e8cbfbd708abc6f85ed09d1727e24e08e08c6b8590d7c65c9a8932"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.7.0"
+  webview_flutter_android:
+    dependency: transitive
+    description:
+      name: webview_flutter_android
+      sha256: "2282ba2320af34b2bd5320156c664d73f3f022341ed78847bc87723bf88c142f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.16.2"
+  webview_flutter_platform_interface:
+    dependency: transitive
+    description:
+      name: webview_flutter_platform_interface
+      sha256: d937581d6e558908d7ae3dc1989c4f87b786891ab47bb9df7de548a151779d8d
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.10.0"
+  webview_flutter_wkwebview:
+    dependency: transitive
+    description:
+      name: webview_flutter_wkwebview
+      sha256: "7affdf9d680c015b11587181171d3cad8093e449db1f7d9f0f08f4f33d24f9a0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.13.1"
   win32:
     dependency: transitive
     description:

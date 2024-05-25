@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:senior/app_colors.dart';
+import 'package:senior/patient/dashboard.dart';
 import 'package:senior/responsive_widget.dart';
 
 class BookingPage extends StatefulWidget {
@@ -686,7 +687,39 @@ class _BookingPageState extends State<BookingPage> {
                                               selectedDate.day,
                                             );
 
-                                            // Check if an appointment already exists at the selected time
+                                            // Define a range of a week (7 days before and 7 days after the selected date)
+                                            DateTime weekBefore = dateOnly
+                                                .subtract(Duration(days: 7));
+                                            DateTime weekAfter =
+                                                dateOnly.add(Duration(days: 7));
+
+                                            // Check if the patient already has an appointment within a week
+                                            var existingPatientAppointments =
+                                                await firestore
+                                                    .collection('appointments')
+                                                    .where('uid',
+                                                        isEqualTo: user.uid)
+                                                    .where('date',
+                                                        isGreaterThanOrEqualTo:
+                                                            weekBefore)
+                                                    .where('date',
+                                                        isLessThanOrEqualTo:
+                                                            weekAfter)
+                                                    .get();
+
+                                            if (existingPatientAppointments
+                                                .docs.isNotEmpty) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      'You already have an appointment within a week.'),
+                                                ),
+                                              );
+                                              return;
+                                            }
+
+                                            // Check if an appointment already exists at the selected time for the dentist
                                             var existingAppointment =
                                                 await firestore
                                                     .collection('appointments')
@@ -710,20 +743,32 @@ class _BookingPageState extends State<BookingPage> {
                                                 'date': dateOnly,
                                                 'hour': selectedHour,
                                               });
-                                              Navigator.pushNamed(
-                                                  context, '/dashboard');
+                                              Navigator.of(context)
+                                                  .pushReplacement(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        WelcomePage()),
+                                              );
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(
-                                                const SnackBar(
+                                                SnackBar(
                                                   content: Text(
                                                       'Appointment booked successfully!'),
+                                                ),
+                                              );
+                                            } else {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      'The selected time is already booked for the dentist.'),
                                                 ),
                                               );
                                             }
                                           }
                                         },
-                                        child: const Text('Book Appointment'),
-                                      ),
+                                        child: Text('Book Appointment'),
+                                      )
                                     ],
                                   ),
                                 ),
