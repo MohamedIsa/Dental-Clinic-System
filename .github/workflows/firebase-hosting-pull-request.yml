@@ -13,7 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: pnpm ci & pnpm run dev
+      - name: Install pnpm
+        run: |
+          curl -fsSL https://get.pnpm.io | bash -  # Install pnpm
+          sudo ln -s /root/.local/share/pnpm/global/5/node_modules/.bin/pnpm /usr/local/bin/pnpm  # Ensure pnpm is in the PATH
+      - run: pnpm ci && pnpm run dev
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
