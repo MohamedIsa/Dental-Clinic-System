@@ -1,3 +1,5 @@
 {
-    "cmake.sourceDirectory": "./Senior_Project/implementation/senior/linux"
+  "[dart]": {
+    "editor.formatOnSave": true
+  }
 }
