@@ -10,6 +10,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  //
   setPathUrlStrategy();
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
