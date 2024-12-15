@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:universal_html/html.dart' as html;
+import 'package:flutter/foundation.dart';
 
 class ServiceCard extends StatelessWidget {
   final String title;
@@ -18,23 +20,29 @@ class ServiceCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text(title),
-              content: Text(description),
-              actions: <Widget>[
-                TextButton(
-                  child: Text('Close'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
-        );
+        if (kIsWeb) {
+          {
+            html.window.alert(description);
+          }
+        } else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text(title),
+                content: Text(description),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('Close'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        }
       },
       child: Container(
         width: isMobile ? 100 : 130,

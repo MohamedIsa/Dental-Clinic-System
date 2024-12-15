@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:senior/const/appcolors.dart';
 import 'widgets/top_navigation_bar.dart';
 import 'widgets/welcome_section.dart';
 import 'widgets/services_section.dart';
@@ -48,7 +49,7 @@ class _HomePageState extends State<HomePage> {
           : null,
       body: Container(
         height: MediaQuery.of(context).size.height * 1.5,
-        decoration: const BoxDecoration(color: Colors.blue),
+        decoration: const BoxDecoration(color: Appcolors.primaryColor),
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
@@ -96,9 +97,9 @@ class _HomePageState extends State<HomePage> {
 
 BottomNavigationBar _buildBottomNavigationBar(BuildContext context) {
   return BottomNavigationBar(
-    backgroundColor: Colors.blue,
-    selectedItemColor: Colors.white,
-    unselectedItemColor: Colors.white,
+    backgroundColor: Appcolors.primaryColor,
+    selectedItemColor: Appcolors.primaryColor,
+    unselectedItemColor: Appcolors.secondaryColor,
     selectedLabelStyle: const TextStyle(color: Colors.blue),
     showUnselectedLabels: true,
     items: const <BottomNavigationBarItem>[
@@ -111,19 +112,19 @@ BottomNavigationBar _buildBottomNavigationBar(BuildContext context) {
     onTap: (index) {
       switch (index) {
         case 0:
-          Navigator.pushNamed(context, '/home');
+          Navigator.pushReplacementNamed(context, '/home');
           break;
         case 1:
-          Navigator.pushNamed(context, '/service');
+          Navigator.pushReplacementNamed(context, '/service');
           break;
         case 2:
-          Navigator.pushNamed(context, '/aboutUs');
+          Navigator.pushReplacementNamed(context, '/aboutus');
           break;
         case 3:
-          Navigator.pushNamed(context, '/login');
+          Navigator.pushReplacementNamed(context, '/login');
           break;
         case 4:
-          Navigator.pushNamed(context, '/signup');
+          Navigator.pushReplacementNamed(context, '/signup');
           break;
       }
     },

@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/MohamedIsa/Dental-Clinic-System/issues"
   },
-  "homepage": "https://github.com/MohamedIsa/Dental-Clinic-System#readme"
+  "homepage": "https://github.com/MohamedIsa/Dental-Clinic-System#readme",
+  "dependencies": {
+    "firebase": "^11.1.0"
+  }
 }

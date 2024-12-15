@@ -5,8 +5,7 @@ class WelcomeSection extends StatelessWidget {
   final double screenWidth;
 
   const WelcomeSection(
-      {Key? key, required this.welcomeMessage, required this.screenWidth})
-      : super(key: key);
+      {super.key, required this.welcomeMessage, required this.screenWidth});
 
   @override
   Widget build(BuildContext context) {
@@ -18,17 +17,17 @@ class WelcomeSection extends StatelessWidget {
   Widget _buildMobileWelcomeSection() {
     return Center(
       child: Container(
-        margin: const EdgeInsets.only(top: 100, bottom: 300),
+        margin: const EdgeInsets.only(top: 100, bottom: 900),
         padding: const EdgeInsets.all(10),
         height: 130,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             colors: [Colors.blue, Colors.lightBlueAccent],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(20),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.black26,
               blurRadius: 10,
@@ -58,18 +57,18 @@ class WelcomeSection extends StatelessWidget {
   Widget _buildDesktopWelcomeSection() {
     return Center(
       child: Container(
-        margin: const EdgeInsets.only(top: 100, bottom: 600),
+        margin: const EdgeInsets.only(top: 100, bottom: 800),
         padding: const EdgeInsets.all(20),
-        height: screenWidth <= 600 ? 300 : 200,
+        height: 200,
         width: 430,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             colors: [Colors.blue, Colors.lightBlueAccent],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(20),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.black26,
               blurRadius: 10,
@@ -98,9 +97,7 @@ class WelcomeSection extends StatelessWidget {
   Widget _buildSignUpButton(
       {required double fontSize, required double borderRadius}) {
     return ElevatedButton(
-      onPressed: () {
-        // Navigator to Sign Up page when implemented
-      },
+      onPressed: () {},
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color.fromARGB(255, 249, 179, 1),
         shape: RoundedRectangleBorder(
