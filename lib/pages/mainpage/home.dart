@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:senior/const/appcolors.dart';
+import 'package:senior/const/app_colors.dart';
 import 'widgets/top_navigation_bar.dart';
 import 'widgets/welcome_section.dart';
 import 'widgets/services_section.dart';
@@ -107,7 +107,6 @@ BottomNavigationBar _buildBottomNavigationBar(BuildContext context) {
       BottomNavigationBarItem(icon: Icon(Icons.medical_services), label: ''),
       BottomNavigationBarItem(icon: Icon(Icons.info), label: ''),
       BottomNavigationBarItem(icon: Icon(Icons.login), label: ''),
-      BottomNavigationBarItem(icon: Icon(Icons.person_add), label: ''),
     ],
     onTap: (index) {
       switch (index) {
@@ -121,10 +120,7 @@ BottomNavigationBar _buildBottomNavigationBar(BuildContext context) {
           Navigator.pushReplacementNamed(context, '/aboutus');
           break;
         case 3:
-          Navigator.pushReplacementNamed(context, '/login');
-          break;
-        case 4:
-          Navigator.pushReplacementNamed(context, '/signup');
+          Navigator.pushReplacementNamed(context, '/auth');
           break;
       }
     },

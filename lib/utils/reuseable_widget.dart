@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 
 class ReusableTextField extends StatefulWidget {
   final String hintText;
-  final String iconAssetPath;
+  final IconData icon;
   final bool isPassword;
+  final Color color;
   final TextEditingController controller;
 
   ReusableTextField(
-      this.hintText, this.iconAssetPath, this.isPassword, this.controller);
+      this.hintText, this.icon, this.isPassword, this.color, this.controller);
 
   @override
   _ReusableTextFieldState createState() => _ReusableTextFieldState();
@@ -30,13 +31,11 @@ class _ReusableTextFieldState extends State<ReusableTextField> {
       style: TextStyle(
         fontWeight: FontWeight.w400,
         color: Colors.black,
-        fontSize: 12.0,
+        fontSize: 14.0,
       ),
       decoration: InputDecoration(
         border: InputBorder.none,
-        prefixIcon: widget.iconAssetPath.isNotEmpty
-            ? ImageIcon(AssetImage(widget.iconAssetPath))
-            : null,
+        prefixIcon: Icon(widget.icon, color: widget.color),
         suffixIcon: widget.isPassword
             ? IconButton(
                 onPressed: () {
@@ -53,7 +52,7 @@ class _ReusableTextFieldState extends State<ReusableTextField> {
         hintStyle: TextStyle(
           fontWeight: FontWeight.w400,
           color: Colors.black.withOpacity(0.5),
-          fontSize: 12.0,
+          fontSize: 14.0,
         ),
       ),
     );

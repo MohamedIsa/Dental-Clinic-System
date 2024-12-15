@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../const/loading.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'firebase_options.dart';
+import 'pages/auth/AuthScreen.dart';
 import 'pages/mainpage/home.dart';
 
 void main() async {
@@ -18,6 +19,7 @@ void main() async {
     routes: {
       '/': (context) => const Loading(),
       '/home': (context) => const HomePage(),
+      '/auth': (context) => const Authscreen(),
     },
   ));
 }

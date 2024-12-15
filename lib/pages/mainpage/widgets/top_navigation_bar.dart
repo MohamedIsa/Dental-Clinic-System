@@ -19,10 +19,7 @@ class TopNavigationBar extends StatelessWidget {
                 Navigator.pushNamed(context, '/aboutus');
               }),
               _buildNavButton(context, 'Sign In', () {
-                Navigator.pushNamed(context, '/login');
-              }),
-              _buildNavButton(context, 'Sign Up', () {
-                Navigator.pushNamed(context, '/signup');
+                Navigator.pushNamed(context, '/auth');
               }),
             ],
           ),
