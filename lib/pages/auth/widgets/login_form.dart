@@ -85,7 +85,7 @@ class _LoginFormState extends State<LoginForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildEmailField(),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         _buildPasswordField(),
         SizedBox(height: height * 0.03),
         _buildSignInButton(width),
@@ -167,7 +167,7 @@ class _LoginFormState extends State<LoginForm> {
               horizontal: width * 0.1,
               vertical: 12.0,
             ),
-            child: Center(
+            child: const Center(
               child: Text(
                 'Sign In',
                 style: TextStyle(

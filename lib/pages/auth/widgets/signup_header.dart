@@ -3,7 +3,7 @@ import 'package:senior/const/app_colors.dart';
 import 'package:senior/const/app_styles.dart';
 
 class SignUpHeader extends StatelessWidget {
-  const SignUpHeader({Key? key}) : super(key: key);
+  const SignUpHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class SignUpHeader extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Text(
           'Hey, Enter your details to create a new account.',
           style: ralewayStyle.copyWith(

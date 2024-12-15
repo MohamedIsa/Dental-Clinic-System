@@ -6,7 +6,7 @@ import 'package:senior/const/app_styles.dart';
 import 'package:senior/utils/reuseable_widget.dart';
 
 class ForgotPasswordForm extends StatefulWidget {
-  const ForgotPasswordForm({Key? key}) : super(key: key);
+  const ForgotPasswordForm({super.key});
 
   @override
   _ForgotPasswordFormState createState() => _ForgotPasswordFormState();
@@ -95,7 +95,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
                   horizontal: width * 0.1,
                   vertical: 12.0,
                 ),
-                child: Center(
+                child: const Center(
                   child: Text(
                     'Reset Password',
                     style: TextStyle(

@@ -54,9 +54,9 @@ class _SignUpFormState extends State<SignUpForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildEmailField(),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         _buildPasswordField(),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         _buildConfirmPasswordField(),
         SizedBox(height: height * 0.03),
         _buildSignUpButton(width),
@@ -166,7 +166,7 @@ class _SignUpFormState extends State<SignUpForm> {
               horizontal: width * 0.1,
               vertical: 12.0,
             ),
-            child: Center(
+            child: const Center(
               child: Text(
                 'Sign Up',
                 style: TextStyle(

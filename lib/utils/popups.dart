@@ -13,7 +13,7 @@ void showErrorDialog(BuildContext context, String message) {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(kIsWeb ? 0 : 15),
           ),
-          title: Text('Error'),
+          title: const Text('Error'),
           content: Text(message),
           actions: [
             TextButton(
@@ -23,7 +23,7 @@ void showErrorDialog(BuildContext context, String message) {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );
@@ -43,7 +43,7 @@ void showMessagealert(BuildContext context, String message) {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(kIsWeb ? 0 : 15),
           ),
-          title: Text('Message'),
+          title: const Text('Message'),
           content: Text(message),
           actions: [
             TextButton(
@@ -53,7 +53,7 @@ void showMessagealert(BuildContext context, String message) {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );

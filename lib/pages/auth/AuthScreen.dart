@@ -11,7 +11,7 @@ import 'widgets/signup_header.dart';
 import 'widgets/signup_form.dart';
 
 class Authscreen extends StatefulWidget {
-  const Authscreen({Key? key}) : super(key: key);
+  const Authscreen({super.key});
 
   @override
   State<Authscreen> createState() => _AuthscreenState();
@@ -116,7 +116,7 @@ class _AuthscreenState extends State<Authscreen> {
                                 ),
                                 child: IconButton(
                                   onPressed: () => signInWithGoogle(context),
-                                  icon: Icon(Icons.g_mobiledata,
+                                  icon: const Icon(Icons.g_mobiledata,
                                       color: Appcolors.whiteColor),
                                 ),
                               ),
@@ -191,7 +191,7 @@ class _AuthscreenState extends State<Authscreen> {
                 fontWeight: FontWeight.w600,
               )),
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
       ],
     );
   }
@@ -207,7 +207,7 @@ class _AuthscreenState extends State<Authscreen> {
                 fontWeight: FontWeight.w600,
               )),
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
       ],
     );
   }

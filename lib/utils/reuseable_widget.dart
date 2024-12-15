@@ -7,8 +7,9 @@ class ReusableTextField extends StatefulWidget {
   final Color color;
   final TextEditingController controller;
 
-  ReusableTextField(
-      this.hintText, this.icon, this.isPassword, this.color, this.controller);
+  const ReusableTextField(
+      this.hintText, this.icon, this.isPassword, this.color, this.controller,
+      {super.key});
 
   @override
   _ReusableTextFieldState createState() => _ReusableTextFieldState();
@@ -28,7 +29,7 @@ class _ReusableTextFieldState extends State<ReusableTextField> {
     return TextField(
       controller: widget.controller,
       obscureText: _obscureText,
-      style: TextStyle(
+      style: const TextStyle(
         fontWeight: FontWeight.w400,
         color: Colors.black,
         fontSize: 14.0,
@@ -47,7 +48,7 @@ class _ReusableTextFieldState extends State<ReusableTextField> {
                     _obscureText ? Icons.visibility : Icons.visibility_off),
               )
             : null,
-        contentPadding: EdgeInsets.only(top: 16.0),
+        contentPadding: const EdgeInsets.only(top: 16.0),
         hintText: widget.hintText,
         hintStyle: TextStyle(
           fontWeight: FontWeight.w400,
