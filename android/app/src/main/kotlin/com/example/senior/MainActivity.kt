@@ -1,4 +1,4 @@
-package com.google.firebase.senior.dem
+package com.senior.app
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -33,7 +33,7 @@ class ServiceCard extends StatelessWidget {
                 content: Text(description),
                 actions: <Widget>[
                   TextButton(
-                    child: Text('Close'),
+                    child: const Text('Close'),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },

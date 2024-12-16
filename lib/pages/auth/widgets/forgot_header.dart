@@ -32,7 +32,7 @@ class ForgotHeader extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Text(
           'Hey, Enter your email to change your password',
           style: ralewayStyle.copyWith(

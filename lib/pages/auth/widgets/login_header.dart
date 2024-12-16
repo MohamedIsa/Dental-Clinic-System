@@ -3,7 +3,7 @@ import 'package:senior/const/app_colors.dart';
 import 'package:senior/const/app_styles.dart';
 
 class LoginHeader extends StatelessWidget {
-  const LoginHeader({Key? key}) : super(key: key);
+  const LoginHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class LoginHeader extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Text(
           'Hey, Enter your details to get sign in \nto your account.',
           style: ralewayStyle.copyWith(

@@ -1,5 +1,7 @@
 {
   "[dart]": {
     "editor.formatOnSave": true
-  }
+  },
+  "java.configuration.updateBuildConfiguration": "interactive",
+  "cmake.sourceDirectory": "/home/mohamed/Desktop/projects/Dental-Clinic-System/linux"
 }
