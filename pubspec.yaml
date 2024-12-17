@@ -22,6 +22,7 @@ dependencies:
   cloud_firestore: ^5.5.1
   intl: ^0.20.1
   url_strategy: ^0.3.0
+  logger: ^2.5.0
 
 dev_dependencies:
   flutter_test:

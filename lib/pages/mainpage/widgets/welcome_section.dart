@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:senior/pages/auth/AuthScreen.dart';
 
 class WelcomeSection extends StatelessWidget {
   final String welcomeMessage;
@@ -10,11 +11,11 @@ class WelcomeSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return screenWidth <= 600
-        ? _buildMobileWelcomeSection()
-        : _buildDesktopWelcomeSection();
+        ? _buildMobileWelcomeSection(context)
+        : _buildDesktopWelcomeSection(context);
   }
 
-  Widget _buildMobileWelcomeSection() {
+  Widget _buildMobileWelcomeSection(BuildContext context) {
     return Center(
       child: Container(
         margin: const EdgeInsets.only(top: 100, bottom: 900),
@@ -47,14 +48,14 @@ class WelcomeSection extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            _buildSignUpButton(fontSize: 16, borderRadius: 16.0),
+            _buildSignUpButton(context, fontSize: 16, borderRadius: 16.0),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDesktopWelcomeSection() {
+  Widget _buildDesktopWelcomeSection(BuildContext context) {
     return Center(
       child: Container(
         margin: const EdgeInsets.only(top: 100, bottom: 800),
@@ -87,17 +88,19 @@ class WelcomeSection extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            _buildSignUpButton(fontSize: 20, borderRadius: 32.0),
+            _buildSignUpButton(context, fontSize: 20, borderRadius: 32.0),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSignUpButton(
+  Widget _buildSignUpButton(BuildContext context,
       {required double fontSize, required double borderRadius}) {
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: () {
+        Navigator.pushNamed(context, "/signup");
+      },
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color.fromARGB(255, 249, 179, 1),
         shape: RoundedRectangleBorder(

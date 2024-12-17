@@ -29,7 +29,26 @@ void main() async {
     routes: {
       '/': (context) => const Loading(),
       '/home': (context) => const HomePage(),
-      '/auth': (context) => const Authscreen(),
+      '/login': (context) => const AuthScreen(
+            isSignUp: false,
+            isCompleteDetails: false,
+            isForgotPassword: false,
+          ),
+      '/signup': (context) => const AuthScreen(
+            isSignUp: true,
+            isCompleteDetails: false,
+            isForgotPassword: false,
+          ),
+      '/complete': (context) => const AuthScreen(
+            isSignUp: false,
+            isCompleteDetails: true,
+            isForgotPassword: false,
+          ),
+      '/forgot': (context) => const AuthScreen(
+            isSignUp: false,
+            isCompleteDetails: false,
+            isForgotPassword: true,
+          ),
     },
   ));
 }

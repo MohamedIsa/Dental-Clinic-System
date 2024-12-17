@@ -120,7 +120,7 @@ BottomNavigationBar _buildBottomNavigationBar(BuildContext context) {
           Navigator.pushReplacementNamed(context, '/aboutus');
           break;
         case 3:
-          Navigator.pushReplacementNamed(context, '/auth');
+          Navigator.pushReplacementNamed(context, '/login');
           break;
       }
     },

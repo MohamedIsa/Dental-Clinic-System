@@ -1,35 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:senior/pages/auth/widgets/complete_header.dart';
 import 'package:senior/pages/auth/widgets/forgot_form.dart';
 import '../../const/app_colors.dart';
 import '../../const/app_styles.dart';
 import '../../utils/googlesignin.dart';
 import '../../utils/responsive_widget.dart';
+import 'widgets/complete_form.dart';
 import 'widgets/forgot_header.dart';
 import 'widgets/login_header.dart';
 import 'widgets/login_form.dart';
 import 'widgets/signup_header.dart';
 import 'widgets/signup_form.dart';
 
-class Authscreen extends StatefulWidget {
-  const Authscreen({super.key});
+class AuthScreen extends StatefulWidget {
+  final bool isSignUp;
+  final bool isCompleteDetails;
+  final bool isForgotPassword;
+  const AuthScreen(
+      {super.key,
+      required this.isSignUp,
+      required this.isCompleteDetails,
+      required this.isForgotPassword});
 
   @override
-  State<Authscreen> createState() => _AuthscreenState();
+  State<AuthScreen> createState() => _AuthScreenState();
 }
 
-class _AuthscreenState extends State<Authscreen> {
-  bool _isSignUp = false;
+class _AuthScreenState extends State<AuthScreen> {
+  bool? _isSignUp;
   bool _isForgotPassword = false;
+  bool _isCompleteDetails = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _isSignUp = widget.isSignUp;
+    _isCompleteDetails = widget.isCompleteDetails;
+    _isForgotPassword = widget.isForgotPassword;
+  }
 
   void _toggleForm() {
     setState(() {
-      _isSignUp = !_isSignUp;
+      Navigator.pushNamed(context, '/signup');
     });
   }
 
+  void _togglesignIn() => setState(() {
+        Navigator.pushNamed(context, '/login');
+      });
+
   void _toggleForgotPassword() {
     setState(() {
-      _isForgotPassword = !_isForgotPassword;
+      Navigator.pushNamed(context, '/forgot');
+    });
+  }
+
+  void _toggleCompleteDetails() {
+    setState(() {
+      Navigator.pushNamed(context, '/complete');
     });
   }
 
@@ -82,48 +110,92 @@ class _AuthscreenState extends State<Authscreen> {
                             const ForgotHeader(),
                             SizedBox(height: height * 0.064),
                             const ForgotPasswordForm(),
-                          ],
-                        )
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(height: height * 0.2),
-                            _isSignUp
-                                ? const SignUpHeader()
-                                : const LoginHeader(),
-                            SizedBox(height: height * 0.064),
-                            _isSignUp ? const SignUpForm() : const LoginForm(),
-                            SizedBox(height: height * 0.02),
-                            _isSignUp
-                                ? _buildSignInPrompt()
-                                : _buildSignUpPrompt(),
-                            SizedBox(height: height * 0.02),
-                            _isSignUp
-                                ? const SizedBox()
-                                : _buildForgotPasswordLink(),
-                            _isSignUp
-                                ? _buildSocialSignUpSection(width)
-                                : _buildSocialSignInSection(width),
-                            Align(
-                              alignment: Alignment.center,
-                              child: Container(
-                                height: 50.0,
-                                width: 50.0,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(16.0),
-                                  color: Appcolors.mainBlueColor,
-                                ),
-                                child: IconButton(
-                                  onPressed: () => signInWithGoogle(context),
-                                  icon: const Icon(Icons.g_mobiledata,
-                                      color: Appcolors.whiteColor),
+                            InkWell(
+                              onTap: () {},
+                              child: TextButton(
+                                onPressed: _togglesignIn,
+                                child: Text(
+                                  'Log in',
+                                  style: ralewayStyle.copyWith(
+                                    fontSize: 12.0,
+                                    color: Appcolors.mainBlueColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
                             ),
-                            SizedBox(height: height * 0.02),
                           ],
-                        ),
+                        )
+                      : _isCompleteDetails
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                SizedBox(height: height * 0.2),
+                                const CompleteHeader(),
+                                SizedBox(height: height * 0.064),
+                                const CompleteForm(
+                                  uid: '',
+                                ),
+                                InkWell(
+                                  onTap: () {},
+                                  child: TextButton(
+                                    onPressed: _toggleForgotPassword,
+                                    child: Text(
+                                      'Log in',
+                                      style: ralewayStyle.copyWith(
+                                        fontSize: 12.0,
+                                        color: Appcolors.mainBlueColor,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                SizedBox(height: height * 0.2),
+                                _isSignUp!
+                                    ? const SignUpHeader()
+                                    : const LoginHeader(),
+                                SizedBox(height: height * 0.064),
+                                _isSignUp!
+                                    ? const SignUpForm()
+                                    : const LoginForm(),
+                                SizedBox(height: height * 0.02),
+                                _isSignUp!
+                                    ? _buildSignInPrompt()
+                                    : _buildSignUpPrompt(),
+                                SizedBox(height: height * 0.02),
+                                _isSignUp!
+                                    ? const SizedBox()
+                                    : _buildForgotPasswordLink(),
+                                _isSignUp!
+                                    ? _buildSocialSignUpSection(width)
+                                    : _buildSocialSignInSection(width),
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: Container(
+                                    height: 50.0,
+                                    width: 50.0,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(16.0),
+                                      color: Appcolors.mainBlueColor,
+                                    ),
+                                    child: IconButton(
+                                      onPressed: () =>
+                                          signInWithGoogle(context),
+                                      icon: const Icon(Icons.g_mobiledata,
+                                          color: Appcolors.whiteColor),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: height * 0.02),
+                              ],
+                            ),
                 ),
               ),
             ),
@@ -227,7 +299,7 @@ class _AuthscreenState extends State<Authscreen> {
             ),
           ),
           TextButton(
-            onPressed: _toggleForm,
+            onPressed: _togglesignIn,
             child: Text(
               'Sign In',
               style: ralewayStyle.copyWith(

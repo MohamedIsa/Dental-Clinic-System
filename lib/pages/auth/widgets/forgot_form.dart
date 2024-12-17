@@ -18,6 +18,12 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String _errorMessage = '';
 
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
+
   Future<void> _resetPassword() async {
     try {
       final snapshot = await _firestore
@@ -116,20 +122,6 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
             color: Colors.red,
             fontSize: 12.0,
             fontWeight: FontWeight.w400,
-          ),
-        ),
-        InkWell(
-          onTap: () {},
-          child: TextButton(
-            onPressed: () {},
-            child: Text(
-              'Log in',
-              style: ralewayStyle.copyWith(
-                fontSize: 12.0,
-                color: Appcolors.mainBlueColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
           ),
         ),
       ],

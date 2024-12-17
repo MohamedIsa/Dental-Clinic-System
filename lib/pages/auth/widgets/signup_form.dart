@@ -19,6 +19,14 @@ class _SignUpFormState extends State<SignUpForm> {
   final TextEditingController _confirmPasswordTextController =
       TextEditingController();
 
+  @override
+  void dispose() {
+    _emailTextController.dispose();
+    _passwordTextController.dispose();
+    _confirmPasswordTextController.dispose();
+    super.dispose();
+  }
+
   Future<void> _signUp() async {
     if (_passwordTextController.text != _confirmPasswordTextController.text) {
       showErrorDialog(context, 'Passwords do not match');
@@ -85,8 +93,13 @@ class _SignUpFormState extends State<SignUpForm> {
             borderRadius: BorderRadius.circular(16.0),
             color: Appcolors.whiteColor,
           ),
-          child: ReusableTextField('Enter email', Icons.email, false,
-              Appcolors.greyColor, _emailTextController),
+          child: ReusableTextField(
+            'Enter email',
+            Icons.email,
+            false,
+            Appcolors.greyColor,
+            _emailTextController,
+          ),
         ),
       ],
     );
@@ -113,8 +126,13 @@ class _SignUpFormState extends State<SignUpForm> {
             borderRadius: BorderRadius.circular(16.0),
             color: Appcolors.whiteColor,
           ),
-          child: ReusableTextField('Enter password', Icons.lock, true,
-              Appcolors.greyColor, _passwordTextController),
+          child: ReusableTextField(
+            'Enter password',
+            Icons.lock,
+            true,
+            Appcolors.greyColor,
+            _passwordTextController,
+          ),
         ),
       ],
     );
@@ -141,8 +159,13 @@ class _SignUpFormState extends State<SignUpForm> {
             borderRadius: BorderRadius.circular(16.0),
             color: Appcolors.whiteColor,
           ),
-          child: ReusableTextField('Confirm password', Icons.lock, true,
-              Appcolors.greyColor, _confirmPasswordTextController),
+          child: ReusableTextField(
+            'Confirm password',
+            Icons.lock,
+            true,
+            Appcolors.greyColor,
+            _confirmPasswordTextController,
+          ),
         ),
       ],
     );
