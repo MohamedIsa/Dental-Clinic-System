@@ -20,7 +20,7 @@ class PasswordField extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(left: 16.0),
           child: Text(
-            'Password',
+            title,
             style: ralewayStyle.copyWith(
               fontSize: 12.0,
               color: Appcolors.blueDarkColor,
@@ -35,11 +35,11 @@ class PasswordField extends StatelessWidget {
             color: Appcolors.whiteColor,
           ),
           child: ReusableTextField(
-            'Enter password',
-            Icons.lock,
-            true,
-            Appcolors.greyColor,
-            passwordTextController,
+            hintText: hint,
+            icon: Icons.lock,
+            isPassword: true,
+            color: Appcolors.greyColor,
+            controller: passwordTextController,
           ),
         ),
       ],

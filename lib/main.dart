@@ -6,6 +6,7 @@ import 'package:url_strategy/url_strategy.dart';
 import 'firebase_options.dart';
 import 'pages/auth/AuthScreen.dart';
 import 'pages/mainpage/home.dart';
+import 'pages/phome/phome.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,6 +50,7 @@ void main() async {
             isCompleteDetails: false,
             isForgotPassword: true,
           ),
+      '/patientDashboard': (context) => WelcomePage(),
     },
   ));
 }

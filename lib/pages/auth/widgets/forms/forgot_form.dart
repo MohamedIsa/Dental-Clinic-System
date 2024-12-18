@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:senior/const/app_colors.dart';
 import 'package:senior/const/app_styles.dart';
-import 'package:senior/utils/reuseable_widget.dart';
+import 'package:senior/pages/auth/widgets/buttonform.dart';
+import 'package:senior/pages/auth/widgets/reuseablewidgets/emailfield.dart';
 
 class ForgotPasswordForm extends StatefulWidget {
   const ForgotPasswordForm({super.key});
@@ -58,63 +58,9 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child: Text(
-            'Email',
-            style: ralewayStyle.copyWith(
-              fontSize: 12.0,
-              color: Appcolors.blueDarkColor,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
-        const SizedBox(height: 6.0),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16.0),
-            color: Appcolors.whiteColor,
-          ),
-          child: ReusableTextField(
-            'Enter email',
-            Icons.email,
-            false,
-            Appcolors.greyColor,
-            _emailController,
-          ),
-        ),
+        EmailField(emailTextController: _emailController),
         SizedBox(height: height * 0.04),
-        Container(
-          height: 50.0,
-          width: width,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16.0),
-            color: Appcolors.mainBlueColor,
-          ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: _resetPassword,
-              borderRadius: BorderRadius.circular(16.0),
-              child: Ink(
-                padding: EdgeInsets.symmetric(
-                  horizontal: width * 0.1,
-                  vertical: 12.0,
-                ),
-                child: const Center(
-                  child: Text(
-                    'Reset Password',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      color: Appcolors.whiteColor,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
+        ButtonForm(width: width, title: 'ResetPassword', onTap: _resetPassword),
         SizedBox(height: height * 0.04),
         Text(
           _errorMessage,

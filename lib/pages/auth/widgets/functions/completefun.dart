@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../../../utils/popups.dart';
+import '../../../../models/users.dart';
 
 String cprPattern = r'^\d{2}(0[1-9]|1[0-2])\d{5}$';
 String phonePattern = r'^(66\d{6}|3[2-9]\d{6})$';
@@ -47,27 +48,29 @@ Future<void> completeRegistration(
     User? currentUser = FirebaseAuth.instance.currentUser;
 
     if (currentUser != null) {
-      await _firestore.collection('user').doc(currentUser.uid).set(
-        {
-          'Email': currentUser.email,
-          'FullName': fullName,
-          'CPR': cpr,
-          'Phone': phone,
-          'Gender': _selectedGender,
-          'DOB': _dobTextController.text,
-        },
-        SetOptions(merge: true),
+      Users user = Users(
+        id: currentUser.uid,
+        name: fullName,
+        email: currentUser.email!,
+        role: 'patient',
+        phone: phone,
+        cpr: cpr,
+        dob: _dobTextController.text,
+        gender: _selectedGender,
       );
 
-      await _firestore.collection('patient').doc(currentUser.uid).set({
-        'UID': currentUser.uid,
+      await _firestore.collection('users').doc(currentUser.uid).set({
+        'id': user.id,
+        'name': user.name,
+        'email': user.email,
+        'role': user.role,
+        'phone': user.phone,
+        'cpr': user.cpr,
+        'gender': user.gender,
+        'dob': user.dob,
       });
 
-      // Navigator.of(context).pushReplacement(
-      //   MaterialPageRoute(
-      //     builder: (context) => PatientHomePage(),
-      //   ),
-      // );
+      Navigator.pushReplacementNamed(context, '/patientDashboard');
     } else {
       showErrorDialog(context, 'No user is currently signed in.');
     }

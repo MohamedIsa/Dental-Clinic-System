@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:senior/pages/auth/AuthScreen.dart';
 
 class WelcomeSection extends StatelessWidget {
   final String welcomeMessage;

@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:senior/pages/auth/widgets/complete_header.dart';
-import 'package:senior/pages/auth/widgets/forgot_form.dart';
+import 'package:senior/pages/auth/widgets/headers/complete_header.dart';
+import 'package:senior/pages/auth/widgets/forms/forgot_form.dart';
+import 'package:senior/pages/auth/widgets/googlelog.dart';
+import 'package:senior/pages/auth/widgets/navigations/signinprompt.dart';
+import 'package:senior/pages/auth/widgets/texts/socialsignup.dart';
 import '../../const/app_colors.dart';
 import '../../const/app_styles.dart';
-import '../../utils/googlesignin.dart';
 import '../../utils/responsive_widget.dart';
-import 'widgets/complete_form.dart';
-import 'widgets/forgot_header.dart';
-import 'widgets/login_header.dart';
-import 'widgets/login_form.dart';
-import 'widgets/signup_header.dart';
-import 'widgets/signup_form.dart';
+import 'widgets/forms/complete_form.dart';
+import 'widgets/headers/forgot_header.dart';
+import 'widgets/headers/login_header.dart';
+import 'widgets/forms/login_form.dart';
+import 'widgets/headers/signup_header.dart';
+import 'widgets/forms/signup_form.dart';
+import 'widgets/navigations/forgotpasswordlink.dart';
+import 'widgets/navigations/signupprompt.dart';
+import 'widgets/functions/navigationfun.dart';
 
 class AuthScreen extends StatefulWidget {
   final bool isSignUp;
@@ -37,28 +42,6 @@ class _AuthScreenState extends State<AuthScreen> {
     _isSignUp = widget.isSignUp;
     _isCompleteDetails = widget.isCompleteDetails;
     _isForgotPassword = widget.isForgotPassword;
-  }
-
-  void _toggleForm() {
-    setState(() {
-      Navigator.pushNamed(context, '/signup');
-    });
-  }
-
-  void _togglesignIn() => setState(() {
-        Navigator.pushNamed(context, '/login');
-      });
-
-  void _toggleForgotPassword() {
-    setState(() {
-      Navigator.pushNamed(context, '/forgot');
-    });
-  }
-
-  void _toggleCompleteDetails() {
-    setState(() {
-      Navigator.pushNamed(context, '/complete');
-    });
   }
 
   @override
@@ -113,7 +96,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             InkWell(
                               onTap: () {},
                               child: TextButton(
-                                onPressed: _togglesignIn,
+                                onPressed: () => toggleSignIn(context),
                                 child: Text(
                                   'Log in',
                                   style: ralewayStyle.copyWith(
@@ -137,20 +120,6 @@ class _AuthScreenState extends State<AuthScreen> {
                                 const CompleteForm(
                                   uid: '',
                                 ),
-                                InkWell(
-                                  onTap: () {},
-                                  child: TextButton(
-                                    onPressed: _toggleForgotPassword,
-                                    child: Text(
-                                      'Log in',
-                                      style: ralewayStyle.copyWith(
-                                        fontSize: 12.0,
-                                        color: Appcolors.mainBlueColor,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                ),
                               ],
                             )
                           : Column(
@@ -166,33 +135,13 @@ class _AuthScreenState extends State<AuthScreen> {
                                     ? const SignUpForm()
                                     : const LoginForm(),
                                 SizedBox(height: height * 0.02),
-                                _isSignUp!
-                                    ? _buildSignInPrompt()
-                                    : _buildSignUpPrompt(),
+                                _isSignUp! ? SigninPrompt() : SignUpPrompt(),
                                 SizedBox(height: height * 0.02),
                                 _isSignUp!
                                     ? const SizedBox()
-                                    : _buildForgotPasswordLink(),
-                                _isSignUp!
-                                    ? _buildSocialSignUpSection(width)
-                                    : _buildSocialSignInSection(width),
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Container(
-                                    height: 50.0,
-                                    width: 50.0,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(16.0),
-                                      color: Appcolors.mainBlueColor,
-                                    ),
-                                    child: IconButton(
-                                      onPressed: () =>
-                                          signInWithGoogle(context),
-                                      icon: const Icon(Icons.g_mobiledata,
-                                          color: Appcolors.whiteColor),
-                                    ),
-                                  ),
-                                ),
+                                    : ForgotPasswordLink(),
+                                SocialSignUpSection(),
+                                Googlelog(),
                                 SizedBox(height: height * 0.02),
                               ],
                             ),
@@ -201,115 +150,6 @@ class _AuthScreenState extends State<AuthScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildForgotPasswordLink() {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: TextButton(
-        onPressed: _toggleForgotPassword,
-        child: Text(
-          'Forgot Password?',
-          style: ralewayStyle.copyWith(
-            fontSize: 12.0,
-            color: Appcolors.mainBlueColor,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSignUpPrompt() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 11.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Text(
-            'Don\'t have an account? ',
-            style: ralewayStyle.copyWith(
-              fontSize: 12.0,
-              color: Appcolors.greyColor,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          TextButton(
-            onPressed: _toggleForm,
-            child: Text(
-              'Sign Up',
-              style: ralewayStyle.copyWith(
-                fontSize: 12.0,
-                color: Appcolors.mainBlueColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSocialSignInSection(double width) {
-    return Column(
-      children: [
-        Center(
-          child: Text('Or Sign In With',
-              style: ralewayStyle.copyWith(
-                fontSize: 12.0,
-                color: Appcolors.greyColor,
-                fontWeight: FontWeight.w600,
-              )),
-        ),
-        const SizedBox(height: 20),
-      ],
-    );
-  }
-
-  Widget _buildSocialSignUpSection(double width) {
-    return Column(
-      children: [
-        Center(
-          child: Text('Or Sign Up With',
-              style: ralewayStyle.copyWith(
-                fontSize: 12.0,
-                color: Appcolors.greyColor,
-                fontWeight: FontWeight.w600,
-              )),
-        ),
-        const SizedBox(height: 20),
-      ],
-    );
-  }
-
-  Widget _buildSignInPrompt() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 11.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Text(
-            'Already have an account? ',
-            style: ralewayStyle.copyWith(
-              fontSize: 12.0,
-              color: Appcolors.greyColor,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          TextButton(
-            onPressed: _togglesignIn,
-            child: Text(
-              'Sign In',
-              style: ralewayStyle.copyWith(
-                fontSize: 12.0,
-                color: Appcolors.mainBlueColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

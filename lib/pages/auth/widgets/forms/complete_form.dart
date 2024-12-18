@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:senior/const/app_colors.dart';
+import 'package:senior/pages/auth/widgets/buttonform.dart';
 import 'package:senior/pages/auth/widgets/reuseablewidgets/cprfield.dart';
 import 'package:senior/pages/auth/widgets/reuseablewidgets/dobfield.dart';
 import 'package:senior/pages/auth/widgets/reuseablewidgets/fullnamefield.dart';
 import 'package:senior/pages/auth/widgets/reuseablewidgets/genderfield.dart';
 import 'package:senior/pages/auth/widgets/reuseablewidgets/phonefield.dart';
-import '../widgets/functions/completefun.dart';
+import '../functions/completefun.dart';
 
 class CompleteForm extends StatefulWidget {
   final String uid;
-  const CompleteForm({Key? key, required this.uid}) : super(key: key);
+  const CompleteForm({super.key, required this.uid});
 
   @override
   _CompleteFormState createState() => _CompleteFormState();
@@ -41,49 +41,18 @@ class _CompleteFormState extends State<CompleteForm> {
         SizedBox(height: height * 0.014),
         DobField(dobTextController: _dobTextController, width: width),
         SizedBox(height: height * 0.03),
-        _buildCompleteRegistrationButton(width),
+        ButtonForm(
+            width: width,
+            title: 'Complete Registration',
+            onTap: () => completeRegistration(
+                context,
+                widget.uid,
+                _fullNameTextController,
+                _phoneTextController,
+                _selectedGender,
+                _cprTextController,
+                _dobTextController))
       ],
-    );
-  }
-
-  Widget _buildCompleteRegistrationButton(double width) {
-    return Container(
-      height: 50.0,
-      width: width,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16.0),
-        color: Appcolors.mainBlueColor,
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => completeRegistration(
-              context,
-              widget.uid,
-              _fullNameTextController,
-              _phoneTextController,
-              _selectedGender,
-              _cprTextController,
-              _dobTextController),
-          borderRadius: BorderRadius.circular(16.0),
-          child: Ink(
-            padding: EdgeInsets.symmetric(
-              horizontal: width * 0.1,
-              vertical: 12.0,
-            ),
-            child: Center(
-              child: Text(
-                'Complete Registration',
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  color: Appcolors.whiteColor,
-                  fontSize: 16.0,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

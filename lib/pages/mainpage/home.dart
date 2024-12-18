@@ -107,20 +107,24 @@ BottomNavigationBar _buildBottomNavigationBar(BuildContext context) {
       BottomNavigationBarItem(icon: Icon(Icons.medical_services), label: ''),
       BottomNavigationBarItem(icon: Icon(Icons.info), label: ''),
       BottomNavigationBarItem(icon: Icon(Icons.login), label: ''),
+      BottomNavigationBarItem(icon: Icon(Icons.app_registration), label: ''),
     ],
     onTap: (index) {
       switch (index) {
         case 0:
-          Navigator.pushReplacementNamed(context, '/home');
+          Navigator.pushNamed(context, '/home');
           break;
         case 1:
-          Navigator.pushReplacementNamed(context, '/service');
+          Navigator.pushNamed(context, '/service');
           break;
         case 2:
-          Navigator.pushReplacementNamed(context, '/aboutus');
+          Navigator.pushNamed(context, '/aboutus');
           break;
         case 3:
-          Navigator.pushReplacementNamed(context, '/login');
+          Navigator.pushNamed(context, '/login');
+          break;
+        case 4:
+          Navigator.pushNamed(context, '/signup');
           break;
       }
     },
