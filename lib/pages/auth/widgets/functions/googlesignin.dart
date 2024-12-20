@@ -4,62 +4,51 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:senior/utils/popups.dart';
-import '../firebase_options.dart';
+import '../../../../firebase_options.dart';
 
 Future<void> signInWithGoogle(BuildContext context) async {
   try {
+    final GoogleSignIn googleSignIn = GoogleSignIn(
+      clientId: DefaultFirebaseOptions.currentPlatform.iosClientId ??
+          OauthCredential.clientId,
+    );
+
+    GoogleSignInAccount? googleUser;
+
     if (kIsWeb) {
-      final GoogleSignIn googleSignIn = GoogleSignIn(
-        clientId: OauthCredential.clientId,
-      );
-
-      final GoogleSignInAccount? googleUser =
-          await googleSignIn.signInSilently();
-
-      if (googleUser == null) {
-        showErrorDialog(context, 'Google Sign-In cancelled');
-        return;
-      }
-
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      await _handleFirebaseSignIn(context, credential);
+      googleUser = await googleSignIn.signIn();
     } else {
-      final GoogleSignIn googleSignIn = GoogleSignIn(
-        clientId: OauthCredential.clientId,
-      );
-
       await googleSignIn.signOut();
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      googleUser = await googleSignIn.signIn();
+    }
 
-      if (googleUser == null) {
+    if (googleUser == null) {
+      if (context.mounted) {
         showErrorDialog(context, 'Google Sign-In cancelled');
-        return;
       }
+      return;
+    }
 
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
 
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
+    final AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
 
-      await _handleFirebaseSignIn(context, credential);
+    if (context.mounted) {
+      await handleFirebaseSignIn(context, credential);
     }
   } catch (e) {
-    showErrorDialog(context, 'An unexpected error occurred: ${e.toString()}');
-    print("Sign-In error: $e");
+    if (context.mounted) {
+      showErrorDialog(context, 'An unexpected error occurred: ${e.toString()}');
+    }
+    debugPrint("Sign-In error: $e");
   }
 }
 
-Future<void> _handleFirebaseSignIn(
+Future<void> handleFirebaseSignIn(
     BuildContext context, AuthCredential credential) async {
   try {
     final UserCredential userCredential =
@@ -70,13 +59,17 @@ Future<void> _handleFirebaseSignIn(
     if (firebaseUser != null) {
       bool userExists = await checkIfUserExistsInDatabase(firebaseUser.uid);
 
-      if (userExists) {
-        Navigator.pushReplacementNamed(context, '/dashboard');
-      } else {
-        Navigator.pushReplacementNamed(context, '/complete');
+      if (context.mounted) {
+        if (userExists) {
+          Navigator.pushReplacementNamed(context, '/patientDashboard');
+        } else {
+          Navigator.pushReplacementNamed(context, '/complete');
+        }
       }
     } else {
-      showErrorDialog(context, 'Authentication failed');
+      if (context.mounted) {
+        showErrorDialog(context, 'Authentication failed');
+      }
     }
   } on FirebaseAuthException catch (e) {
     String errorMessage = 'Authentication error';
@@ -90,8 +83,12 @@ Future<void> _handleFirebaseSignIn(
       case 'operation-not-allowed':
         errorMessage = 'Google Sign-In is not enabled';
         break;
+      default:
+        errorMessage = 'An unknown error occurred';
     }
-    showErrorDialog(context, errorMessage);
+    if (context.mounted) {
+      showErrorDialog(context, errorMessage);
+    }
   }
 }
 
@@ -113,7 +110,7 @@ Future<bool> checkIfUserExistsInDatabase(String uid) async {
 
     return false;
   } catch (e) {
-    print("Error checking user existence: $e");
+    debugPrint("Error checking user existence: $e");
     return false;
   }
 }

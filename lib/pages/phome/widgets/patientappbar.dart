@@ -1,30 +1,24 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+
 import '../../../utils/responsive_widget.dart';
+import '../functions/getusername.dart';
 
-class WelcomeHeader extends StatelessWidget implements PreferredSizeWidget {
-  const WelcomeHeader({Key? key}) : super(key: key);
+class PatientAppBar extends StatefulWidget implements PreferredSizeWidget {
+  const PatientAppBar({super.key});
 
-  Future<String> getFullName() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
-      String fullName = userDoc.get('name');
-      List<String> names = fullName.split(' ');
-      return names.first;
-    }
-    return 'User';
-  }
+  @override
+  State<PatientAppBar> createState() => _PatientAppBarState();
 
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
+
+class _PatientAppBarState extends State<PatientAppBar> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-
     return AppBar(
       title: Row(
         children: <Widget>[
@@ -60,8 +54,7 @@ class WelcomeHeader extends StatelessWidget implements PreferredSizeWidget {
           icon: Icon(Icons.logout),
           onPressed: () async {
             await FirebaseAuth.instance.signOut();
-            Navigator.pushNamedAndRemoveUntil(
-                context, '/home', (route) => false);
+            Navigator.pushNamed(context, '/home');
           },
         ),
       ],
@@ -69,7 +62,4 @@ class WelcomeHeader extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0.0,
     );
   }
-
-  @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }

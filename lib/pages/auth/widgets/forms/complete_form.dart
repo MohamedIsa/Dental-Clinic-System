@@ -48,9 +48,9 @@ class _CompleteFormState extends State<CompleteForm> {
                 context,
                 widget.uid,
                 _fullNameTextController,
+                _cprTextController,
                 _phoneTextController,
                 _selectedGender,
-                _cprTextController,
                 _dobTextController))
       ],
     );

@@ -21,8 +21,10 @@ class AuthScreen extends StatefulWidget {
   final bool isSignUp;
   final bool isCompleteDetails;
   final bool isForgotPassword;
+  final String? uid;
   const AuthScreen(
       {super.key,
+      this.uid,
       required this.isSignUp,
       required this.isCompleteDetails,
       required this.isForgotPassword});
@@ -117,8 +119,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                 SizedBox(height: height * 0.2),
                                 const CompleteHeader(),
                                 SizedBox(height: height * 0.064),
-                                const CompleteForm(
-                                  uid: '',
+                                CompleteForm(
+                                  uid: widget.uid ?? '',
                                 ),
                               ],
                             )

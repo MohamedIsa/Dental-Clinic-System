@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../const/app_colors.dart';
-import '../../../utils/googlesignin.dart';
+import 'functions/googlesignin.dart';
 
 class Googlelog extends StatelessWidget {
   const Googlelog({super.key});

@@ -10,15 +10,15 @@ String phonePattern = r'^(66\d{6}|3[2-9]\d{6})$';
 Future<void> completeRegistration(
     BuildContext context,
     uid,
-    _fullNameTextController,
-    _cprTextController,
-    _phoneTextController,
-    _selectedGender,
-    _dobTextController) async {
-  FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  String fullName = _fullNameTextController.text;
-  String cpr = _cprTextController.text;
-  String phone = _phoneTextController.text;
+    fullNameTextController,
+    cprTextController,
+    phoneTextController,
+    selectedGender,
+    dobTextController) async {
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  String fullName = fullNameTextController.text;
+  String cpr = cprTextController.text;
+  String phone = phoneTextController.text;
   List<String> errors = [];
 
   if (fullName.isEmpty) {
@@ -36,7 +36,7 @@ Future<void> completeRegistration(
   if (cpr.isNotEmpty && !RegExp(cprPattern).hasMatch(cpr)) {
     errors.add('Invalid CPR format.');
   }
-  if (_dobTextController.text.isEmpty) {
+  if (dobTextController.text.isEmpty) {
     errors.add('Date of Birth is required.');
   }
   if (errors.isNotEmpty) {
@@ -55,11 +55,11 @@ Future<void> completeRegistration(
         role: 'patient',
         phone: phone,
         cpr: cpr,
-        dob: _dobTextController.text,
-        gender: _selectedGender,
+        dob: dobTextController.text,
+        gender: selectedGender,
       );
 
-      await _firestore.collection('users').doc(currentUser.uid).set({
+      await firestore.collection('users').doc(currentUser.uid).set({
         'id': user.id,
         'name': user.name,
         'email': user.email,
@@ -70,12 +70,16 @@ Future<void> completeRegistration(
         'dob': user.dob,
       });
 
-      Navigator.pushReplacementNamed(context, '/patientDashboard');
+      if (context.mounted) {
+        Navigator.pushReplacementNamed(context, '/patientDashboard');
+      }
     } else {
       showErrorDialog(context, 'No user is currently signed in.');
     }
   } catch (e) {
-    print('Failed to update user: $e');
-    showErrorDialog(context, e.toString());
+    debugPrint('Failed to update user: $e');
+    if (context.mounted) {
+      showErrorDialog(context, e.toString());
+    }
   }
 }

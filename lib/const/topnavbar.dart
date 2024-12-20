@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
-class TopNavigationBar extends StatelessWidget {
-  const TopNavigationBar({super.key});
+import '../models/navbaritem.dart';
+
+class TopNavBar extends StatelessWidget {
+  final List<NavBarItem> navItems;
+  const TopNavBar({super.key, required this.navItems});
 
   @override
   Widget build(BuildContext context) {
@@ -13,21 +16,11 @@ class TopNavigationBar extends StatelessWidget {
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              _buildNavButton(context, 'Home', () {}),
-              _buildNavButton(context, 'Dental services', () {
-                Navigator.pushNamed(context, '/service');
-              }),
-              _buildNavButton(context, 'About Us', () {
-                Navigator.pushNamed(context, '/aboutUs');
-              }),
-              _buildNavButton(context, 'Sign In', () {
-                Navigator.pushNamed(context, '/login');
-              }),
-              _buildNavButton(context, 'Sign Up', () {
-                Navigator.pushNamed(context, '/signup');
-              })
-            ],
+            children: navItems.map((item) {
+              return _buildNavButton(context, item.label, () {
+                Navigator.pushNamed(context, item.route);
+              });
+            }).toList(),
           ),
         ],
       ),
