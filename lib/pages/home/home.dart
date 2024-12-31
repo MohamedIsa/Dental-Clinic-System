@@ -4,8 +4,8 @@ import 'package:senior/const/body.dart';
 import '../../const/bottomnavbar.dart';
 import '../../const/navbaritems.dart';
 import '../../const/topnavbar.dart';
-import '../../widgets/static/welcome_section.dart';
-import '../../widgets/static/services_section.dart';
+import '../widgets/static/welcome_section.dart';
+import '../widgets/static/services_section.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../../utils/responsive_widget.dart';
-import '../../functions/phome/getusername.dart';
+import '../../../utils/responsive_widget.dart';
+import '../../../functions/phome/getusername.dart';
 
 class PatientAppBar extends StatefulWidget implements PreferredSizeWidget {
   const PatientAppBar({super.key});

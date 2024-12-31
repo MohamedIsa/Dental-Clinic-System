@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../const/app_colors.dart';
-import '../../const/app_styles.dart';
+import '../../../const/app_colors.dart';
+import '../../../const/app_styles.dart';
 
 class SocialSignInSection extends StatelessWidget {
   const SocialSignInSection({super.key});

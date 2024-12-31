@@ -24,7 +24,6 @@ dependencies:
   url_strategy: ^0.3.0
   logger: ^2.5.0
   google_sign_in_web: ^0.12.4+3
-  flutter_dotenv: ^5.0.2
 
 dev_dependencies:
   flutter_test:

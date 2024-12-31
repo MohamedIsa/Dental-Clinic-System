@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../functions/auth/navigationfun.dart';
+import '../../../functions/auth/navigationfun.dart';
 
-import '../../const/app_colors.dart';
-import '../../const/app_styles.dart';
+import '../../../const/app_colors.dart';
+import '../../../const/app_styles.dart';
 
 class SigninPrompt extends StatelessWidget {
   const SigninPrompt({super.key});

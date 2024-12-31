@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:senior/const/servicelist.dart';
-import '../../const/service_card.dart';
+import '../../../const/service_card.dart';
 
 class ServicesSection extends StatelessWidget {
   final double screenWidth;

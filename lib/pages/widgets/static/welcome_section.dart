@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../const/messagecontainer.dart';
-import '../../functions/home/welcomemessage.dart';
+import '../../../const/messagecontainer.dart';
+import '../../../functions/home/welcomemessage.dart';
 
 class WelcomeSection extends StatelessWidget {
   final double screenWidth;

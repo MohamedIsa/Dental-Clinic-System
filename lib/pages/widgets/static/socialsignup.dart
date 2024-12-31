@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../const/app_colors.dart';
-import '../../const/app_styles.dart';
+import '../../../const/app_colors.dart';
+import '../../../const/app_styles.dart';
 
 class SocialSignUpSection extends StatelessWidget {
   const SocialSignUpSection({super.key});

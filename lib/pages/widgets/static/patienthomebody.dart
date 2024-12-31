@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:senior/functions/phome/getupcomingappoint.dart';
-import '../../const/body.dart';
-import '../../const/messagecontainer.dart';
+import '../../../const/body.dart';
+import '../../../const/messagecontainer.dart';
 
 class PatientHomeBody extends StatefulWidget {
   const PatientHomeBody({super.key});

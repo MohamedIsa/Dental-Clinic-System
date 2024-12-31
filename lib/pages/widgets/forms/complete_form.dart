@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:senior/widgets/static/buttonform.dart';
-import 'package:senior/widgets/textfieldwidgets/cprfield.dart';
-import 'package:senior/widgets/textfieldwidgets/dobfield.dart';
-import 'package:senior/widgets/textfieldwidgets/fullnamefield.dart';
-import 'package:senior/widgets/textfieldwidgets/genderfield.dart';
-import 'package:senior/widgets/textfieldwidgets/phonefield.dart';
-import '../../functions/auth/completefun.dart';
+import 'package:senior/pages/widgets/static/buttonform.dart';
+import 'package:senior/pages/widgets/textfieldwidgets/cprfield.dart';
+import 'package:senior/pages/widgets/textfieldwidgets/dobfield.dart';
+import 'package:senior/pages/widgets/textfieldwidgets/fullnamefield.dart';
+import 'package:senior/pages/widgets/textfieldwidgets/genderfield.dart';
+import 'package:senior/pages/widgets/textfieldwidgets/phonefield.dart';
+import '../../../functions/auth/completefun.dart';
 
 class CompleteForm extends StatefulWidget {
   final String uid;

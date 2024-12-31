@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:senior/widgets/static/buttonform.dart';
+import 'package:senior/pages/widgets/static/buttonform.dart';
 import '../textfieldwidgets/passwordfield.dart';
-import '../../functions/auth/loginfun.dart';
+import '../../../functions/auth/loginfun.dart';
 import '../textfieldwidgets/emailfield.dart';
 
 class LoginForm extends StatefulWidget {

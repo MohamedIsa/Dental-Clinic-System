@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:senior/widgets/static/buttonform.dart';
-import 'package:senior/widgets/textfieldwidgets/cprfield.dart';
-import 'package:senior/widgets/textfieldwidgets/dobfield.dart';
-import 'package:senior/widgets/textfieldwidgets/emailfield.dart';
-import 'package:senior/widgets/textfieldwidgets/fullnamefield.dart';
-import 'package:senior/widgets/textfieldwidgets/genderfield.dart';
-import 'package:senior/widgets/textfieldwidgets/passwordfield.dart';
-import 'package:senior/widgets/textfieldwidgets/phonefield.dart';
-import '../../functions/auth/signupfun.dart';
+import 'package:senior/pages/widgets/static/buttonform.dart';
+import 'package:senior/pages/widgets/textfieldwidgets/cprfield.dart';
+import 'package:senior/pages/widgets/textfieldwidgets/dobfield.dart';
+import 'package:senior/pages/widgets/textfieldwidgets/emailfield.dart';
+import 'package:senior/pages/widgets/textfieldwidgets/fullnamefield.dart';
+import 'package:senior/pages/widgets/textfieldwidgets/genderfield.dart';
+import 'package:senior/pages/widgets/textfieldwidgets/passwordfield.dart';
+import 'package:senior/pages/widgets/textfieldwidgets/phonefield.dart';
+import '../../../functions/auth/signupfun.dart';
 
 class SignUpForm extends StatefulWidget {
   const SignUpForm({super.key});

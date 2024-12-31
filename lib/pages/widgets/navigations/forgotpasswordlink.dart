@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../const/app_colors.dart';
-import '../../const/app_styles.dart';
-import '../../functions/auth/navigationfun.dart';
+import '../../../const/app_colors.dart';
+import '../../../const/app_styles.dart';
+import '../../../functions/auth/navigationfun.dart';
 
 class ForgotPasswordLink extends StatelessWidget {
   const ForgotPasswordLink({super.key});

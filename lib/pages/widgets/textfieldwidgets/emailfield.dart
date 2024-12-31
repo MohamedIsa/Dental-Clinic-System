@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../const/app_colors.dart';
-import '../../const/app_styles.dart';
-import '../../utils/reuseable_widget.dart';
+import '../../../const/app_colors.dart';
+import '../../../const/app_styles.dart';
+import '../../../utils/reuseable_widget.dart';
 
 class EmailField extends StatelessWidget {
   final TextEditingController emailTextController;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:senior/const/app_styles.dart';
-import '../../const/app_colors.dart';
-import '../../utils/reuseable_widget.dart';
+import '../../../const/app_colors.dart';
+import '../../../utils/reuseable_widget.dart';
 
 class CprField extends StatelessWidget {
   final TextEditingController cprTextController;
