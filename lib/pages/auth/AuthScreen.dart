@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:senior/pages/auth/widgets/headers/complete_header.dart';
-import 'package:senior/pages/auth/widgets/forms/forgot_form.dart';
-import 'package:senior/pages/auth/widgets/googlelog.dart';
-import 'package:senior/pages/auth/widgets/navigations/signinprompt.dart';
-import 'package:senior/pages/auth/widgets/texts/socialsignup.dart';
+import 'package:senior/widgets/headers/complete_header.dart';
+import 'package:senior/widgets/forms/forgot_form.dart';
+import 'package:senior/widgets/static/googlelog.dart';
+import 'package:senior/widgets/navigations/signinprompt.dart';
+import 'package:senior/widgets/static/socialsignup.dart';
 import '../../const/app_colors.dart';
 import '../../const/app_styles.dart';
 import '../../utils/responsive_widget.dart';
-import 'widgets/forms/complete_form.dart';
-import 'widgets/headers/forgot_header.dart';
-import 'widgets/headers/login_header.dart';
-import 'widgets/forms/login_form.dart';
-import 'widgets/headers/signup_header.dart';
-import 'widgets/forms/signup_form.dart';
-import 'widgets/navigations/forgotpasswordlink.dart';
-import 'widgets/navigations/signupprompt.dart';
-import 'widgets/functions/navigationfun.dart';
+import '../../widgets/forms/complete_form.dart';
+import '../../widgets/headers/forgot_header.dart';
+import '../../widgets/headers/login_header.dart';
+import '../../widgets/forms/login_form.dart';
+import '../../widgets/headers/signup_header.dart';
+import '../../widgets/forms/signup_form.dart';
+import '../../widgets/navigations/forgotpasswordlink.dart';
+import '../../widgets/navigations/signupprompt.dart';
+import '../../functions/auth/navigationfun.dart';
 
 class AuthScreen extends StatefulWidget {
   final bool isSignUp;

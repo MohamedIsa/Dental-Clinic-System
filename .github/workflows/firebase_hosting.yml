@@ -1,0 +1,28 @@
+name: Automated Deploying of Flutter App on Firebase Hosting
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Build Flutter Web App
+      run: flutter build web
+    - name: Inject Firebase Config
+      run: |
+        sed -i 's|__API_KEY__|${{ secrets.FIREBASE_API_KEY }}|g' build/web/index.html
+        sed -i 's|__AUTH_DOMAIN__|${{ secrets.FIREBASE_AUTH_DOMAIN }}|g' build/web/index.html
+        sed -i 's|__PROJECT_ID__|${{ secrets.FIREBASE_PROJECT_ID }}|g' build/web/index.html
+        sed -i 's|__STORAGE_BUCKET__|${{ secrets.FIREBASE_STORAGE_BUCKET }}|g' build/web/index.html
+        sed -i 's|__MESSAGING_SENDER_ID__|${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}|g' build/web/index.html
+        sed -i 's|__APP_ID__|${{ secrets.FIREBASE_APP_ID }}|g' build/web/index.html
+        sed -i 's|__API_KEY__|${{ secrets.FIREBASE_API_KEY }}|g' lib/firebase_options.template.dart
+        sed -i 's|__AUTH_DOMAIN__|${{ secrets.FIREBASE_AUTH_DOMAIN }}|g' lib/firebase_options.template.dart
+        sed -i 's|__PROJECT_ID__|${{ secrets.FIREBASE_PROJECT_ID }}|g' lib/firebase_options.template.dart
+        sed -i 's|__STORAGE_BUCKET__|${{ secrets.FIREBASE_STORAGE_BUCKET }}|g' lib/firebase_options.template.dart
+        sed -i 's|__MESSAGING_SENDER_ID__|${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}|g' lib/firebase_options.template.dart
+        sed -i 's|__APP_ID__|${{ secrets.FIREBASE_APP_ID }}|g' lib/firebase_options.template.dart
+    - name: Deploy to Firebase Hosting
+      run: 
+        firebase deploy

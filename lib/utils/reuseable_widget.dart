@@ -8,6 +8,7 @@ class ReusableTextField extends StatefulWidget {
   final Color color;
   final TextEditingController controller;
   final bool isNumeric;
+  final bool isDob;
 
   const ReusableTextField({
     super.key,
@@ -17,6 +18,7 @@ class ReusableTextField extends StatefulWidget {
     required this.color,
     required this.controller,
     this.isNumeric = false,
+    this.isDob = false,
   });
 
   @override
@@ -37,10 +39,17 @@ class _ReusableTextFieldState extends State<ReusableTextField> {
     return TextField(
       controller: widget.controller,
       obscureText: _obscureText,
-      keyboardType:
-          widget.isNumeric ? TextInputType.number : TextInputType.text,
-      inputFormatters: widget.isNumeric
-          ? <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly]
+      keyboardType: widget.isNumeric || widget.isDob
+          ? TextInputType.number
+          : TextInputType.text,
+      inputFormatters: widget.isNumeric || widget.isDob
+          ? [
+              FilteringTextInputFormatter.digitsOnly,
+              if (widget.isDob) ...[
+                LengthLimitingTextInputFormatter(8),
+                DateInputFormatter(),
+              ],
+            ]
           : null,
       style: const TextStyle(
         fontWeight: FontWeight.w400,
@@ -71,5 +80,21 @@ class _ReusableTextFieldState extends State<ReusableTextField> {
         ),
       ),
     );
+  }
+}
+
+class DateInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    final text = newValue.text.replaceAll('/', '');
+    final newText = StringBuffer();
+    for (int i = 0; i < text.length; i++) {
+      if ((i == 2 || i == 4) && i != 0) newText.write('/');
+      newText.write(text[i]);
+    }
+    return TextEditingValue(
+        text: newText.toString(),
+        selection: TextSelection.collapsed(offset: newText.length));
   }
 }

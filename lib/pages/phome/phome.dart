@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:senior/const/navbaritems.dart';
 import 'package:senior/const/bottomnavbar.dart';
-import 'package:senior/pages/phome/widgets/patientappbar.dart';
-import 'package:senior/pages/phome/widgets/patienthomebody.dart';
+import 'package:senior/widgets/static/patientappbar.dart';
+import 'package:senior/widgets/static/patienthomebody.dart';
 import 'package:senior/const/topnavbar.dart';
 import '../../utils/responsive_widget.dart';
-import 'functions/getusername.dart';
+import '../../functions/phome/getusername.dart';
 
 class WelcomePage extends StatefulWidget {
   @override

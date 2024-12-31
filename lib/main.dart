@@ -5,19 +5,23 @@ import '../const/loading.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'firebase_options.dart';
 import 'pages/auth/AuthScreen.dart';
-import 'pages/mainpage/home.dart';
+import 'pages/home/home.dart';
 import 'pages/phome/phome.dart';
+import 'firebase_options.template.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Ensure Firebase is initialized only once
-  if (Firebase.apps.isEmpty) {
+  try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+  } catch (e) {
+    print(
+        'firebase_options.dart not found, using firebase_options.template.dart');
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptionsTemplate.currentPlatform,
+    );
   }
-
   setPathUrlStrategy();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
