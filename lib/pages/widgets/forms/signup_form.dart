@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:senior/functions/auth/checkauthfield.dart';
 import 'package:senior/pages/widgets/static/buttonform.dart';
 import 'package:senior/pages/widgets/textfieldwidgets/cprfield.dart';
 import 'package:senior/pages/widgets/textfieldwidgets/dobfield.dart';
@@ -7,7 +8,6 @@ import 'package:senior/pages/widgets/textfieldwidgets/fullnamefield.dart';
 import 'package:senior/pages/widgets/textfieldwidgets/genderfield.dart';
 import 'package:senior/pages/widgets/textfieldwidgets/passwordfield.dart';
 import 'package:senior/pages/widgets/textfieldwidgets/phonefield.dart';
-import '../../../functions/auth/signupfun.dart';
 
 class SignUpForm extends StatefulWidget {
   const SignUpForm({super.key});
@@ -74,8 +74,9 @@ class _SignUpFormState extends State<SignUpForm> {
             width: width,
             title: 'Sign Up',
             onTap: () {
-              signUp(
+              check(
                 context,
+                null,
                 _emailTextController,
                 _passwordTextController,
                 _confirmPasswordTextController,

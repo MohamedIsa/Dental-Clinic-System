@@ -21,7 +21,7 @@ class DobField extends StatelessWidget {
             'Date of Birth',
             style: ralewayStyle.copyWith(
               fontSize: 12.0,
-              color: Appcolors.blueDarkColor,
+              color: AppColors.blueDarkColor,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -32,13 +32,13 @@ class DobField extends StatelessWidget {
           width: width,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16.0),
-            color: Appcolors.whiteColor,
+            color: AppColors.whiteColor,
           ),
           child: ReusableTextField(
             hintText: 'Enter Your Date of Birth',
             icon: Icons.calendar_today,
             isPassword: false,
-            color: Appcolors.greyColor,
+            color: AppColors.greyColor,
             controller: dobTextController,
             isDob: true,
           ),

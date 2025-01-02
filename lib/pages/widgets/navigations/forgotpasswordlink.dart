@@ -16,7 +16,7 @@ class ForgotPasswordLink extends StatelessWidget {
           'Forgot Password?',
           style: ralewayStyle.copyWith(
             fontSize: 12.0,
-            color: Appcolors.mainBlueColor,
+            color: AppColors.mainBlueColor,
             fontWeight: FontWeight.w600,
           ),
         ),

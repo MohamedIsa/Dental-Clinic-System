@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:senior/const/app_colors.dart';
 import 'package:senior/const/app_styles.dart';
 
-class ForgotHeader extends StatelessWidget {
-  const ForgotHeader({super.key});
+class Header extends StatelessWidget {
+  final String headerName;
+  final String message;
+  const Header({super.key, required this.headerName, required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -14,31 +16,31 @@ class ForgotHeader extends StatelessWidget {
           text: TextSpan(
             children: [
               TextSpan(
-                text: 'Forgot',
+                text: 'Let’s',
                 style: ralewayStyle.copyWith(
                   fontSize: 25.0,
-                  color: Appcolors.blueDarkColor,
+                  color: AppColors.blueDarkColor,
                   fontWeight: FontWeight.normal,
                 ),
               ),
               TextSpan(
-                text: ' Reset Password 👇',
+                text: ' ${headerName} 👇',
                 style: ralewayStyle.copyWith(
                   fontWeight: FontWeight.w800,
-                  color: Appcolors.blueDarkColor,
+                  color: AppColors.blueDarkColor,
                   fontSize: 25.0,
                 ),
               ),
             ],
           ),
         ),
-        const SizedBox(height: 10),
+        SizedBox(height: 10),
         Text(
-          'Hey, Enter your email to change your password',
+          message,
           style: ralewayStyle.copyWith(
             fontSize: 12.0,
             fontWeight: FontWeight.w400,
-            color: Appcolors.textColor,
+            color: AppColors.textColor,
           ),
         ),
       ],

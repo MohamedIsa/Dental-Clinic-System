@@ -20,7 +20,7 @@ class CprField extends StatelessWidget {
             'CPR Number',
             style: ralewayStyle.copyWith(
               fontSize: 12.0,
-              color: Appcolors.blueDarkColor,
+              color: AppColors.blueDarkColor,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -31,13 +31,13 @@ class CprField extends StatelessWidget {
           width: width,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16.0),
-            color: Appcolors.whiteColor,
+            color: AppColors.whiteColor,
           ),
           child: ReusableTextField(
             hintText: 'Enter Your CPR number',
             icon: Icons.credit_card,
             isPassword: false,
-            color: Appcolors.greyColor,
+            color: AppColors.greyColor,
             controller: cprTextController,
             isNumeric: true,
           ),

@@ -23,7 +23,7 @@ class PasswordField extends StatelessWidget {
             title,
             style: ralewayStyle.copyWith(
               fontSize: 12.0,
-              color: Appcolors.blueDarkColor,
+              color: AppColors.blueDarkColor,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -32,13 +32,13 @@ class PasswordField extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16.0),
-            color: Appcolors.whiteColor,
+            color: AppColors.whiteColor,
           ),
           child: ReusableTextField(
             hintText: hint,
             icon: Icons.lock,
             isPassword: true,
-            color: Appcolors.greyColor,
+            color: AppColors.greyColor,
             controller: passwordTextController,
           ),
         ),

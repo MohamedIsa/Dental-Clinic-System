@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:senior/functions/auth/checkauthfield.dart';
 import 'package:senior/pages/widgets/static/buttonform.dart';
 import 'package:senior/pages/widgets/textfieldwidgets/cprfield.dart';
 import 'package:senior/pages/widgets/textfieldwidgets/dobfield.dart';
 import 'package:senior/pages/widgets/textfieldwidgets/fullnamefield.dart';
 import 'package:senior/pages/widgets/textfieldwidgets/genderfield.dart';
 import 'package:senior/pages/widgets/textfieldwidgets/phonefield.dart';
-import '../../../functions/auth/completefun.dart';
 
 class CompleteForm extends StatefulWidget {
   final String uid;
@@ -44,14 +44,18 @@ class _CompleteFormState extends State<CompleteForm> {
         ButtonForm(
             width: width,
             title: 'Complete Registration',
-            onTap: () => completeRegistration(
-                context,
-                widget.uid,
-                _fullNameTextController,
-                _cprTextController,
-                _phoneTextController,
-                _selectedGender,
-                _dobTextController))
+            onTap: () => check(
+                  context,
+                  widget.uid,
+                  null,
+                  null,
+                  null,
+                  _fullNameTextController,
+                  _cprTextController,
+                  _phoneTextController,
+                  _selectedGender,
+                  _dobTextController,
+                )),
       ],
     );
   }

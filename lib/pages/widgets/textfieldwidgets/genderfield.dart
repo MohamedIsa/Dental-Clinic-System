@@ -25,7 +25,7 @@ class _GenderFieldState extends State<GenderField> {
           'Gender',
           style: ralewayStyle.copyWith(
             fontSize: 12.0,
-            color: Appcolors.blueDarkColor,
+            color: AppColors.blueDarkColor,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -34,6 +34,7 @@ class _GenderFieldState extends State<GenderField> {
             Radio(
               value: 'Male',
               groupValue: _selectedGender,
+              activeColor: AppColors.primaryColor,
               onChanged: (value) {
                 setState(() {
                   _selectedGender = value.toString();
@@ -47,6 +48,7 @@ class _GenderFieldState extends State<GenderField> {
             Radio(
               value: 'Female',
               groupValue: _selectedGender,
+              activeColor: AppColors.primaryColor,
               onChanged: (value) {
                 setState(() {
                   _selectedGender = value.toString();

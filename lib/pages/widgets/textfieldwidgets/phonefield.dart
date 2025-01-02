@@ -20,7 +20,7 @@ class Phonefield extends StatelessWidget {
             'Phone Number',
             style: ralewayStyle.copyWith(
               fontSize: 12.0,
-              color: Appcolors.blueDarkColor,
+              color: AppColors.blueDarkColor,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -31,13 +31,13 @@ class Phonefield extends StatelessWidget {
           width: width,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16.0),
-            color: Appcolors.whiteColor,
+            color: AppColors.whiteColor,
           ),
           child: ReusableTextField(
             hintText: 'Enter Your phone number',
             icon: Icons.phone,
             isPassword: false,
-            color: Appcolors.greyColor,
+            color: AppColors.greyColor,
             controller: phoneTextController,
             isNumeric: true,
           ),

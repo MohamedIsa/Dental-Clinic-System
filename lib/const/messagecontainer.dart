@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:senior/const/app_colors.dart';
 
 class MessageContainer extends StatelessWidget {
   final String? staticMessage;
@@ -9,8 +10,7 @@ class MessageContainer extends StatelessWidget {
   final double containerHeight;
   final EdgeInsetsGeometry margin;
   final bool isResponsive;
-  final Color startColor;
-  final Color endColor;
+  final Color backgroundColor;
 
   const MessageContainer({
     super.key,
@@ -21,8 +21,7 @@ class MessageContainer extends StatelessWidget {
     this.containerHeight = 200,
     this.margin = const EdgeInsets.only(top: 100),
     this.isResponsive = false,
-    this.startColor = Colors.blue,
-    this.endColor = Colors.lightBlueAccent,
+    this.backgroundColor = AppColors.primaryColor,
   }) : assert(staticMessage != null || futureMessage != null,
             'Either staticMessage or futureMessage must be provided');
 
@@ -59,11 +58,7 @@ class MessageContainer extends StatelessWidget {
         height: containerHeight,
         width: containerWidth,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [startColor, endColor],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          color: backgroundColor,
           borderRadius: BorderRadius.circular(20),
           boxShadow: const [
             BoxShadow(

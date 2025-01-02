@@ -5,6 +5,7 @@ import 'package:senior/const/bottomnavbar.dart';
 import 'package:senior/pages/widgets/static/patientappbar.dart';
 import 'package:senior/pages/widgets/static/patienthomebody.dart';
 import 'package:senior/const/topnavbar.dart';
+import '../../const/app_colors.dart';
 import '../../utils/responsive_widget.dart';
 import '../../functions/phome/getusername.dart';
 
@@ -30,7 +31,7 @@ class _WelcomePageState extends State<WelcomePage> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
                 child: SpinKitFadingCube(
-                  color: Colors.blue,
+                  color: AppColors.primaryColor,
                   size: 50.0,
                 ),
               );
@@ -40,7 +41,7 @@ class _WelcomePageState extends State<WelcomePage> {
             return Container(
               height: MediaQuery.of(context).size.height * 1.5,
               decoration: const BoxDecoration(
-                color: Colors.blue,
+                color: AppColors.primaryColor,
               ),
               child: SingleChildScrollView(
                 child: Column(
@@ -60,7 +61,7 @@ class _WelcomePageState extends State<WelcomePage> {
         floatingActionButton: FloatingActionButton(
           onPressed: () async {},
           child: const Icon(Icons.chat),
-          backgroundColor: Colors.blue,
+          backgroundColor: AppColors.primaryColor,
         ),
       ),
     );

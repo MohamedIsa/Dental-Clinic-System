@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/navbaritem.dart';
+import 'app_colors.dart';
 
 class BottomNavBar extends StatefulWidget {
   final List<NavBarItem> navItems;
@@ -15,10 +16,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      selectedItemColor: Colors.blue,
+      selectedItemColor: AppColors.primaryColor,
       unselectedItemColor: Colors.grey,
       unselectedLabelStyle: const TextStyle(color: Colors.grey),
-      selectedLabelStyle: const TextStyle(color: Colors.blue),
+      selectedLabelStyle: const TextStyle(color: AppColors.primaryColor),
       showUnselectedLabels: true,
       currentIndex: _selectedIndex,
       items: widget.navItems

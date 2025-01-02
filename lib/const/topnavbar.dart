@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/navbaritem.dart';
+import 'app_colors.dart';
 
 class TopNavBar extends StatelessWidget {
   final List<NavBarItem> navItems;
@@ -9,7 +10,7 @@ class TopNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.blue,
+      color: AppColors.primaryColor,
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

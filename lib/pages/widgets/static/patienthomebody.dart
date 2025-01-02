@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:senior/functions/phome/getupcomingappoint.dart';
+import '../../../const/app_colors.dart';
 import '../../../const/body.dart';
 import '../../../const/messagecontainer.dart';
 
@@ -23,8 +24,7 @@ class _PatientHomeBodyState extends State<PatientHomeBody> {
         containerWidth: isMobile ? null : 430,
         containerHeight: isMobile ? 130 : 200,
         margin: const EdgeInsets.only(top: 100, bottom: 800),
-        startColor: Colors.blue,
-        endColor: Colors.blue,
+        backgroundColor: AppColors.primaryColor,
       ),
     ]);
   }

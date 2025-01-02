@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:flutter/foundation.dart';
 
+import 'app_colors.dart';
+
 class ServiceCard extends StatelessWidget {
   final String title;
   final String imagePath;
@@ -48,7 +50,7 @@ class ServiceCard extends StatelessWidget {
         width: isMobile ? 100 : 130,
         height: isMobile ? 140 : 180,
         decoration: BoxDecoration(
-          color: Colors.blue,
+          color: AppColors.primaryColor,
           borderRadius: BorderRadius.circular(40),
           boxShadow: const [
             BoxShadow(
@@ -71,7 +73,7 @@ class ServiceCard extends StatelessWidget {
             Text(
               title,
               style: TextStyle(
-                  fontSize: isMobile ? 10 : 16,
+                  fontSize: isMobile ? 10 : 14,
                   fontWeight: FontWeight.bold,
                   color: Colors.white),
               textAlign: TextAlign.center,

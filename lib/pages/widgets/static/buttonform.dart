@@ -21,7 +21,7 @@ class ButtonForm extends StatelessWidget {
       width: width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16.0),
-        color: Appcolors.mainBlueColor,
+        color: AppColors.mainBlueColor,
       ),
       child: Material(
         color: Colors.transparent,
@@ -38,7 +38,7 @@ class ButtonForm extends StatelessWidget {
                 title,
                 style: const TextStyle(
                   fontWeight: FontWeight.w700,
-                  color: Appcolors.whiteColor,
+                  color: AppColors.whiteColor,
                   fontSize: 16.0,
                 ),
               ),

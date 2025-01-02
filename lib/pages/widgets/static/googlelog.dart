@@ -14,11 +14,11 @@ class Googlelog extends StatelessWidget {
         width: 50.0,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.0),
-          color: Appcolors.mainBlueColor,
+          color: AppColors.mainBlueColor,
         ),
         child: IconButton(
           onPressed: () => signInWithGoogle(context),
-          icon: const Icon(Icons.g_mobiledata, color: Appcolors.whiteColor),
+          icon: const Icon(Icons.g_mobiledata, color: AppColors.whiteColor),
         ),
       ),
     );

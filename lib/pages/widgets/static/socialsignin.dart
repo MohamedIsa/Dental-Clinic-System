@@ -14,7 +14,7 @@ class SocialSignInSection extends StatelessWidget {
           child: Text('Or Sign In With',
               style: ralewayStyle.copyWith(
                 fontSize: 12.0,
-                color: Appcolors.greyColor,
+                color: AppColors.greyColor,
                 fontWeight: FontWeight.w600,
               )),
         ),

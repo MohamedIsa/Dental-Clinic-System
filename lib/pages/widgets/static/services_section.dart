@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:senior/const/servicelist.dart';
+import '../../../const/app_colors.dart';
 import '../../../const/service_card.dart';
 
 class ServicesSection extends StatelessWidget {
@@ -12,8 +13,8 @@ class ServicesSection extends StatelessWidget {
     return Center(
       child: Container(
         decoration: const BoxDecoration(
-          border:
-              Border.fromBorderSide(BorderSide(color: Colors.blue, width: 2)),
+          border: Border.fromBorderSide(
+              BorderSide(color: AppColors.primaryColor, width: 2)),
           borderRadius: BorderRadius.all(Radius.circular(40.0)),
         ),
         margin: EdgeInsets.only(top: screenWidth <= 600 ? 350 : 300),

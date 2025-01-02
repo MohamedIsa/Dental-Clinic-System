@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:universal_html/html.dart' as html;
 
+import '../const/app_colors.dart';
+
 void showErrorDialog(BuildContext context, String message) {
   if (kIsWeb) {
     html.window.alert(message);
@@ -18,7 +20,7 @@ void showErrorDialog(BuildContext context, String message) {
           actions: [
             TextButton(
               style: TextButton.styleFrom(
-                iconColor: kIsWeb ? Colors.blue : Colors.red,
+                iconColor: kIsWeb ? AppColors.primaryColor : Colors.red,
               ),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -48,7 +50,7 @@ void showMessagealert(BuildContext context, String message) {
           actions: [
             TextButton(
               style: TextButton.styleFrom(
-                iconColor: kIsWeb ? Colors.blue : Colors.red,
+                iconColor: kIsWeb ? AppColors.primaryColor : Colors.red,
               ),
               onPressed: () {
                 Navigator.of(context).pop();

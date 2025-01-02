@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../../const/app_colors.dart';
 import '../../../utils/responsive_widget.dart';
 import '../../../functions/phome/getusername.dart';
 
@@ -39,7 +40,7 @@ class _PatientAppBarState extends State<PatientAppBar> {
                 return Text(
                   'Welcome, ${snapshot.data}!',
                   style: TextStyle(
-                    color: Colors.blue,
+                    color: AppColors.primaryColor,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),

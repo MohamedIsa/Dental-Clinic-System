@@ -4,50 +4,20 @@ import 'package:flutter/material.dart';
 import '../../utils/popups.dart';
 import '../../models/users.dart';
 
-String cprPattern = r'^\d{2}(0[1-9]|1[0-2])\d{5}$';
-String phonePattern = r'^(66\d{6}|3[2-9]\d{6})$';
-String dobPattern = r'^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/\d{4}$';
-
 Future<void> completeRegistration(
     BuildContext context,
     uid,
-    fullNameTextController,
-    cprTextController,
-    phoneTextController,
-    selectedGender,
-    dobTextController) async {
+    TextEditingController fullNameTextController,
+    TextEditingController cprTextController,
+    TextEditingController phoneTextController,
+    String selectedGender,
+    TextEditingController dobTextController) async {
+  print("Entering complete function");
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   String fullName = fullNameTextController.text;
   String cpr = cprTextController.text;
   String phone = phoneTextController.text;
   String dob = dobTextController.text;
-  List<String> errors = [];
-
-  if (fullName.isEmpty) {
-    errors.add('Full Name is required.');
-  }
-  if (cpr.isEmpty) {
-    errors.add('CPR is required.');
-  }
-  if (phone.isEmpty) {
-    errors.add('Phone number is required.');
-  }
-  if (phone.isNotEmpty && !RegExp(phonePattern).hasMatch(phone)) {
-    errors.add('Invalid phone number format.');
-  }
-  if (cpr.isNotEmpty && !RegExp(cprPattern).hasMatch(cpr)) {
-    errors.add('Invalid CPR format.');
-  }
-  if (dob.isEmpty) {
-    errors.add('Date of Birth is required.');
-  }
-  if (dob.isNotEmpty && !RegExp(dobPattern).hasMatch(dob)) {
-    errors.add('Invalid Date of Birth format');
-  }
-  if (errors.isNotEmpty) {
-    showErrorDialog(context, errors.join('\n'));
-    return;
-  }
 
   try {
     User? currentUser = FirebaseAuth.instance.currentUser;
@@ -60,9 +30,18 @@ Future<void> completeRegistration(
         role: 'patient',
         phone: phone,
         cpr: cpr,
-        dob: dobTextController.text,
+        dob: dob,
         gender: selectedGender,
       );
+
+      print('User ID: ${user.id}');
+      print('Full Name: ${user.name}');
+      print('Email: ${user.email}');
+      print('Role: ${user.role}');
+      print('Phone: ${user.phone}');
+      print('CPR: ${user.cpr}');
+      print('DOB: ${user.dob}');
+      print('Gender: ${user.gender}');
 
       await firestore.collection('users').doc(currentUser.uid).set({
         'id': user.id,
@@ -75,11 +54,7 @@ Future<void> completeRegistration(
         'dob': user.dob,
       });
 
-      if (context.mounted) {
-        Navigator.pushReplacementNamed(context, '/patientDashboard');
-      }
-    } else {
-      showErrorDialog(context, 'No user is currently signed in.');
+      Navigator.pushReplacementNamed(context, '/patientDashboard');
     }
   } catch (e) {
     debugPrint('Failed to update user: $e');

@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
           : null,
       body: Container(
         height: MediaQuery.of(context).size.height * 1.5,
-        decoration: const BoxDecoration(color: Appcolors.primaryColor),
+        decoration: const BoxDecoration(color: AppColors.primaryColor),
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[

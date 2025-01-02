@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:senior/pages/widgets/headers/complete_header.dart';
 import 'package:senior/pages/widgets/forms/forgot_form.dart';
+import 'package:senior/pages/widgets/headers/header.dart';
 import 'package:senior/pages/widgets/static/googlelog.dart';
 import 'package:senior/pages/widgets/navigations/signinprompt.dart';
 import 'package:senior/pages/widgets/static/socialsignup.dart';
@@ -8,10 +8,7 @@ import '../../const/app_colors.dart';
 import '../../const/app_styles.dart';
 import '../../utils/responsive_widget.dart';
 import '../widgets/forms/complete_form.dart';
-import '../widgets/headers/forgot_header.dart';
-import '../widgets/headers/login_header.dart';
 import '../widgets/forms/login_form.dart';
-import '../widgets/headers/signup_header.dart';
 import '../widgets/forms/signup_form.dart';
 import '../widgets/navigations/forgotpasswordlink.dart';
 import '../widgets/navigations/signupprompt.dart';
@@ -52,7 +49,7 @@ class _AuthScreenState extends State<AuthScreen> {
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: Appcolors.backColor,
+      backgroundColor: AppColors.backColor,
       body: SizedBox(
         height: height,
         width: width,
@@ -83,7 +80,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       ? height * 0.032
                       : height * 0.12,
                 ),
-                color: Appcolors.backColor,
+                color: AppColors.backColor,
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.only(bottom: 40.0),
                   child: _isForgotPassword
@@ -92,7 +89,10 @@ class _AuthScreenState extends State<AuthScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             SizedBox(height: height * 0.2),
-                            const ForgotHeader(),
+                            const Header(
+                                headerName: 'Reset Password',
+                                message:
+                                    'Hey, Enter your email to change your password'),
                             SizedBox(height: height * 0.064),
                             const ForgotPasswordForm(),
                             InkWell(
@@ -103,7 +103,7 @@ class _AuthScreenState extends State<AuthScreen> {
                                   'Log in',
                                   style: ralewayStyle.copyWith(
                                     fontSize: 12.0,
-                                    color: Appcolors.mainBlueColor,
+                                    color: AppColors.mainBlueColor,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -117,7 +117,10 @@ class _AuthScreenState extends State<AuthScreen> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 SizedBox(height: height * 0.2),
-                                const CompleteHeader(),
+                                const Header(
+                                    headerName: 'Complete details',
+                                    message:
+                                        'Hey, Complete Your details to register in to the system.'),
                                 SizedBox(height: height * 0.064),
                                 CompleteForm(
                                   uid: widget.uid ?? '',
@@ -130,8 +133,14 @@ class _AuthScreenState extends State<AuthScreen> {
                               children: [
                                 SizedBox(height: height * 0.2),
                                 _isSignUp!
-                                    ? const SignUpHeader()
-                                    : const LoginHeader(),
+                                    ? const Header(
+                                        headerName: 'Sign Up',
+                                        message:
+                                            'Hey, Enter your details to create a new account.')
+                                    : const Header(
+                                        headerName: 'Sign In',
+                                        message:
+                                            'Hey, Enter your details to get sign in \nto your account.'),
                                 SizedBox(height: height * 0.064),
                                 _isSignUp!
                                     ? const SignUpForm()

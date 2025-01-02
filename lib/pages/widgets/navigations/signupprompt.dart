@@ -17,7 +17,7 @@ class SignUpPrompt extends StatelessWidget {
             'Don\'t have an account? ',
             style: ralewayStyle.copyWith(
               fontSize: 12.0,
-              color: Appcolors.greyColor,
+              color: AppColors.greyColor,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -27,7 +27,7 @@ class SignUpPrompt extends StatelessWidget {
               'Sign Up',
               style: ralewayStyle.copyWith(
                 fontSize: 12.0,
-                color: Appcolors.mainBlueColor,
+                color: AppColors.mainBlueColor,
                 fontWeight: FontWeight.w600,
               ),
             ),
