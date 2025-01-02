@@ -3,11 +3,12 @@ import 'package:flutter/widgets.dart';
 import 'package:senior/const/app_colors.dart';
 import 'package:senior/pages/widgets/forms/updateaccountform.dart';
 import 'package:senior/utils/responsive_widget.dart';
-import '../../const/bottomnavbar.dart';
-import '../../const/navbaritems.dart';
-import '../../const/topnavbar.dart';
-import '../../functions/updateaccount/fetchdata.dart';
-import '../widgets/static/patientappbar.dart';
+import '../../../../../const/bottomnavbar.dart';
+import '../../../../../const/navbaritems.dart';
+import '../../../../../const/topnavbar.dart';
+import '../../../../../functions/updateaccount/fetchdata.dart';
+import '../../../../../providers/patient_navbar.dart';
+import '../../../../widgets/static/patientappbar.dart';
 
 class UpdateAccountPage extends StatefulWidget {
   @override
@@ -49,7 +50,7 @@ class _UpdateAccountPageState extends State<UpdateAccountPage> {
       largeScreen: Scaffold(
         appBar: PatientAppBar(),
         bottomNavigationBar: ResponsiveWidget.isSmallScreen(context)
-            ? BottomNavBar(
+            ? BottomNavBar<PatientNavBarProvider>(
                 navItems: [...navItemsp],
               )
             : null,
@@ -63,7 +64,7 @@ class _UpdateAccountPageState extends State<UpdateAccountPage> {
               children: <Widget>[
                 if (ResponsiveWidget.isMediumScreen(context) ||
                     ResponsiveWidget.isLargeScreen(context))
-                  TopNavBar(
+                  TopNavBar<PatientNavBarProvider>(
                     navItems: [...navItemsp],
                   ),
                 UpdateAccountForm(

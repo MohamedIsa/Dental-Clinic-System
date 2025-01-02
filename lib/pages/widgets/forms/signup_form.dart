@@ -75,17 +75,17 @@ class _SignUpFormState extends State<SignUpForm> {
             title: 'Sign Up',
             onTap: () {
               check(
-                context,
-                null,
-                _emailTextController,
-                _passwordTextController,
-                _confirmPasswordTextController,
-                _FullnameTextController,
-                _cprTextController,
-                _PhoneTextController,
-                _selectedGender,
-                _dobTextController,
-              );
+                  context,
+                  null,
+                  _emailTextController,
+                  _passwordTextController,
+                  _confirmPasswordTextController,
+                  _FullnameTextController,
+                  _cprTextController,
+                  _PhoneTextController,
+                  _selectedGender,
+                  _dobTextController,
+                  null);
             }),
       ],
     );

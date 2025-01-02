@@ -6,7 +6,7 @@ final List<NavBarItem> navItemsp = [
   NavBarItem(
     icon: Icons.home,
     label: 'Home',
-    route: '/',
+    route: '/patientDashboard',
   ),
   NavBarItem(
     icon: Icons.calendar_today,

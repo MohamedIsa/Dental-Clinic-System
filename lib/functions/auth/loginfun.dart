@@ -66,7 +66,7 @@ Future<void> navigateBasedOnUserRole(
             Navigator.pushReplacementNamed(context, '/patientDashboard');
             return;
           case 'admin':
-            Navigator.pushReplacementNamed(context, '/admin');
+            Navigator.pushReplacementNamed(context, '/dashboard');
             return;
           case 'receptionist':
             Navigator.pushReplacementNamed(context, '/receptionist');

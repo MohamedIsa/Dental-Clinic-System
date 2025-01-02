@@ -4,6 +4,7 @@ import 'package:senior/const/body.dart';
 import '../../const/bottomnavbar.dart';
 import '../../const/navbaritems.dart';
 import '../../const/topnavbar.dart';
+import '../../providers/home_navbar.dart';
 import '../widgets/static/welcome_section.dart';
 import '../widgets/static/services_section.dart';
 
@@ -29,7 +30,7 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
       ),
       bottomNavigationBar: MediaQuery.of(context).size.width <= 600
-          ? BottomNavBar(
+          ? BottomNavBar<HomeNavBarProvider>(
               navItems: [...HomeNavItems],
             )
           : null,
@@ -40,7 +41,7 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             children: <Widget>[
               if (MediaQuery.of(context).size.width > 600)
-                TopNavBar(
+                TopNavBar<HomeNavBarProvider>(
                   navItems: [...HomeNavItems],
                 ),
               Body(

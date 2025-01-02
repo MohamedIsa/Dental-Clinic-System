@@ -5,9 +5,10 @@ import 'package:senior/const/bottomnavbar.dart';
 import 'package:senior/pages/widgets/static/patientappbar.dart';
 import 'package:senior/pages/widgets/static/patienthomebody.dart';
 import 'package:senior/const/topnavbar.dart';
-import '../../const/app_colors.dart';
-import '../../utils/responsive_widget.dart';
-import '../../functions/phome/getusername.dart';
+import '../../../../const/app_colors.dart';
+import '../../../../providers/patient_navbar.dart';
+import '../../../../utils/responsive_widget.dart';
+import '../../../../functions/phome/getusername.dart';
 
 class WelcomePage extends StatefulWidget {
   @override
@@ -21,7 +22,7 @@ class _WelcomePageState extends State<WelcomePage> {
       largeScreen: Scaffold(
         appBar: PatientAppBar(),
         bottomNavigationBar: ResponsiveWidget.isSmallScreen(context)
-            ? BottomNavBar(
+            ? BottomNavBar<PatientNavBarProvider>(
                 navItems: [...navItemsp],
               )
             : null,
@@ -48,7 +49,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   children: <Widget>[
                     if (ResponsiveWidget.isMediumScreen(context) ||
                         ResponsiveWidget.isLargeScreen(context))
-                      TopNavBar(
+                      TopNavBar<PatientNavBarProvider>(
                         navItems: [...navItemsp],
                       ),
                     PatientHomeBody(),
