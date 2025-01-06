@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import '../../../../utils/responsive_widget.dart';
+import '../../../widgets/static/mobileview.dart';
 import 'dentistlist.dart';
 import '../../../../providers/side_menu_provider.dart';
 import 'side_menu_widget.dart';
@@ -112,34 +113,7 @@ class Dashboard extends StatelessWidget {
                     }
                   },
                 )
-              : Scaffold(
-                  appBar: AppBar(
-                    title: Text('Mobile View',
-                        style: TextStyle(color: Colors.red)),
-                    actions: <Widget>[
-                      IconButton(
-                        icon: Icon(
-                          Icons.logout,
-                          color: Colors.red,
-                        ),
-                        onPressed: () {
-                          FirebaseAuth.instance.signOut();
-                          Navigator.of(context).pushReplacementNamed('/login');
-                        },
-                      ),
-                    ],
-                  ),
-                  body: Center(
-                    child: Text(
-                      'You cannot use this page unless you are on the web.',
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                );
+              : MobileView();
         }
       },
     );

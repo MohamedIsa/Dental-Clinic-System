@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../../../const/app_colors.dart';
 import '../../../const/app_styles.dart';
+import '../../../functions/auth/exists.dart';
+import '../../../functions/auth/patterns.dart';
 import '../../../utils/reuseable_widget.dart';
 
 class EmailField extends StatelessWidget {
   final TextEditingController emailTextController;
-  EmailField({super.key, required this.emailTextController});
+  final Function(String)? onFieldSubmitted;
+  EmailField(
+      {super.key, required this.emailTextController, this.onFieldSubmitted});
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +40,22 @@ class EmailField extends StatelessWidget {
             isPassword: false,
             color: AppColors.greyColor,
             controller: emailTextController,
+            onFieldSubmitted: onFieldSubmitted,
           ),
         ),
       ],
     );
   }
+}
+
+Future<String> emailValidator(String email) async {
+  if (email.isEmpty) {
+    return 'Email is required';
+  } else if (email.isNotEmpty &&
+      !RegExp(Patterns.emailPattern).hasMatch(email)) {
+    return 'Invalid email format.';
+  } else if (await emailExists(email)) {
+    return 'Email already exists.';
+  }
+  return '';
 }

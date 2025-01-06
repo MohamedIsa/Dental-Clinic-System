@@ -42,51 +42,69 @@ class _SignUpFormState extends State<SignUpForm> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+    void _submitForm() {
+      check(
+          context: context,
+          fullNameTextController: _FullnameTextController,
+          cprTextController: _cprTextController,
+          phoneTextController: _PhoneTextController,
+          selectedGender: _selectedGender,
+          dobTextController: _dobTextController);
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        EmailField(emailTextController: _emailTextController),
+        EmailField(
+          emailTextController: _emailTextController,
+          onFieldSubmitted: (_) => _submitForm(),
+        ),
         const SizedBox(height: 20),
         NameField(
-            fullNameTextController: _FullnameTextController, width: width),
+          fullNameTextController: _FullnameTextController,
+          width: width,
+          onFieldSubmitted: (_) => _submitForm(),
+        ),
         const SizedBox(height: 20),
-        Phonefield(phoneTextController: _PhoneTextController, width: width),
+        Phonefield(
+          phoneTextController: _PhoneTextController,
+          width: width,
+          onFieldSubmitted: (_) => _submitForm(),
+        ),
         const SizedBox(height: 20),
-        GenderField(width: width, selectedGender: _selectedGender),
+        GenderField(
+          width: width,
+          selectedGender: _selectedGender,
+        ),
         const SizedBox(height: 20),
-        DobField(dobTextController: _dobTextController, width: width),
+        DobField(
+          dobTextController: _dobTextController,
+          width: width,
+          onFieldSubmitted: (_) => _submitForm(),
+        ),
         const SizedBox(height: 20),
-        CprField(cprTextController: _cprTextController, width: width),
+        CprField(
+          cprTextController: _cprTextController,
+          width: width,
+          onFieldSubmitted: (_) => _submitForm(),
+        ),
         const SizedBox(height: 20),
         PasswordField(
-            passwordTextController: _passwordTextController,
-            title: 'Password',
-            hint: 'Enter your password'),
+          passwordTextController: _passwordTextController,
+          title: 'Password',
+          hint: 'Enter your password',
+          onFieldSubmitted: (_) => _submitForm(),
+        ),
         const SizedBox(height: 20),
         PasswordField(
-            passwordTextController: _confirmPasswordTextController,
-            title: 'Confirm Password',
-            hint: 'Re-enter your password'),
+          passwordTextController: _confirmPasswordTextController,
+          title: 'Confirm Password',
+          hint: 'Re-enter your password',
+          onFieldSubmitted: (_) => _submitForm(),
+        ),
         const SizedBox(height: 20),
         SizedBox(height: height * 0.03),
-        ButtonForm(
-            width: width,
-            title: 'Sign Up',
-            onTap: () {
-              check(
-                  context,
-                  null,
-                  _emailTextController,
-                  _passwordTextController,
-                  _confirmPasswordTextController,
-                  _FullnameTextController,
-                  _cprTextController,
-                  _PhoneTextController,
-                  _selectedGender,
-                  _dobTextController,
-                  null);
-            }),
+        ButtonForm(width: width, title: 'Sign Up', onTap: () => _submitForm()),
       ],
     );
   }

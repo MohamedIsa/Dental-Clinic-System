@@ -9,6 +9,7 @@ class ReusableTextField extends StatefulWidget {
   final TextEditingController controller;
   final bool isNumeric;
   final bool isDob;
+  final Function(String)? onFieldSubmitted;
 
   const ReusableTextField({
     super.key,
@@ -19,6 +20,7 @@ class ReusableTextField extends StatefulWidget {
     required this.controller,
     this.isNumeric = false,
     this.isDob = false,
+    this.onFieldSubmitted,
   });
 
   @override
@@ -79,6 +81,7 @@ class _ReusableTextFieldState extends State<ReusableTextField> {
           fontSize: 14.0,
         ),
       ),
+      onSubmitted: widget.onFieldSubmitted,
     );
   }
 }

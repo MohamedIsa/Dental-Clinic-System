@@ -22,6 +22,18 @@ class _CompleteFormState extends State<CompleteForm> {
   final TextEditingController _dobTextController = TextEditingController();
   String _selectedGender = 'Male';
 
+  void _submitForm() {
+    check(
+      context: context,
+      uid: widget.uid,
+      fullNameTextController: _fullNameTextController,
+      cprTextController: _cprTextController,
+      phoneTextController: _phoneTextController,
+      selectedGender: _selectedGender,
+      dobTextController: _dobTextController,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -31,31 +43,39 @@ class _CompleteFormState extends State<CompleteForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         NameField(
-            fullNameTextController: _fullNameTextController, width: width),
+          fullNameTextController: _fullNameTextController,
+          width: width,
+          onFieldSubmitted: (_) => _submitForm,
+        ),
         SizedBox(height: height * 0.014),
-        Phonefield(phoneTextController: _phoneTextController, width: width),
+        Phonefield(
+          phoneTextController: _phoneTextController,
+          width: width,
+          onFieldSubmitted: (_) => _submitForm,
+        ),
         SizedBox(height: height * 0.014),
-        GenderField(width: width, selectedGender: _selectedGender),
+        GenderField(
+          width: width,
+          selectedGender: _selectedGender,
+        ),
         SizedBox(height: height * 0.014),
-        CprField(cprTextController: _cprTextController, width: width),
+        CprField(
+          cprTextController: _cprTextController,
+          width: width,
+          onFieldSubmitted: (_) => _submitForm,
+        ),
         SizedBox(height: height * 0.014),
-        DobField(dobTextController: _dobTextController, width: width),
+        DobField(
+          dobTextController: _dobTextController,
+          width: width,
+          onFieldSubmitted: (_) => _submitForm,
+        ),
         SizedBox(height: height * 0.03),
         ButtonForm(
-            width: width,
-            title: 'Complete Registration',
-            onTap: () => check(
-                context,
-                widget.uid,
-                null,
-                null,
-                null,
-                _fullNameTextController,
-                _cprTextController,
-                _phoneTextController,
-                _selectedGender,
-                _dobTextController,
-                null)),
+          width: width,
+          title: 'Complete Registration',
+          onTap: _submitForm,
+        ),
       ],
     );
   }

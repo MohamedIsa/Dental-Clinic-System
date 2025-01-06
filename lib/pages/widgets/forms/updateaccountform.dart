@@ -40,15 +40,23 @@ class _UpdateAccountFormState extends State<UpdateAccountForm> {
               width: width,
             ),
             SizedBox(height: height * 0.014),
-            CprField(cprTextController: widget.cprController, width: width),
+            CprField(
+              cprTextController: widget.cprController,
+              width: width,
+            ),
             SizedBox(height: height * 0.014),
-            DobField(dobTextController: widget.dobController, width: width),
+            DobField(
+              dobTextController: widget.dobController,
+              width: width,
+            ),
             SizedBox(height: height * 0.014),
             GenderField(
                 width: width, selectedGender: widget.selectedGender.text),
             SizedBox(height: height * 0.014),
             Phonefield(
-                phoneTextController: widget.phoneController, width: width),
+              phoneTextController: widget.phoneController,
+              width: width,
+            ),
             SizedBox(height: height * 0.014),
             SizedBox(height: 20),
             Center(

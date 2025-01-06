@@ -31,12 +31,18 @@ class _LoginFormState extends State<LoginForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        EmailField(emailTextController: _emailTextController),
+        EmailField(
+          emailTextController: _emailTextController,
+          onFieldSubmitted: (_) =>
+              login(context, _emailTextController, _passwordTextController),
+        ),
         const SizedBox(height: 20),
         PasswordField(
             passwordTextController: _passwordTextController,
             title: 'Password',
-            hint: 'Enter password'),
+            hint: 'Enter password',
+            onFieldSubmitted: (_) =>
+                login(context, _emailTextController, _passwordTextController)),
         SizedBox(height: height * 0.03),
         ButtonForm(
             width: width,

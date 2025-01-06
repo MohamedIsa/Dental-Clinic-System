@@ -29,4 +29,17 @@ class Users {
       dob: data['dob'],
     );
   }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'role': role,
+      'phone': phone,
+      'cpr': cpr,
+      'gender': gender,
+      'dob': dob,
+    };
+  }
 }

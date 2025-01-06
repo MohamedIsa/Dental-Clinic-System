@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:senior/const/app_styles.dart';
 import '../../../const/app_colors.dart';
+import '../../../functions/auth/exists.dart';
+import '../../../functions/auth/patterns.dart';
 import '../../../utils/reuseable_widget.dart';
 
 class CprField extends StatelessWidget {
   final TextEditingController cprTextController;
   final double width;
+  final Function(String)? onFieldSubmitted;
   const CprField(
-      {super.key, required this.cprTextController, required this.width});
+      {super.key,
+      required this.cprTextController,
+      required this.width,
+      this.onFieldSubmitted});
 
   @override
   Widget build(BuildContext context) {
@@ -40,9 +46,23 @@ class CprField extends StatelessWidget {
             color: AppColors.greyColor,
             controller: cprTextController,
             isNumeric: true,
+            onFieldSubmitted: onFieldSubmitted,
           ),
         ),
       ],
     );
   }
+}
+
+Future<String> cprValidator(String cpr) async {
+  if (cpr.isEmpty) {
+    return 'Please enter your CPR number';
+  } else if (cpr.length != 9) {
+    return 'CPR number must be 9 digits';
+  } else if (cpr.isNotEmpty && !RegExp(Patterns.cprPattern).hasMatch(cpr)) {
+    return 'Invalid CPR format.';
+  } else if (await cprExists(cpr)) {
+    return 'CPR already exists.';
+  }
+  return '';
 }

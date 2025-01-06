@@ -48,3 +48,4 @@ lib/firebase_options.dart
 node_modules/
 
 firebase.json
+.env

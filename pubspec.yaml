@@ -27,6 +27,7 @@ dependencies:
   google_sign_in_web: ^0.12.4+3
   provider: ^6.1.2
   flex_color_picker: ^3.6.0
+  flutter_dotenv: ^5.0.2
 
 dev_dependencies:
   flutter_test:
@@ -42,3 +43,4 @@ flutter:
     - assets/images/
     - assets/svgs/
     - assets/icons/
+    - assets/.env

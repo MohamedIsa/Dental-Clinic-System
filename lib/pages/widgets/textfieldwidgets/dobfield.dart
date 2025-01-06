@@ -2,13 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:senior/const/app_styles.dart';
 
 import '../../../const/app_colors.dart';
+import '../../../functions/auth/patterns.dart';
 import '../../../utils/reuseable_widget.dart';
 
 class DobField extends StatelessWidget {
   final TextEditingController dobTextController;
   final double width;
+  final Function(String)? onFieldSubmitted;
   const DobField(
-      {super.key, required this.dobTextController, required this.width});
+      {super.key,
+      required this.dobTextController,
+      required this.width,
+      this.onFieldSubmitted});
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +46,19 @@ class DobField extends StatelessWidget {
             color: AppColors.greyColor,
             controller: dobTextController,
             isDob: true,
+            onFieldSubmitted: onFieldSubmitted,
           ),
         ),
       ],
     );
   }
+}
+
+Future<String> dobValidator(String dob) async {
+  if (dob.isEmpty) {
+    return 'Please enter your Date of Birth';
+  } else if (dob.isNotEmpty && !RegExp(Patterns.dobPattern).hasMatch(dob)) {
+    return 'Invalid Date of Birth format.';
+  }
+  return '';
 }

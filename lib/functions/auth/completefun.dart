@@ -33,16 +33,6 @@ Future<void> completeRegistration(
         dob: dob,
         gender: selectedGender,
       );
-
-      print('User ID: ${user.id}');
-      print('Full Name: ${user.name}');
-      print('Email: ${user.email}');
-      print('Role: ${user.role}');
-      print('Phone: ${user.phone}');
-      print('CPR: ${user.cpr}');
-      print('DOB: ${user.dob}');
-      print('Gender: ${user.gender}');
-
       await firestore.collection('users').doc(currentUser.uid).set({
         'id': user.id,
         'name': user.name,

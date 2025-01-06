@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:senior/const/app_colors.dart';
+import 'package:senior/functions/auth/checkauthfield.dart';
 import 'package:senior/pages/widgets/textfieldwidgets/cprfield.dart';
 import 'package:senior/pages/widgets/textfieldwidgets/dobfield.dart';
 import 'package:senior/pages/widgets/textfieldwidgets/emailfield.dart';
 import 'package:senior/pages/widgets/textfieldwidgets/fullnamefield.dart';
 import 'package:senior/pages/widgets/textfieldwidgets/genderfield.dart';
+import 'package:senior/pages/widgets/textfieldwidgets/phonefield.dart';
 import 'package:senior/pages/widgets/textfieldwidgets/rolefield.dart';
 
 class AddStaff extends StatefulWidget {
@@ -19,6 +21,7 @@ class _AddStaffState extends State<AddStaff> {
   final TextEditingController fullNameTextController = TextEditingController();
   final TextEditingController cprTextController = TextEditingController();
   final TextEditingController dobTextController = TextEditingController();
+  final TextEditingController phoneTextController = TextEditingController();
   String selectedGender = 'Male';
   String selectedRole = 'admin';
 
@@ -28,6 +31,7 @@ class _AddStaffState extends State<AddStaff> {
     fullNameTextController.dispose();
     cprTextController.dispose();
     dobTextController.dispose();
+    phoneTextController.dispose();
     super.dispose();
   }
 
@@ -54,14 +58,34 @@ class _AddStaffState extends State<AddStaff> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              EmailField(emailTextController: emailTextController),
+              EmailField(
+                emailTextController: emailTextController,
+                onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+              ),
               const SizedBox(height: 20),
               NameField(
-                  fullNameTextController: fullNameTextController, width: width),
+                fullNameTextController: fullNameTextController,
+                width: width,
+                onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+              ),
               const SizedBox(height: 20),
-              CprField(cprTextController: cprTextController, width: width),
+              CprField(
+                cprTextController: cprTextController,
+                width: width,
+                onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+              ),
               const SizedBox(height: 20),
-              DobField(dobTextController: dobTextController, width: width),
+              Phonefield(
+                phoneTextController: phoneTextController,
+                width: width,
+                onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+              ),
+              const SizedBox(height: 20),
+              DobField(
+                dobTextController: dobTextController,
+                width: width,
+                onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+              ),
               const SizedBox(height: 20),
               GenderField(width: width, selectedGender: selectedGender),
               const SizedBox(height: 20),
@@ -80,7 +104,27 @@ class _AddStaffState extends State<AddStaff> {
                   ),
                   const SizedBox(width: 20),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      //print the whole fields first then go to the check function
+                      print('Email: ${emailTextController.text}');
+                      print('Full Name: ${fullNameTextController.text}');
+                      print('CPR: ${cprTextController.text}');
+                      print('Phone: ${phoneTextController.text}');
+                      print('DOB: ${dobTextController.text}');
+                      print('selectedgender: $selectedGender');
+                      print('selectedrole: $selectedRole');
+
+                      check(
+                        context: context,
+                        emailTextController: emailTextController,
+                        fullNameTextController: fullNameTextController,
+                        cprTextController: cprTextController,
+                        phoneTextController: phoneTextController,
+                        selectedGender: selectedGender,
+                        dobTextController: dobTextController,
+                        selectedrole: selectedRole,
+                      );
+                    },
                     child: Text('Add Staff'),
                   ),
                 ],

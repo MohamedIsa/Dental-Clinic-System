@@ -27,8 +27,8 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
   Future<void> _resetPassword() async {
     try {
       final snapshot = await _firestore
-          .collection('user')
-          .where('Email', isEqualTo: _emailController.text)
+          .collection('users')
+          .where('email', isEqualTo: _emailController.text)
           .get();
 
       if (snapshot.docs.isNotEmpty) {
@@ -58,7 +58,9 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        EmailField(emailTextController: _emailController),
+        EmailField(
+            emailTextController: _emailController,
+            onFieldSubmitted: (_) => _resetPassword),
         SizedBox(height: height * 0.04),
         ButtonForm(width: width, title: 'ResetPassword', onTap: _resetPassword),
         SizedBox(height: height * 0.04),

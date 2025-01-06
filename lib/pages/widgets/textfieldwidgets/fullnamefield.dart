@@ -6,8 +6,12 @@ import '../../../utils/reuseable_widget.dart';
 class NameField extends StatelessWidget {
   final TextEditingController fullNameTextController;
   final double width;
+  final Function(String)? onFieldSubmitted;
   const NameField(
-      {super.key, required this.fullNameTextController, required this.width});
+      {super.key,
+      required this.fullNameTextController,
+      required this.width,
+      this.onFieldSubmitted});
 
   @override
   Widget build(BuildContext context) {
@@ -39,9 +43,19 @@ class NameField extends StatelessWidget {
             isPassword: false,
             color: AppColors.greyColor,
             controller: fullNameTextController,
+            onFieldSubmitted: onFieldSubmitted,
           ),
         ),
       ],
     );
   }
+}
+
+Future<String> fullNameValidator(String fullName) async {
+  if (fullName.isEmpty) {
+    return 'Full Name is required';
+  } else if (fullName.length < 3) {
+    return 'Full Name must be at least 3 characters';
+  }
+  return '';
 }

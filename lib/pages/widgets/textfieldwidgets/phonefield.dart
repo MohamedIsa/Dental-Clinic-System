@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import '../../../const/app_colors.dart';
 import '../../../const/app_styles.dart';
+import '../../../functions/auth/patterns.dart';
 import '../../../utils/reuseable_widget.dart';
 
 class Phonefield extends StatelessWidget {
   final TextEditingController phoneTextController;
   final double width;
+  final Function(String)? onFieldSubmitted;
   const Phonefield(
-      {super.key, required this.phoneTextController, required this.width});
+      {super.key,
+      required this.phoneTextController,
+      required this.width,
+      this.onFieldSubmitted});
 
   @override
   Widget build(BuildContext context) {
@@ -40,9 +45,20 @@ class Phonefield extends StatelessWidget {
             color: AppColors.greyColor,
             controller: phoneTextController,
             isNumeric: true,
+            onFieldSubmitted: onFieldSubmitted,
           ),
         ),
       ],
     );
   }
+}
+
+String phoneValidator(String phone) {
+  if (phone.isEmpty) {
+    return 'Phone number is required.';
+  } else if (phone.isNotEmpty &&
+      !RegExp(Patterns.phonePattern).hasMatch(phone)) {
+    return 'Invalid phone number format.';
+  }
+  return '';
 }
