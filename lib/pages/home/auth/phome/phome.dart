@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:senior/const/navbaritems.dart';
@@ -6,9 +8,11 @@ import 'package:senior/pages/widgets/static/patientappbar.dart';
 import 'package:senior/pages/widgets/static/patienthomebody.dart';
 import 'package:senior/const/topnavbar.dart';
 import '../../../../const/app_colors.dart';
+import '../../../../functions/chat/seenmessage.dart';
 import '../../../../providers/patient_navbar.dart';
 import '../../../../utils/responsive_widget.dart';
 import '../../../../functions/phome/getusername.dart';
+import '../chat/chatpage.dart';
 
 class WelcomePage extends StatefulWidget {
   @override
@@ -16,6 +20,22 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
+  late Future<bool> isSeenFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    final patientId = FirebaseAuth.instance.currentUser?.uid;
+    if (patientId != null) {
+      isSeenFuture = isMessageSeen(FirebaseFirestore.instance
+          .collection('users')
+          .doc(patientId)
+          .collection('chat'));
+    } else {
+      isSeenFuture = Future.value(false); // Default to false if no patientId
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ResponsiveWidget(
@@ -59,10 +79,47 @@ class _WelcomePageState extends State<WelcomePage> {
             );
           },
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {},
-          child: const Icon(Icons.chat),
-          backgroundColor: AppColors.primaryColor,
+        floatingActionButton: FutureBuilder<bool>(
+          future: isSeenFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return FloatingActionButton(
+                onPressed: null,
+                backgroundColor: AppColors.primaryColor,
+                child: const CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+              );
+            }
+
+            final bool isSeen = snapshot.data ?? false;
+
+            return FloatingActionButton(
+              onPressed: () async {
+                final patientId = FirebaseAuth.instance.currentUser?.uid;
+
+                if (patientId != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatPage(patientId: patientId),
+                    ),
+                  );
+                }
+              },
+              backgroundColor: AppColors.primaryColor,
+              child: isSeen
+                  ? Badge(
+                      child: const Icon(Icons.chat),
+                      label: const Icon(
+                        Icons.circle,
+                        color: Colors.red,
+                        size: 2.0,
+                      ),
+                    )
+                  : const Icon(Icons.chat),
+            );
+          },
         ),
       ),
     );

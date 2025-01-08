@@ -23,7 +23,6 @@ Future<void> check({
   required TextEditingController dobTextController,
   String? selectedrole,
 }) async {
-  debugPrint('starting the function check');
   String email = emailTextController?.text ?? '';
   String password = passwordTextController?.text ?? '';
   String confirmPassword = confirmPasswordTextController?.text ?? '';
@@ -31,8 +30,7 @@ Future<void> check({
   String cpr = cprTextController.text;
   String phone = phoneTextController.text;
   String dob = dobTextController.text;
-  debugPrint(
-      'uid: $uid\nemail:$email\npassword:$password\nconfirmPassword: $confirmPassword\nfullName: $fullName\ncpr: $cpr\nphone: $phone\ndob: $dob\nselectedrole: $selectedrole\n');
+
   String emailError = await emailValidator(email);
   String passwordError = passwordValidator(password);
   String confirmPasswordError =
@@ -57,7 +55,6 @@ Future<void> check({
 
   if (dobError.isNotEmpty) errors.add(dobError);
 
-  print(errors.join('\n'));
   if (errors.isNotEmpty) {
     showErrorDialog(context, errors.join('\n'));
     return;

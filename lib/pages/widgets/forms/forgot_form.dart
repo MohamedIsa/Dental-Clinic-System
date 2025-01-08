@@ -43,7 +43,6 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
         });
       }
     } catch (error) {
-      print(error);
       setState(() {
         _errorMessage = error.toString();
       });

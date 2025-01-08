@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../providers/side_menu_provider.dart';
+import '../../../providers/side_menu_provider.dart';
 
 class SideMenuWidget extends StatefulWidget {
   const SideMenuWidget({super.key});
@@ -89,8 +89,6 @@ class _SideMenuWidgetState extends State<SideMenuWidget> {
       Provider.of<SideMenuProvider>(context, listen: false)
           .updateIndex(index, routeName);
       Navigator.pushNamed(context, routeName);
-    } else {
-      print('Already on the current route: $routeName');
     }
   }
 }

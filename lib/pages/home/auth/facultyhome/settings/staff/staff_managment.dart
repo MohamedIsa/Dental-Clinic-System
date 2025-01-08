@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:senior/const/app_colors.dart';
-import '../../../../../functions/createfaculty/deleteuser.dart';
-import '../../../../../functions/createfaculty/hideuser.dart';
-import '../../../../../functions/createfaculty/restoreuser.dart';
-import '../../../../../functions/createfaculty/userrole.dart';
+import '../../../../../../functions/createfaculty/deleteuser.dart';
+import '../../../../../../functions/createfaculty/hideuser.dart';
+import '../../../../../../functions/createfaculty/restoreuser.dart';
+import '../../../../../../functions/createfaculty/userrole.dart';
 
 class StaffManagementScreen extends StatefulWidget {
   const StaffManagementScreen({super.key});
@@ -20,7 +20,9 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
       backgroundColor: AppColors.primaryColor,
       appBar: AppBar(
         backgroundColor: AppColors.primaryColor,
-        title: Text('Staff Management'),
+        title: Text('Staff Management',
+            style: TextStyle(color: AppColors.whiteColor)),
+        iconTheme: IconThemeData(color: AppColors.whiteColor),
       ),
       body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: FirebaseFirestore.instance.collection('users').snapshots(),
@@ -70,30 +72,42 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
                       return SizedBox.shrink();
                     }
                     return ListTile(
-                      title: Text(name),
+                      title: Text(name,
+                          style: TextStyle(
+                            color: AppColors.whiteColor,
+                          )),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(email),
-                          Text(role),
+                          Text(email,
+                              style: TextStyle(
+                                color: AppColors.whiteColor,
+                              )),
+                          Text(role,
+                              style: TextStyle(
+                                color: AppColors.whiteColor,
+                              )),
                         ],
                       ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: Icon(Icons.hide_image),
+                            icon: Icon(Icons.hide_image,
+                                color: AppColors.whiteColor),
                             onPressed: () =>
                                 hideUser(context, userDoc.id, role),
                           ),
                           SizedBox(width: 20),
                           IconButton(
-                            icon: Icon(Icons.restore),
+                            icon: Icon(Icons.restore,
+                                color: AppColors.whiteColor),
                             onPressed: () => restoreUser(context, userDoc.id),
                           ),
                           SizedBox(width: 20),
                           IconButton(
-                            icon: Icon(Icons.delete),
+                            icon:
+                                Icon(Icons.delete, color: AppColors.whiteColor),
                             onPressed: () =>
                                 deleteUser(context, userDoc.id, role),
                           ),

@@ -9,14 +9,18 @@ import 'package:senior/pages/widgets/textfieldwidgets/genderfield.dart';
 import 'package:senior/pages/widgets/textfieldwidgets/phonefield.dart';
 import 'package:senior/pages/widgets/textfieldwidgets/rolefield.dart';
 
-class AddStaff extends StatefulWidget {
-  const AddStaff({super.key});
+class Add extends StatefulWidget {
+  final String title;
+  final bool show;
+  final String add;
+  const Add(
+      {super.key, required this.title, required this.show, required this.add});
 
   @override
-  State<AddStaff> createState() => _AddStaffState();
+  State<Add> createState() => _AddState();
 }
 
-class _AddStaffState extends State<AddStaff> {
+class _AddState extends State<Add> {
   final TextEditingController emailTextController = TextEditingController();
   final TextEditingController fullNameTextController = TextEditingController();
   final TextEditingController cprTextController = TextEditingController();
@@ -44,7 +48,7 @@ class _AddStaffState extends State<AddStaff> {
       appBar: AppBar(
         backgroundColor: AppColors.primaryColor,
         title: Text(
-          'Add New Staff',
+          widget.title,
           style: TextStyle(
             color: AppColors.whiteColor,
           ),
@@ -89,31 +93,31 @@ class _AddStaffState extends State<AddStaff> {
               const SizedBox(height: 20),
               GenderField(width: width, selectedGender: selectedGender),
               const SizedBox(height: 20),
-              RoleField(
-                selectedRole: selectedRole,
-                width: width,
-              ),
-              const SizedBox(height: 20),
+              widget.show
+                  ? Column(
+                      children: [
+                        RoleField(
+                          selectedRole: selectedRole,
+                          width: width,
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    )
+                  : Container(),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
                     child: Text('Cancel'),
                   ),
                   const SizedBox(width: 20),
                   ElevatedButton(
                     onPressed: () {
-                      //print the whole fields first then go to the check function
-                      print('Email: ${emailTextController.text}');
-                      print('Full Name: ${fullNameTextController.text}');
-                      print('CPR: ${cprTextController.text}');
-                      print('Phone: ${phoneTextController.text}');
-                      print('DOB: ${dobTextController.text}');
-                      print('selectedgender: $selectedGender');
-                      print('selectedrole: $selectedRole');
-
+                      if (widget.show) selectedRole == 'patient';
                       check(
                         context: context,
                         emailTextController: emailTextController,
@@ -125,7 +129,7 @@ class _AddStaffState extends State<AddStaff> {
                         selectedrole: selectedRole,
                       );
                     },
-                    child: Text('Add Staff'),
+                    child: Text(widget.add),
                   ),
                 ],
               )

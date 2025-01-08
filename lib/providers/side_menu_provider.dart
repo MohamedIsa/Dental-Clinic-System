@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../pages/home/auth/facultyhome/side_menu_data.dart';
+import '../pages/widgets/navigations/side_menu_data.dart';
 import '../models/side_menu_model.dart';
 import 'navbar_provider.dart';
 

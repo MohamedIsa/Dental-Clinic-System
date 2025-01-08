@@ -32,14 +32,17 @@ class MessageContainer extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          message,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: isMobile ? 16 : 20,
-            fontWeight: FontWeight.bold,
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            message,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: isMobile ? 16 : 20,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
           ),
-          textAlign: TextAlign.center,
         ),
         if (actionButton != null) actionButton!,
       ],

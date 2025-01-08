@@ -31,7 +31,6 @@ Future<void> hideUser(BuildContext context, String userId, String role) async {
     }
     showMessagealert(context, 'User Hidden Successfully');
   } catch (e) {
-    print('Error: $e');
     showErrorDialog(context, e.toString());
   }
 }

@@ -15,9 +15,7 @@ Future<void> signUp(
   String selectedGender,
   TextEditingController dobTextController,
 ) async {
-  print("Entering signup function");
   try {
-    print("Entering try signup");
     UserCredential userCredential =
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
       email: emailTextController.text,

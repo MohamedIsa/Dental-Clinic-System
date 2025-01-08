@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:senior/pages/widgets/forms/forgot_form.dart';
 import 'package:senior/pages/widgets/headers/header.dart';
@@ -6,6 +7,7 @@ import 'package:senior/pages/widgets/navigations/signinprompt.dart';
 import 'package:senior/pages/widgets/static/socialsignup.dart';
 import '../../../const/app_colors.dart';
 import '../../../const/app_styles.dart';
+import '../../../functions/auth/checkuserloggedin.dart';
 import '../../../utils/responsive_widget.dart';
 import '../../widgets/forms/complete_form.dart';
 import '../../widgets/forms/login_form.dart';
@@ -41,6 +43,13 @@ class _AuthScreenState extends State<AuthScreen> {
     _isSignUp = widget.isSignUp;
     _isCompleteDetails = widget.isCompleteDetails;
     _isForgotPassword = widget.isForgotPassword;
+    String? userid = FirebaseAuth.instance.currentUser?.uid;
+    if (!_isSignUp! &&
+        !_isCompleteDetails &&
+        !_isForgotPassword &&
+        userid != null) {
+      checkUserLoggedIn(context);
+    }
   }
 
   @override
@@ -49,7 +58,6 @@ class _AuthScreenState extends State<AuthScreen> {
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: AppColors.backColor,
       body: SizedBox(
         height: height,
         width: width,
@@ -80,7 +88,6 @@ class _AuthScreenState extends State<AuthScreen> {
                       ? height * 0.032
                       : height * 0.12,
                 ),
-                color: AppColors.backColor,
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.only(bottom: 40.0),
                   child: _isForgotPassword

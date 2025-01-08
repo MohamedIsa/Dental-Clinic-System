@@ -1,121 +1,56 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
-import 'package:provider/provider.dart';
-import '../../../../utils/responsive_widget.dart';
-import '../../../widgets/static/mobileview.dart';
-import 'dentistlist.dart';
-import '../../../../providers/side_menu_provider.dart';
-import 'side_menu_widget.dart';
-import 'header_widget.dart';
-import 'today_appointment.dart';
+import 'package:senior/pages/widgets/static/facilitypage.dart';
+import '../../../../functions/dashboard/getrole.dart';
+import '../../../widgets/static/dentistlist.dart';
+import '../../../widgets/static/today_appointment.dart';
 
-class Dashboard extends StatelessWidget {
-  const Dashboard({Key? key});
+class Dashboard extends StatefulWidget {
+  Dashboard({super.key});
+
+  @override
+  _DashboardState createState() => _DashboardState();
+}
+
+class _DashboardState extends State<Dashboard> {
+  String role = '';
+
+  @override
+  void initState() {
+    super.initState();
+    getRole().then((roles) {
+      if (roles != null) {
+        setState(() {
+          role = roles;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final sideMenuProvider =
-        Provider.of<SideMenuProvider>(context, listen: false);
-
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    String role = '';
-    FirebaseFirestore.instance.collection('users').doc(uid).get().then((doc) {
-      if (doc.exists) {
-        role = doc.data()?['role'] ?? '';
-      }
-    });
-
-    bool isWeb = kIsWeb && ResponsiveWidget.isLargeScreen(context);
-
-    return FutureBuilder(
-      future: sideMenuProvider.loadMenu(context),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return SpinKitFadingCube(
-            size: 30,
-            color: Colors.blue,
-          );
-        } else if (snapshot.hasError) {
-          return Scaffold(
-            body: Center(
-              child: Text('Error: ${snapshot.error}'),
+    return FacilityPage(
+      widget: Expanded(
+        flex: 9,
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border(
+              right: BorderSide(
+                color: Colors.grey,
+                width: 1.0,
+              ),
             ),
-          );
-        } else {
-          return isWeb
-              ? StreamBuilder<DocumentSnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection('users')
-                      .doc(uid)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      final fullName = snapshot.data?.get('name') ?? '';
-                      final firstName = fullName.split(' ')[0];
-
-                      return Scaffold(
-                        appBar: HeaderWidget(userName: firstName),
-                        body: SafeArea(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Expanded(
-                                flex: 7,
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 3,
-                                      child: SideMenuWidget(),
-                                    ),
-                                    Expanded(
-                                      flex: 10,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          border: Border(
-                                            right: BorderSide(
-                                              color: Colors.grey,
-                                              width: 1.0,
-                                            ),
-                                          ),
-                                        ),
-                                        child: role == 'admin' ||
-                                                role == 'recptionist'
-                                            ? TodayAppointmentPage()
-                                            : null,
-                                      ),
-                                    ),
-                                    //===========================================================
-                                    //admin recptionist
-                                    role == 'admin' || role == 'recptionist'
-                                        ? Expanded(
-                                            flex: 5,
-                                            child: DentistsDataTable(),
-                                          )
-                                        : Container(),
-                                    //=================================================
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      return SpinKitFadingCube(
-                        size: 30,
-                        color: Colors.blue,
-                      );
-                    }
-                  },
-                )
-              : MobileView();
-        }
-      },
+          ),
+          child: role == 'admin' || role == 'recptionist'
+              ? TodayAppointmentPage()
+              : null,
+        ),
+      ),
+      widget1: Expanded(
+        flex: 2,
+        child: role == 'admin' || role == 'recptionist'
+            ? DentistsDataTable()
+            : Container(),
+      ),
     );
   }
 }

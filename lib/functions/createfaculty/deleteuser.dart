@@ -82,8 +82,6 @@ Future<void> deleteUser(
 
     showMessagealert(context, 'User Deleted Successfully');
   } catch (e) {
-    print('Error deleting user: $e');
-
     showMessagealert(context, 'Error deleting user: $e');
   }
 }

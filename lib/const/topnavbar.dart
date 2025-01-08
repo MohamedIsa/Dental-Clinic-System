@@ -53,8 +53,6 @@ class TopNavBar<T extends NavBarProvider> extends StatelessWidget {
 
     if (currentRoute != routeName) {
       Navigator.pushNamed(context, routeName);
-    } else {
-      print('Already on the current route: $routeName');
     }
   }
 }

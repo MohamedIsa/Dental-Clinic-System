@@ -23,10 +23,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    print('HomePage1');
     return Scaffold(
       appBar: AppBar(
         title: _buildAppBarTitle(context),
         backgroundColor: Colors.transparent,
+        automaticallyImplyLeading: false,
         elevation: 0,
       ),
       bottomNavigationBar: MediaQuery.of(context).size.width <= 600

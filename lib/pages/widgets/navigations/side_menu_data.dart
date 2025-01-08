@@ -2,16 +2,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:senior/utils/popups.dart';
-import '../../../../models/side_menu_model.dart';
+import '../../../models/side_menu_model.dart';
 
 class SideMenuData {
   final menu = <MenuModel>[];
 
   Future<void> loadMenu(BuildContext context) async {
     try {
+      menu.clear();
+
       final uid = FirebaseAuth.instance.currentUser?.uid;
       if (uid == null) {
-        return showErrorDialog(context, "User not logged in");
+        showErrorDialog(context, "User not logged in");
+        return;
       }
 
       final userDoc =

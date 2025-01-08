@@ -12,7 +12,6 @@ Future<void> completeRegistration(
     TextEditingController phoneTextController,
     String selectedGender,
     TextEditingController dobTextController) async {
-  print("Entering complete function");
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   String fullName = fullNameTextController.text;
   String cpr = cprTextController.text;
@@ -47,7 +46,6 @@ Future<void> completeRegistration(
       Navigator.pushReplacementNamed(context, '/patientDashboard');
     }
   } catch (e) {
-    debugPrint('Failed to update user: $e');
     if (context.mounted) {
       showErrorDialog(context, e.toString());
     }

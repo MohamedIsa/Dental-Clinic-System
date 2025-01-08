@@ -44,7 +44,6 @@ Future<void> signInWithGoogle(BuildContext context) async {
     if (context.mounted) {
       showErrorDialog(context, 'An unexpected error occurred: ${e.toString()}');
     }
-    debugPrint("Sign-In error: $e");
   }
 }
 
@@ -110,7 +109,6 @@ Future<bool> checkIfUserExistsInDatabase(String uid) async {
 
     return false;
   } catch (e) {
-    debugPrint("Error checking user existence: $e");
     return false;
   }
 }

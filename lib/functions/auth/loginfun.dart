@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:senior/utils/popups.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'checkuserloggedin.dart';
 
 Future<void> login(
   BuildContext context,
@@ -39,8 +39,7 @@ Future<void> login(
         .signInWithEmailAndPassword(email: email, password: password);
 
     if (userCredential.user != null) {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('userId', userCredential.user!.uid);
+      await persistUser(userCredential.user!.uid);
       await navigateBasedOnUserRole(context, userCredential.user!.uid);
     }
   } catch (e) {

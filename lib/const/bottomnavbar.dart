@@ -39,8 +39,6 @@ class BottomNavBar<T extends NavBarProvider> extends StatelessWidget {
     if (currentRoute != routeName) {
       Provider.of<T>(context, listen: false).updateIndex(index, routeName);
       Navigator.pushNamed(context, routeName);
-    } else {
-      print('Already on the current route: $routeName');
     }
   }
 }

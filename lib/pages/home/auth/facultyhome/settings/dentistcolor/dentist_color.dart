@@ -238,8 +238,6 @@ class _DentistColorSettingsScreenState
                             .update({'color': color});
                         showMessagealert(context, 'Color Updated Successfully');
                       } catch (e) {
-                        print(
-                            'Error updating color for dentist $dentistUID: $e');
                         showErrorDialog(
                             context, 'Error updating color for dentist: $e');
                       }

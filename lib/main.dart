@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:senior/pages/home/auth/facultyhome/settings/addstaff.dart';
+import 'package:senior/pages/home/auth/facultyhome/patients/patient_list.dart';
+import 'package:senior/pages/home/auth/facultyhome/settings/staff/addstaff/add.dart';
 import 'pages/home/auth/AuthScreen.dart';
 import 'pages/home/auth/facultyhome/settings/settings_screen.dart';
 import 'providers/home_navbar.dart';
@@ -74,7 +75,17 @@ class MyApp extends StatelessWidget {
         '/update': (context) => UpdateAccountPage(),
         '/dashboard': (context) => Dashboard(),
         '/settings': (context) => SettingsScreen(),
-        '/addstaff': (context) => AddStaff(),
+        '/addstaff': (context) => Add(
+              title: 'Add New Staff',
+              show: true,
+              add: 'Add Staff',
+            ),
+        '/patients': (context) => PatientScreen(),
+        '/addpatient': (context) => Add(
+              title: 'Add New Patient',
+              show: false,
+              add: 'Add Patient',
+            ),
       },
     );
   }

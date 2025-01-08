@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:senior/pages/home/auth/facultyhome/settings/staff_managment.dart';
-import 'dentist_color.dart';
-import 'edit_message.dart';
+import 'package:senior/const/app_colors.dart';
+import 'package:senior/pages/home/auth/facultyhome/settings/staff/staff_managment.dart';
+import 'dentistcolor/dentist_color.dart';
+import 'editmessage/edit_message.dart';
 import 'settings_page.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -16,6 +17,7 @@ class SettingsScreen extends StatelessWidget {
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.blue,
+        iconTheme: IconThemeData(color: AppColors.whiteColor),
       ),
       body: Container(
         color: Colors.blue,
@@ -50,7 +52,6 @@ class SettingsScreen extends StatelessWidget {
                         );
                         break;
                       default:
-                        print('Setting not found');
                     }
                   },
                 ),
