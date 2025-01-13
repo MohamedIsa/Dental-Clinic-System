@@ -6,11 +6,13 @@ import '../../../const/app_styles.dart';
 class RoleField extends StatefulWidget {
   final String selectedRole;
   final double width;
+  final ValueChanged<String> onRoleChanged;
 
   const RoleField({
     super.key,
     required this.selectedRole,
     required this.width,
+    required this.onRoleChanged,
   });
 
   @override
@@ -78,6 +80,7 @@ class RoleFieldState extends State<RoleField> {
             onChanged: (newValue) {
               setState(() {
                 _selectedRole = newValue!;
+                widget.onRoleChanged(_selectedRole);
               });
             },
           ),

@@ -51,7 +51,10 @@ class _UpdateAccountFormState extends State<UpdateAccountForm> {
             ),
             SizedBox(height: height * 0.014),
             GenderField(
-                width: width, selectedGender: widget.selectedGender.text),
+                width: width,
+                selectedGender: widget.selectedGender.text,
+                onGenderChanged: (newGender) =>
+                    widget.selectedGender.text = newGender),
             SizedBox(height: height * 0.014),
             Phonefield(
               phoneTextController: widget.phoneController,

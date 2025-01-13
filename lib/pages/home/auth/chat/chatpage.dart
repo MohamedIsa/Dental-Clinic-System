@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:senior/functions/chat/seenmessage.dart';
 import '../../../../functions/chat/getmessage.dart';
 import '../../../../functions/chat/sendmessage.dart';
 import '../../../../models/chatmessage.dart';
+import '../../../../utils/data.dart';
 import 'messagebubble.dart';
 
 class ChatPage extends StatefulWidget {
@@ -53,8 +53,7 @@ class _ChatPageState extends State<ChatPage> {
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
                     var message = messages[index];
-                    bool isMe = message.senderId ==
-                        FirebaseAuth.instance.currentUser!.uid;
+                    bool isMe = message.senderId == Data.currentID;
 
                     // Show 'Seen' indicator for outgoing messages
                     return Column(

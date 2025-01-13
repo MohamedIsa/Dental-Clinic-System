@@ -4,6 +4,7 @@ import 'package:senior/pages/home/auth/facultyhome/patients/patient_list.dart';
 import 'package:senior/pages/home/auth/facultyhome/settings/staff/addstaff/add.dart';
 import 'pages/home/auth/AuthScreen.dart';
 import 'pages/home/auth/facultyhome/settings/settings_screen.dart';
+import 'pages/home/auth/phome/booking/bookingpage.dart';
 import 'providers/home_navbar.dart';
 import 'providers/patient_navbar.dart';
 import 'providers/side_menu_provider.dart';
@@ -86,6 +87,7 @@ class MyApp extends StatelessWidget {
               show: false,
               add: 'Add Patient',
             ),
+        '/booking': (context) => BookingPage(),
       },
     );
   }

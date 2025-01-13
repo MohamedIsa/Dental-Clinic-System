@@ -5,17 +5,20 @@ import '../../../const/app_styles.dart';
 class GenderField extends StatefulWidget {
   final double width;
   final String selectedGender;
+  final ValueChanged<String> onGenderChanged;
 
-  const GenderField(
-      {super.key, required this.width, required this.selectedGender});
+  GenderField({
+    super.key,
+    required this.width,
+    required this.selectedGender,
+    required this.onGenderChanged,
+  });
 
   @override
   State<GenderField> createState() => _GenderFieldState();
 }
 
 class _GenderFieldState extends State<GenderField> {
-  String _selectedGender = 'Male';
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -33,12 +36,10 @@ class _GenderFieldState extends State<GenderField> {
           children: [
             Radio(
               value: 'Male',
-              groupValue: _selectedGender,
+              groupValue: widget.selectedGender,
               activeColor: AppColors.primaryColor,
               onChanged: (value) {
-                setState(() {
-                  _selectedGender = value.toString();
-                });
+                widget.onGenderChanged(value.toString());
               },
             ),
             Text('Male'),
@@ -47,12 +48,10 @@ class _GenderFieldState extends State<GenderField> {
             ),
             Radio(
               value: 'Female',
-              groupValue: _selectedGender,
+              groupValue: widget.selectedGender,
               activeColor: AppColors.primaryColor,
               onChanged: (value) {
-                setState(() {
-                  _selectedGender = value.toString();
-                });
+                widget.onGenderChanged(value.toString());
               },
             ),
             Text('Female'),

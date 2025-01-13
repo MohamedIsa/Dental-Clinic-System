@@ -75,6 +75,11 @@ class _SignUpFormState extends State<SignUpForm> {
         GenderField(
           width: width,
           selectedGender: _selectedGender,
+          onGenderChanged: (newGender) {
+            setState(() {
+              _selectedGender = newGender;
+            });
+          },
         ),
         const SizedBox(height: 20),
         DobField(

@@ -57,6 +57,11 @@ class _CompleteFormState extends State<CompleteForm> {
         GenderField(
           width: width,
           selectedGender: _selectedGender,
+          onGenderChanged: (newGender) {
+            setState(() {
+              _selectedGender = newGender;
+            });
+          },
         ),
         SizedBox(height: height * 0.014),
         CprField(

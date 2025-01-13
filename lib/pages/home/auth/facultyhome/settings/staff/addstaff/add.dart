@@ -27,7 +27,7 @@ class _AddState extends State<Add> {
   final TextEditingController dobTextController = TextEditingController();
   final TextEditingController phoneTextController = TextEditingController();
   String selectedGender = 'Male';
-  String selectedRole = 'admin';
+  String selectedRole = 'Admin';
 
   @override
   void dispose() {
@@ -91,7 +91,15 @@ class _AddState extends State<Add> {
                 onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
               ),
               const SizedBox(height: 20),
-              GenderField(width: width, selectedGender: selectedGender),
+              GenderField(
+                width: width,
+                selectedGender: selectedGender,
+                onGenderChanged: (newGender) {
+                  setState(() {
+                    selectedGender = newGender;
+                  });
+                },
+              ),
               const SizedBox(height: 20),
               widget.show
                   ? Column(
@@ -99,6 +107,11 @@ class _AddState extends State<Add> {
                         RoleField(
                           selectedRole: selectedRole,
                           width: width,
+                          onRoleChanged: (newRole) {
+                            setState(() {
+                              selectedRole = newRole;
+                            });
+                          },
                         ),
                         const SizedBox(height: 20),
                       ],
@@ -117,7 +130,6 @@ class _AddState extends State<Add> {
                   const SizedBox(width: 20),
                   ElevatedButton(
                     onPressed: () {
-                      if (widget.show) selectedRole == 'patient';
                       check(
                         context: context,
                         emailTextController: emailTextController,

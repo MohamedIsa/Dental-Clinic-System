@@ -11,7 +11,7 @@ final List<NavBarItem> navItemsp = [
   NavBarItem(
     icon: Icons.calendar_today,
     label: 'Book Appointment',
-    route: '/bookingm',
+    route: '/booking',
   ),
   NavBarItem(
     icon: Icons.history,
