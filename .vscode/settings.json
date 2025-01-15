@@ -1,3 +1,11 @@
 {
-    "cmake.sourceDirectory": "./Senior_Project/implementation/senior/linux"
+  "[dart]": {
+    "editor.formatOnSave": true
+  },
+  "java.configuration.updateBuildConfiguration": "interactive",
+  "cmake.sourceDirectory": "/home/mohamed/Desktop/projects/Dental-Clinic-System/linux",
+  "cSpell.words": [
+    "adduser",
+    "Phonefield"
+  ]
 }

@@ -1,0 +1,61 @@
+import 'package:flutter/material.dart';
+import '../../../const/app_colors.dart';
+import '../../../const/app_styles.dart';
+import '../../../utils/reuseable_widget.dart';
+
+class NameField extends StatelessWidget {
+  final TextEditingController fullNameTextController;
+  final double width;
+  final Function(String)? onFieldSubmitted;
+  const NameField(
+      {super.key,
+      required this.fullNameTextController,
+      required this.width,
+      this.onFieldSubmitted});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child: Text(
+            'Full Name',
+            style: ralewayStyle.copyWith(
+              fontSize: 12.0,
+              color: AppColors.blueDarkColor,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        const SizedBox(height: 6.0),
+        Container(
+          height: 50.0,
+          width: width,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16.0),
+            color: AppColors.whiteColor,
+          ),
+          child: ReusableTextField(
+            hintText: 'Enter Full Name',
+            icon: Icons.person,
+            isPassword: false,
+            color: AppColors.greyColor,
+            controller: fullNameTextController,
+            onFieldSubmitted: onFieldSubmitted,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+Future<String> fullNameValidator(String fullName) async {
+  if (fullName.isEmpty) {
+    return 'Full Name is required';
+  } else if (fullName.length < 3) {
+    return 'Full Name must be at least 3 characters';
+  }
+  return '';
+}
