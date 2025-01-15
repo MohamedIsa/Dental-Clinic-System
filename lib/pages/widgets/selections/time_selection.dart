@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:senior/const/app_colors.dart';
-
-import '../../../functions/booking/bookingfunctions.dart';
+import '../../../functions/booking/gettime.dart';
 
 class TimeSelection extends StatelessWidget {
   final String selectedDentistId;
@@ -19,8 +18,8 @@ class TimeSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<List<int>>>(
-      future: getAvailableTimeSlots(selectedDentistId, selectedDate),
+    return FutureBuilder<List<int>>(
+      future: getAvailableTimeSlots(context, selectedDentistId, selectedDate),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -44,7 +43,6 @@ class TimeSelection extends StatelessWidget {
           builder: (context, constraints) {
             final crossAxisCount =
                 _calculateCrossAxisCount(constraints.maxWidth);
-            final allSlots = timeSlots.expand((x) => x).toList();
 
             return GridView.builder(
               shrinkWrap: true,
@@ -55,9 +53,9 @@ class TimeSelection extends StatelessWidget {
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
               ),
-              itemCount: allSlots.length,
+              itemCount: timeSlots.length,
               itemBuilder: (context, index) {
-                return _buildTimeCard(context, allSlots[index]);
+                return _buildTimeCard(context, timeSlots[index]);
               },
             );
           },

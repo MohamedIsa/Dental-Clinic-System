@@ -1,64 +1,34 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
-import 'chatmessage.dart';
-
 class Chat {
-  String patientId;
-  List<ChatMessage> messages;
-  DateTime lastUpdated;
+  String senderId;
+  String text;
+  DateTime timestamp;
+  bool seen;
+  String role;
 
-  Chat({
-    required this.patientId,
-    required this.messages,
-    required this.lastUpdated,
-  });
+  Chat(
+      {required this.senderId,
+      required this.text,
+      required this.timestamp,
+      this.seen = false,
+      required this.role});
 
   Map<String, dynamic> toMap() {
     return {
-      'messages': messages.map((message) => message.toMap()).toList(),
-      'lastUpdated': lastUpdated.toIso8601String(),
+      'senderId': senderId,
+      'text': text,
+      'timestamp': timestamp.toIso8601String(),
+      'seen': seen,
+      'role': role,
     };
   }
 
-  static Chat fromMap(String patientId, Map<String, dynamic> map) {
-    var messages = (map['messages'] as List)
-        .map((messageMap) => ChatMessage.fromMap(messageMap))
-        .toList();
-
+  static Chat fromMap(Map<String, dynamic> map) {
     return Chat(
-      patientId: patientId,
-      messages: messages,
-      lastUpdated: DateTime.parse(map['lastUpdated']),
+      senderId: map['senderId'],
+      text: map['text'],
+      timestamp: DateTime.parse(map['timestamp']),
+      seen: map['seen'] ?? false,
+      role: map['role'],
     );
-  }
-
-  void addMessage(ChatMessage message) {
-    messages.add(message);
-    lastUpdated = DateTime.now();
-  }
-
-  static CollectionReference getUserChatCollection(String userId) {
-    return FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('chat');
-  }
-
-  static DocumentReference getChatMessageDocument(
-      String userId, String messageId) {
-    return getUserChatCollection(userId).doc(messageId);
-  }
-
-  static Future<List<ChatMessage>> getPatientChatMessages(String userId) async {
-    var chatCollection = getUserChatCollection(userId);
-    var snapshot = await chatCollection.orderBy('timestamp').get();
-    return snapshot.docs
-        .map((doc) => ChatMessage.fromMap(doc.data() as Map<String, dynamic>))
-        .toList();
-  }
-
-  Future<void> addMessageToPatientChat(
-      String userId, ChatMessage message) async {
-    await getUserChatCollection(userId).add(message.toMap());
   }
 }

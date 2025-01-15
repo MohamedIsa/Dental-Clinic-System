@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:senior/functions/booking/bookingfunctions.dart';
+import 'package:senior/functions/booking/getdentist.dart';
 
 import '../../../const/app_colors.dart';
 

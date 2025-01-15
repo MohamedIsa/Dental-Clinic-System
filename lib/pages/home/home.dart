@@ -23,7 +23,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    print('HomePage1');
     return Scaffold(
       appBar: AppBar(
         title: _buildAppBarTitle(context),

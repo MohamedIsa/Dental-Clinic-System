@@ -49,3 +49,4 @@ node_modules/
 
 firebase.json
 .env
+/web/web.json

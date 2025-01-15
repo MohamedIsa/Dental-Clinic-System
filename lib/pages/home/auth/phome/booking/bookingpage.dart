@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:senior/const/app_colors.dart';
-import '../../../../../functions/booking/bookingfunctions.dart';
+import '../../../../../functions/booking/bookappointment.dart';
 import '../../../../../utils/data.dart';
 import '../../../../../utils/popups.dart';
 import '../../../../widgets/selections/date_selection.dart';
@@ -46,9 +46,9 @@ class _BookingPageState extends State<BookingPage> {
     });
   }
 
-  void bookAppointment() {
+  void booking() {
     if (selectedDentistId.isNotEmpty && selectedHour != -1) {
-      addAppointment(
+      bookAppointment(
         context,
         selectedDentistId,
         selectedDate,
@@ -145,7 +145,7 @@ class _BookingPageState extends State<BookingPage> {
                       isSmallScreen ? double.infinity : screenSize.width * 0.3,
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: bookAppointment,
+                    onPressed: booking,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryColor,
                       shape: RoundedRectangleBorder(

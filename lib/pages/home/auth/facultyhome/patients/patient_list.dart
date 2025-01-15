@@ -59,39 +59,58 @@ class _PatientScreenState extends State<PatientScreen> {
                   return StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance
                         .collection('users')
+                        .where('role', isEqualTo: 'patient')
                         .snapshots(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
                       }
                       if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                        print('No documents found: ${snapshot.data?.docs}');
                         return const Center(
                             child: Text('No patient data found.'));
                       }
 
+                      // Filter patients based on the search query
                       var filteredDocs = snapshot.data!.docs.where((doc) {
-                        String name = (doc['name'] ?? '').toLowerCase();
-                        String cpr = (doc['cpr'] ?? '').toLowerCase();
+                        String name =
+                            (doc['name'] ?? '').toString().toLowerCase();
+                        String cpr =
+                            (doc['cpr'] ?? '').toString().toLowerCase();
                         return name.contains(searchQuery.toLowerCase()) ||
                             cpr.contains(searchQuery.toLowerCase());
                       }).toList();
 
                       if (filteredDocs.isEmpty) {
+                        print('No matching documents found: $searchQuery');
                         return const Center(
                             child: Text('No matching patients found.'));
                       }
 
                       return FutureBuilder<List<Map<String, dynamic>>>(
                         future: Future.wait(filteredDocs.map((doc) async {
-                          var chatCollection = FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(doc['id'])
-                              .collection('chat');
-                          bool isSeen = await isMessageSeen(chatCollection);
-                          return {
-                            'doc': doc,
-                            'isSeen': isSeen,
-                          };
+                          try {
+                            // Use `doc.id` instead of `doc['id']` to get the document ID
+                            var chatCollection = FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(doc.id)
+                                .collection('chat');
+
+                            bool isSeen =
+                                await isMessageSeen(chatCollection, 'patient');
+                            return {
+                              'doc': doc,
+                              'isSeen': isSeen,
+                            };
+                          } catch (e) {
+                            print(
+                                'Error in isMessageSeen for doc ${doc.id}: $e');
+                            return {
+                              'doc': doc,
+                              'isSeen':
+                                  false, // Default to false if an error occurs
+                            };
+                          }
                         }).toList()),
                         builder: (context, futureSnapshot) {
                           if (futureSnapshot.connectionState ==
@@ -102,12 +121,15 @@ class _PatientScreenState extends State<PatientScreen> {
 
                           if (!futureSnapshot.hasData ||
                               futureSnapshot.data!.isEmpty) {
+                            print(
+                                'No data in FutureBuilder: ${futureSnapshot.data}');
                             return const Center(
                                 child: Text('No matching patients found.'));
                           }
 
                           var sortedDocs = futureSnapshot.data!;
 
+                          // Sort documents based on the `isSeen` status
                           sortedDocs.sort((a, b) {
                             if (a['isSeen'] && !b['isSeen']) {
                               return -1;
@@ -122,7 +144,7 @@ class _PatientScreenState extends State<PatientScreen> {
                             itemBuilder: (context, index) {
                               var patientDoc = sortedDocs[index]['doc'];
                               var patientData = Users(
-                                id: patientDoc['id'],
+                                id: patientDoc.id, // Use `doc.id` for the ID
                                 name: patientDoc['name'] ?? '',
                                 cpr: patientDoc['cpr'] ?? '',
                                 dob: patientDoc['dob'] ?? '',

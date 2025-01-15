@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:senior/const/app_colors.dart';
-import 'package:senior/functions/booking/bookingfunctions.dart';
+import 'package:senior/functions/booking/getdates.dart';
 
 class DateSelection extends StatelessWidget {
   final String selectedDentistId;
@@ -16,8 +16,8 @@ class DateSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<List<DateTime>>>(
-      future: getAvailableDates(selectedDentistId),
+    return FutureBuilder<List<DateTime>>(
+      future: getAvailableDates(context, selectedDentistId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -47,9 +47,9 @@ class DateSelection extends StatelessWidget {
                 crossAxisSpacing: 4,
                 mainAxisSpacing: 8,
               ),
-              itemCount: dates.expand((x) => x).length,
+              itemCount: dates.length,
               itemBuilder: (context, index) {
-                final date = dates.expand((x) => x).elementAt(index);
+                final date = dates[index];
                 return _buildDateCard(context, date);
               },
             );

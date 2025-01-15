@@ -7,6 +7,7 @@ import 'package:senior/const/bottomnavbar.dart';
 import 'package:senior/pages/widgets/static/patientappbar.dart';
 import 'package:senior/pages/widgets/static/patienthomebody.dart';
 import 'package:senior/const/topnavbar.dart';
+import 'package:senior/utils/data.dart';
 import '../../../../const/app_colors.dart';
 import '../../../../functions/chat/seenmessage.dart';
 import '../../../../providers/patient_navbar.dart';
@@ -25,15 +26,13 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   void initState() {
     super.initState();
-    final patientId = FirebaseAuth.instance.currentUser?.uid;
-    if (patientId != null) {
-      isSeenFuture = isMessageSeen(FirebaseFirestore.instance
-          .collection('users')
-          .doc(patientId)
-          .collection('chat'));
-    } else {
-      isSeenFuture = Future.value(false); // Default to false if no patientId
-    }
+    final patientId = Data.currentID;
+    isSeenFuture = isMessageSeen(
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(patientId)
+            .collection('chat'),
+        Data.currentID);
   }
 
   @override
@@ -102,7 +101,10 @@ class _WelcomePageState extends State<WelcomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ChatPage(patientId: patientId),
+                      builder: (context) => ChatPage(
+                        senderId: patientId,
+                        patientId: patientId,
+                      ),
                     ),
                   );
                 }

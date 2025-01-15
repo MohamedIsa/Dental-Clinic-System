@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:senior/models/users.dart';
+import 'package:senior/utils/data.dart';
 
 import '../../../chat/chatpage.dart';
 
@@ -30,7 +31,10 @@ class PatientDetailsPage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return ChatPage(patientId: patient.id);
+            return ChatPage(
+              patientId: patient.id,
+              senderId: Data.currentID,
+            );
           }));
         },
         child: Icon(Icons.chat),

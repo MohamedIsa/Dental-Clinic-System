@@ -1,7 +1,7 @@
 class Appointments {
   final String id;
   final String date;
-  final String time;
+  final int time;
   final String patientId;
   final String dentistId;
 

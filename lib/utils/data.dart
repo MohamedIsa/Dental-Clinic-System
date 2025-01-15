@@ -10,4 +10,13 @@ class Data {
   }
 
   static String currentID = FirebaseAuth.instance.currentUser!.uid;
+
+  static Future<String> currentRole() async {
+    DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentID)
+        .get();
+    String role = documentSnapshot.get('role');
+    return role;
+  }
 }
