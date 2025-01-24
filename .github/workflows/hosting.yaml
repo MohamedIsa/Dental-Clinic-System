@@ -10,6 +10,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Ensure required directories exist
+      run: |
+        mkdir -p ./web
+        mkdir -p ./lib
+        
     - name: Generate `web.json` file
       run: echo "$WEB_JSON" > ./web/web.json
       env:
@@ -19,10 +27,7 @@ jobs:
       run: echo "$FIREBASE_OPTIONS_DART" > ./lib/firebase_options.dart
       env:
         FIREBASE_OPTIONS_DART: ${{ secrets.FIREBASE_OPTIONS_DART }}
-
-    - name: Get Flutter dependencies
-      run: flutter pub get
-
+        
     - name: Build Flutter web project
       run: flutter build web
 
