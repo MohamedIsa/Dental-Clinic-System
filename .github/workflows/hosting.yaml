@@ -1,0 +1,40 @@
+name: Build and Deploy Firebase App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: stable
+
+    - name: Generate `web.json` file
+      run: echo "$WEB_JSON" > ./web/web.json
+      env:
+        WEB_JSON: ${{ secrets.WEB_JSON }}
+
+    - name: Generate `firebase_options.dart` file
+      run: echo "$FIREBASE_OPTIONS_DART" > ./lib/firebase_options.dart
+      env:
+        FIREBASE_OPTIONS_DART: ${{ secrets.FIREBASE_OPTIONS_DART }}
+
+    - name: Get Flutter dependencies
+      run: flutter pub get
+
+    - name: Build Flutter web project
+      run: flutter build web
+
+    - name: Deploy to Firebase Hosting
+      env:
+        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      run: firebase deploy --only hosting
