@@ -17,11 +17,6 @@ jobs:
       uses: subosito/flutter-action@v2
       with:
         flutter-version: "3.24.2"
-
-    - name: Ensure required directories exist
-      run: |
-        mkdir -p ./web
-        mkdir -p ./lib
         
     - name: Generate `web.json` file
       run: echo "$WEB_JSON" > ./web/web.json
