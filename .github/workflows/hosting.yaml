@@ -28,6 +28,9 @@ jobs:
       env:
         FIREBASE_OPTIONS_DART: ${{ secrets.FIREBASE_OPTIONS_DART }}
         
+    - name: Getting Latest Packages 
+      run: flutter pub outdated
+      
     - name: Build Flutter web project
       run: flutter build web
 
