@@ -31,6 +31,9 @@ jobs:
     - name: Getting Latest Packages 
       run: flutter pub outdated
       
+    - name: upgrading Packages
+      run: flutter pub upgrade
+      
     - name: Build Flutter web project
       run: flutter build web
 
