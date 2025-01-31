@@ -9,7 +9,7 @@ class PasswordField extends StatelessWidget {
   final String title;
   final String hint;
   final Function(String)? onFieldSubmitted;
-  PasswordField(
+  const PasswordField(
       {super.key,
       required this.passwordTextController,
       required this.title,

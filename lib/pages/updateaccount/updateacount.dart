@@ -3,14 +3,16 @@ import 'package:flutter/widgets.dart';
 import 'package:senior/const/app_colors.dart';
 import 'package:senior/pages/widgets/forms/updateaccountform.dart';
 import 'package:senior/utils/responsive_widget.dart';
-import '../../../../../const/bottomnavbar.dart';
-import '../../../../../const/navbaritems.dart';
-import '../../../../../const/topnavbar.dart';
-import '../../../../../functions/updateaccount/fetchdata.dart';
-import '../../../../../providers/patient_navbar.dart';
-import '../../../../widgets/static/patientappbar.dart';
+import '../../const/bottomnavbar.dart';
+import '../../const/navbaritems.dart';
+import '../../const/topnavbar.dart';
+import '../../functions/updateaccount/fetchdata.dart';
+import '../../providers/patient_navbar.dart';
+import '../widgets/static/patientappbar.dart';
 
 class UpdateAccountPage extends StatefulWidget {
+  const UpdateAccountPage({super.key});
+
   @override
   _UpdateAccountPageState createState() => _UpdateAccountPageState();
 }

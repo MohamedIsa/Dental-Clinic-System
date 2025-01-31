@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:senior/const/app_colors.dart';
-import '../../../../../functions/booking/bookappointment.dart';
-import '../../../../../utils/data.dart';
-import '../../../../../utils/popups.dart';
-import '../../../../widgets/selections/date_selection.dart';
-import '../../../../widgets/selections/dentist_selection.dart';
-import '../../../../widgets/selections/time_selection.dart';
-import '../../../../widgets/selections/bookingdetails.dart';
+import '../../functions/booking/bookappointment.dart';
+import '../../utils/data.dart';
+import '../../utils/popups.dart';
+import '../widgets/selections/date_selection.dart';
+import '../widgets/selections/dentist_selection.dart';
+import '../widgets/selections/time_selection.dart';
+import '../widgets/selections/bookingdetails.dart';
 
 class BookingPage extends StatefulWidget {
   const BookingPage({super.key});

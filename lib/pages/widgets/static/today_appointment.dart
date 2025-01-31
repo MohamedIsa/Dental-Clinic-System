@@ -3,7 +3,7 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TodayAppointmentPage extends StatelessWidget {
-  const TodayAppointmentPage({Key? key});
+  const TodayAppointmentPage({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,17 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:senior/functions/chat/seenmessage.dart';
-import '../../../../functions/chat/getmessage.dart';
-import '../../../../functions/chat/sendmessage.dart';
-import '../../../../models/chat.dart';
-import '../../../../utils/data.dart';
+import '../../functions/chat/getmessage.dart';
+import '../../functions/chat/sendmessage.dart';
+import '../../models/chat.dart';
+import '../../utils/data.dart';
 import 'messagebubble.dart';
 
 class ChatPage extends StatefulWidget {
   final String patientId;
   final String senderId;
 
-  ChatPage({required this.senderId, required this.patientId});
+  const ChatPage({super.key, required this.senderId, required this.patientId});
 
   @override
   _ChatPageState createState() => _ChatPageState();

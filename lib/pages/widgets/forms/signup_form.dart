@@ -42,7 +42,7 @@ class _SignUpFormState extends State<SignUpForm> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    void _submitForm() {
+    void submitForm() {
       check(
           context: context,
           fullNameTextController: _FullnameTextController,
@@ -57,19 +57,19 @@ class _SignUpFormState extends State<SignUpForm> {
       children: [
         EmailField(
           emailTextController: _emailTextController,
-          onFieldSubmitted: (_) => _submitForm(),
+          onFieldSubmitted: (_) => submitForm(),
         ),
         const SizedBox(height: 20),
         NameField(
           fullNameTextController: _FullnameTextController,
           width: width,
-          onFieldSubmitted: (_) => _submitForm(),
+          onFieldSubmitted: (_) => submitForm(),
         ),
         const SizedBox(height: 20),
         Phonefield(
           phoneTextController: _PhoneTextController,
           width: width,
-          onFieldSubmitted: (_) => _submitForm(),
+          onFieldSubmitted: (_) => submitForm(),
         ),
         const SizedBox(height: 20),
         GenderField(
@@ -85,31 +85,31 @@ class _SignUpFormState extends State<SignUpForm> {
         DobField(
           dobTextController: _dobTextController,
           width: width,
-          onFieldSubmitted: (_) => _submitForm(),
+          onFieldSubmitted: (_) => submitForm(),
         ),
         const SizedBox(height: 20),
         CprField(
           cprTextController: _cprTextController,
           width: width,
-          onFieldSubmitted: (_) => _submitForm(),
+          onFieldSubmitted: (_) => submitForm(),
         ),
         const SizedBox(height: 20),
         PasswordField(
           passwordTextController: _passwordTextController,
           title: 'Password',
           hint: 'Enter your password',
-          onFieldSubmitted: (_) => _submitForm(),
+          onFieldSubmitted: (_) => submitForm(),
         ),
         const SizedBox(height: 20),
         PasswordField(
           passwordTextController: _confirmPasswordTextController,
           title: 'Confirm Password',
           hint: 'Re-enter your password',
-          onFieldSubmitted: (_) => _submitForm(),
+          onFieldSubmitted: (_) => submitForm(),
         ),
         const SizedBox(height: 20),
         SizedBox(height: height * 0.03),
-        ButtonForm(width: width, title: 'Sign Up', onTap: () => _submitForm()),
+        ButtonForm(width: width, title: 'Sign Up', onTap: () => submitForm()),
       ],
     );
   }

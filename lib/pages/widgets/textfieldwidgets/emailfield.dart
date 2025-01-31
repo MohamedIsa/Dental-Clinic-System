@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../const/app_colors.dart';
 import '../../../const/app_styles.dart';
 import '../../../functions/auth/exists.dart';
@@ -9,7 +8,7 @@ import '../../../utils/reuseable_widget.dart';
 class EmailField extends StatelessWidget {
   final TextEditingController emailTextController;
   final Function(String)? onFieldSubmitted;
-  EmailField(
+  const EmailField(
       {super.key, required this.emailTextController, this.onFieldSubmitted});
 
   @override

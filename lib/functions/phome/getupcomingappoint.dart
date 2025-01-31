@@ -66,9 +66,9 @@ Future<String> getUpcomingAppointment(String patientId) async {
                 : 'Unknown';
             String formattedTime;
             if (appointmentTime < 12) {
-              formattedTime = '${appointmentTime}:00 AM';
+              formattedTime = '$appointmentTime:00 AM';
             } else if (appointmentTime == 12) {
-              formattedTime = '${appointmentTime}:00 PM';
+              formattedTime = '$appointmentTime:00 PM';
             } else {
               formattedTime = '${appointmentTime - 12}:00 PM';
             }

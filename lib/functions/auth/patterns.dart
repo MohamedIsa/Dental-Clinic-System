@@ -4,7 +4,7 @@ class Patterns {
   static final String passwordPattern =
       r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$';
   static final String specialCharacters =
-      '[!@#\$%^&*()_+\-=\\[\\]{};:\'",.<>?/\\\\|`~]';
+      '[!@#\$%^&*()_+-=\\[\\]{};:\'",.<>?/\\\\|`~]';
   static final String upperCase = r'^(?=.*[A-Z])';
   static final String lowerCase = r'^(?=.*[a-z])';
   static final String dobPattern =

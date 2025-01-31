@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:senior/models/users.dart';
 import 'package:senior/utils/data.dart';
 
-import '../../../chat/chatpage.dart';
+import '../chat/chatpage.dart';
 
 class PatientDetailsPage extends StatelessWidget {
   final Users patient;
 
-  const PatientDetailsPage({required this.patient});
+  const PatientDetailsPage({super.key, required this.patient});
 
   @override
   Widget build(BuildContext context) {

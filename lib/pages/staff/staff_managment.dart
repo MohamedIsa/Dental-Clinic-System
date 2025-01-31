@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:senior/const/app_colors.dart';
-import '../../../../../../functions/createfaculty/deleteuser.dart';
-import '../../../../../../functions/createfaculty/hideuser.dart';
-import '../../../../../../functions/createfaculty/restoreuser.dart';
-import '../../../../../../functions/createfaculty/userrole.dart';
+import '../../functions/createfaculty/deleteuser.dart';
+import '../../functions/createfaculty/hideuser.dart';
+import '../../functions/createfaculty/restoreuser.dart';
+import '../../functions/createfaculty/userrole.dart';
 
 class StaffManagementScreen extends StatefulWidget {
   const StaffManagementScreen({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'pages/patients/patient_list.dart';
-import 'pages/staff/addstaff/add.dart';
+import 'package:senior/pages/patients/patient_list.dart';
+import 'package:senior/pages/staff/addstaff/add.dart';
 import 'pages/auth/AuthScreen.dart';
 import 'pages/settings/settings_screen.dart';
 import 'pages/booking/bookingpage.dart';
@@ -16,7 +16,7 @@ import 'const/loading.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'package:url_strategy/url_strategy.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +28,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   runApp(
     MultiProvider(
       providers: [

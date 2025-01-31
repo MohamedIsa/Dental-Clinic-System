@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DentistsDataTable extends StatefulWidget {
-  const DentistsDataTable({Key? key, this.uid});
+  const DentistsDataTable({super.key, this.uid});
 
   final String? uid;
 

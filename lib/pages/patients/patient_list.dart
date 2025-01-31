@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:senior/pages/home/auth/facultyhome/patients/patientdetails/patientdetailspage.dart';
-import '../../../../../functions/chat/seenmessage.dart';
-import '../../../../../models/users.dart';
-import '../../../../widgets/static/facilitypage.dart';
+import 'package:senior/pages/patientdetails/patientdetailspage.dart';
+import '../../functions/chat/seenmessage.dart';
+import '../../models/users.dart';
+import '../widgets/static/facilitypage.dart';
 import 'patientbutton.dart';
 
 class PatientScreen extends StatefulWidget {

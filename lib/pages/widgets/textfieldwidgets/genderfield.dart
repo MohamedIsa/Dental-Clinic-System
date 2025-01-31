@@ -7,7 +7,7 @@ class GenderField extends StatefulWidget {
   final String selectedGender;
   final ValueChanged<String> onGenderChanged;
 
-  GenderField({
+  const GenderField({
     super.key,
     required this.width,
     required this.selectedGender,

@@ -27,6 +27,7 @@ dependencies:
   provider: ^6.1.2
   flex_color_picker: ^3.6.0
   http: ^1.2.2
+  url_strategy: ^0.3.0
 
 dev_dependencies:
   flutter_test:

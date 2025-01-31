@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:senior/pages/widgets/static/facilitypage.dart';
-import '../../../../functions/dashboard/getrole.dart';
-import '../../../widgets/static/dentistlist.dart';
-import '../../../widgets/static/today_appointment.dart';
+import '../../functions/dashboard/getrole.dart';
+import '../widgets/static/dentistlist.dart';
+import '../widgets/static/today_appointment.dart';
 
 class Dashboard extends StatefulWidget {
-  Dashboard({super.key});
+  const Dashboard({super.key});
 
   @override
   _DashboardState createState() => _DashboardState();

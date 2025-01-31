@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:senior/const/app_colors.dart';
-import 'package:senior/pages/home/auth/facultyhome/settings/staff/staff_managment.dart';
-import 'dentistcolor/dentist_color.dart';
-import 'editmessage/edit_message.dart';
+import 'package:senior/pages/staff/staff_managment.dart';
+import '../dentistcolor/dentist_color.dart';
+import '../editmessage/edit_message.dart';
 import 'settings_page.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
