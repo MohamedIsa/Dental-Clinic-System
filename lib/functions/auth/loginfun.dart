@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:senior/utils/popups.dart';
 import 'checkuserloggedin.dart';
 
@@ -62,16 +63,16 @@ Future<void> navigateBasedOnUserRole(
       if (snapshot.exists && snapshot['role'] == role) {
         switch (role) {
           case 'patient':
-            Navigator.pushReplacementNamed(context, '/patientDashboard');
+            context.go('/patientDashboard');
             return;
           case 'admin':
-            Navigator.pushReplacementNamed(context, '/dashboard');
+            context.go('/dashboard');
             return;
           case 'receptionist':
-            Navigator.pushReplacementNamed(context, '/receptionist');
+            context.go('/receptionist');
             return;
           case 'dentist':
-            Navigator.pushReplacementNamed(context, '/dentist');
+            context.go('/dentist');
             return;
         }
       }

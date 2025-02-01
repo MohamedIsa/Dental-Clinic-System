@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:senior/utils/popups.dart';
 import '../../firebase_options.dart';
@@ -41,7 +42,9 @@ Future<void> signInWithGoogle(BuildContext context) async {
       await handleFirebaseSignIn(context, credential);
     }
   } catch (e) {
-    if (context.mounted) {
+    if (e is FirebaseAuthException &&
+        e.code != 'popup_closed' &&
+        e.message != 'Popup window closed') {
       showErrorDialog(context, 'An unexpected error occurred: ${e.toString()}');
     }
   }
@@ -60,9 +63,9 @@ Future<void> handleFirebaseSignIn(
 
       if (context.mounted) {
         if (userExists) {
-          Navigator.pushReplacementNamed(context, '/patientDashboard');
+          context.go('/patientDashboard');
         } else {
-          Navigator.pushReplacementNamed(context, '/complete');
+          context.go('/complete');
         }
       }
     } else {
@@ -85,9 +88,7 @@ Future<void> handleFirebaseSignIn(
       default:
         errorMessage = 'An unknown error occurred';
     }
-    if (context.mounted) {
-      showErrorDialog(context, errorMessage);
-    }
+    showErrorDialog(context, errorMessage);
   }
 }
 
@@ -106,7 +107,6 @@ Future<bool> checkIfUserExistsInDatabase(String uid) async {
           userData.containsKey('phone') &&
           userData.containsKey('gender');
     }
-
     return false;
   } catch (e) {
     return false;

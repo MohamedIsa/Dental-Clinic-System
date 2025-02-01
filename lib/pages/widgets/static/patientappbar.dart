@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../const/app_colors.dart';
 import '../../../utils/responsive_widget.dart';
@@ -55,7 +56,7 @@ class _PatientAppBarState extends State<PatientAppBar> {
           icon: Icon(Icons.logout),
           onPressed: () async {
             await FirebaseAuth.instance.signOut();
-            Navigator.pushNamed(context, '/home');
+            context.go('/home');
           },
         ),
       ],

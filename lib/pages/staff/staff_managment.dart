@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:go_router/go_router.dart';
 import 'package:senior/const/app_colors.dart';
 import '../../functions/createfaculty/deleteuser.dart';
 import '../../functions/createfaculty/hideuser.dart';
@@ -123,7 +124,7 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () => Navigator.pushNamed(context, "/addstaff"),
+        onPressed: () => context.go('/addstaff'),
       ),
     );
   }

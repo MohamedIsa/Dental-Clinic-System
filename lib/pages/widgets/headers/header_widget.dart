@@ -1,10 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class HeaderWidget extends StatelessWidget implements PreferredSizeWidget {
   final String userName;
 
-  const HeaderWidget({Key? key, required this.userName}) : super(key: key);
+  const HeaderWidget({super.key, required this.userName});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -34,7 +35,7 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget {
               ),
               onPressed: () {
                 FirebaseAuth.instance.signOut();
-                Navigator.pushReplacementNamed(context, '/home');
+                context.go('/home');
               },
             ),
           ),

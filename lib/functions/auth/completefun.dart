@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../utils/popups.dart';
 import '../../models/users.dart';
 
@@ -43,7 +44,7 @@ Future<void> completeRegistration(
         'dob': user.dob,
       });
 
-      Navigator.pushReplacementNamed(context, '/patientDashboard');
+      context.go('/patientDashboard');
     }
   } catch (e) {
     if (context.mounted) {

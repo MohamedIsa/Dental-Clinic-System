@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:senior/utils/popups.dart';
 
@@ -61,7 +62,7 @@ Future<void> bookAppointment(BuildContext context, String dentistId,
         });
       });
 
-      Navigator.pushReplacementNamed(context, '/patientDashboard');
+      context.go('/patientDashboard');
       showMessagealert(context, 'Appointment booked successfully.');
     } else {
       showErrorDialog(context, 'This time slot is already booked.');

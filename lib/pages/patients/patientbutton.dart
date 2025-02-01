@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class PatientButtonsWidget extends StatefulWidget {
   final VoidCallback? onAddPatientPressed;
@@ -27,7 +28,7 @@ class _PatientButtonsWidgetState extends State<PatientButtonsWidget> {
               ButtonTheme(
                 minWidth: 120,
                 child: ElevatedButton(
-                  onPressed: () => Navigator.pushNamed(context, '/addpatient'),
+                  onPressed: () => context.go('/addpatient'),
                   child: const Text('Add New Patient'),
                 ),
               ),

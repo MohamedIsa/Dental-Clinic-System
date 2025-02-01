@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 void toggleForm(BuildContext context) {
-  Navigator.pushNamed(context, '/signup');
+  context.go('/signup');
 }
 
 void toggleSignIn(BuildContext context) {
-  Navigator.pushNamed(context, '/login');
+  context.go('/login');
 }
 
 void toggleForgotPassword(BuildContext context) {
-  Navigator.pushNamed(context, '/forgot');
+  context.go('/forgot');
 }
 
 void toggleCompleteDetails(BuildContext context) {
-  Navigator.pushNamed(context, '/complete');
+  context.go('/complete');
 }

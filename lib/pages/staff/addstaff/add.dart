@@ -122,9 +122,7 @@ class _AddState extends State<Add> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                    onPressed: () => Navigator.pop(context),
                     child: Text('Cancel'),
                   ),
                   const SizedBox(width: 20),

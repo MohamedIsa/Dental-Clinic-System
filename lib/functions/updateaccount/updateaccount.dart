@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 void updateUser(
     BuildContext context,
@@ -18,7 +19,7 @@ void updateUser(
       'gender': selectedGender.text,
       'phone': phoneController.text,
     });
-    Navigator.pushNamed(context, '/patientDashboard');
+    context.go('/patientDashboard');
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text('User updated successfully'),
     ));

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../const/messagecontainer.dart';
 import '../../../functions/home/welcomemessage.dart';
 
@@ -28,7 +29,7 @@ class WelcomeSection extends StatelessWidget {
       {required double fontSize, required double borderRadius}) {
     return ElevatedButton(
       onPressed: () {
-        Navigator.pushNamed(context, "/signup");
+        context.go('/signup');
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color.fromARGB(255, 249, 179, 1),

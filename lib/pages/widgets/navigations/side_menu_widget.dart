@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/side_menu_provider.dart';
 
@@ -88,7 +89,7 @@ class _SideMenuWidgetState extends State<SideMenuWidget> {
     if (currentRoute != routeName) {
       Provider.of<SideMenuProvider>(context, listen: false)
           .updateIndex(index, routeName);
-      Navigator.pushNamed(context, routeName);
+      context.go(routeName);
     }
   }
 }
