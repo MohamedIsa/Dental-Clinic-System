@@ -93,24 +93,24 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          IconButton(
-                            icon: Icon(Icons.hide_image,
-                                color: AppColors.whiteColor),
+                          TextButton(
                             onPressed: () =>
                                 hideUser(context, userDoc.id, role),
+                            child: Text('Hide',
+                                style: TextStyle(color: AppColors.whiteColor)),
                           ),
                           SizedBox(width: 20),
-                          IconButton(
-                            icon: Icon(Icons.restore,
-                                color: AppColors.whiteColor),
+                          TextButton(
                             onPressed: () => restoreUser(context, userDoc.id),
+                            child: Text('Restore',
+                                style: TextStyle(color: AppColors.whiteColor)),
                           ),
                           SizedBox(width: 20),
-                          IconButton(
-                            icon:
-                                Icon(Icons.delete, color: AppColors.whiteColor),
+                          TextButton(
                             onPressed: () =>
                                 deleteUser(context, userDoc.id, role),
+                            child: Text('Delete',
+                                style: TextStyle(color: AppColors.whiteColor)),
                           ),
                         ],
                       ),

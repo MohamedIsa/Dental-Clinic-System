@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:senior/const/app_colors.dart';
 import '../../../functions/booking/gettime.dart';
 
-class TimeSelection extends StatelessWidget {
+class TimeSelection extends StatefulWidget {
   final String selectedDentistId;
   final DateTime selectedDate;
   final Function(int) onTimeSelected;
@@ -17,9 +17,17 @@ class TimeSelection extends StatelessWidget {
   });
 
   @override
+  _TimeSelectionState createState() => _TimeSelectionState();
+}
+
+class _TimeSelectionState extends State<TimeSelection> {
+  int? selectedHour;
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<int>>(
-      future: getAvailableTimeSlots(context, selectedDentistId, selectedDate),
+      future: getAvailableTimeSlots(
+          context, widget.selectedDentistId, widget.selectedDate),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -75,6 +83,7 @@ class TimeSelection extends StatelessWidget {
   Widget _buildTimeCard(BuildContext context, int hour) {
     final isPM = hour >= 12;
     final displayHour = hour > 12 ? hour - 12 : hour;
+    final isSelected = selectedHour == hour;
 
     return Card(
       elevation: 2,
@@ -82,16 +91,26 @@ class TimeSelection extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: InkWell(
-        onTap: () => onTimeSelected(hour),
+        onTap: () {
+          setState(() {
+            selectedHour = hour;
+          });
+          widget.onTimeSelected(hour);
+        },
         borderRadius: BorderRadius.circular(12),
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             gradient: LinearGradient(
-              colors: [
-                AppColors.primaryColor.withOpacity(0.7),
-                AppColors.primaryColor.withOpacity(0.9),
-              ],
+              colors: isSelected
+                  ? [
+                      Colors.green.withOpacity(0.7),
+                      Colors.green.withOpacity(0.9)
+                    ]
+                  : [
+                      AppColors.primaryColor.withOpacity(0.7),
+                      AppColors.primaryColor.withOpacity(0.9)
+                    ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -102,7 +121,9 @@ class TimeSelection extends StatelessWidget {
               Text(
                 '$displayHour:00',
                 style: TextStyle(
-                  color: Theme.of(context).primaryColor,
+                  color: isSelected
+                      ? Colors.white
+                      : Theme.of(context).primaryColor,
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),
@@ -111,7 +132,9 @@ class TimeSelection extends StatelessWidget {
               Text(
                 isPM ? 'PM' : 'AM',
                 style: TextStyle(
-                  color: Theme.of(context).primaryColor.withOpacity(0.7),
+                  color: isSelected
+                      ? Colors.white
+                      : Theme.of(context).primaryColor.withOpacity(0.7),
                   fontWeight: FontWeight.w500,
                   fontSize: 14,
                 ),
@@ -164,7 +187,7 @@ class TimeSelection extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'No available time slots for ${DateFormat('MMMM d').format(selectedDate)}',
+              'No available time slots for ${DateFormat('MMMM d').format(widget.selectedDate)}',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.grey[600],

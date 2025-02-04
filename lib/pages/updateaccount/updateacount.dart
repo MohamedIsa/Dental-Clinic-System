@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:senior/const/app_colors.dart';
-import 'package:senior/pages/widgets/forms/updateaccountform.dart';
-import 'package:senior/utils/responsive_widget.dart';
+import '../../const/app_colors.dart';
 import '../../const/bottomnavbar.dart';
 import '../../const/navbaritems.dart';
 import '../../const/topnavbar.dart';
 import '../../functions/updateaccount/fetchdata.dart';
 import '../../providers/patient_navbar.dart';
+import '../../utils/data.dart';
+import '../../utils/responsive_widget.dart';
+import '../widgets/forms/updateaccountform.dart';
 import '../widgets/static/patientappbar.dart';
 
 class UpdateAccountPage extends StatefulWidget {
@@ -27,6 +28,7 @@ class _UpdateAccountPageState extends State<UpdateAccountPage> {
   @override
   void initState() {
     super.initState();
+    Data.checkUserAndNavigate(context);
     _nameController = TextEditingController();
     _cprController = TextEditingController();
     _dobController = TextEditingController();

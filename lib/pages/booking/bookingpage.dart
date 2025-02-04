@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:senior/const/app_colors.dart';
+import '../../const/app_colors.dart';
 import '../../functions/booking/bookappointment.dart';
 import '../../utils/data.dart';
 import '../../utils/popups.dart';
@@ -53,11 +53,17 @@ class _BookingPageState extends State<BookingPage> {
         selectedDentistId,
         selectedDate,
         selectedHour,
-        Data.currentID,
+        Data.currentID!,
       );
     } else {
       showErrorDialog(context, 'Please select a dentist, date, and time.');
     }
+  }
+
+  @override
+  void initState() {
+    Data.checkUserAndNavigate(context);
+    super.initState();
   }
 
   @override
@@ -71,9 +77,7 @@ class _BookingPageState extends State<BookingPage> {
         title: const Text(
           'Book Appointment',
           style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
-          ),
+              fontWeight: FontWeight.bold, fontSize: 24, color: Colors.white),
         ),
         backgroundColor: AppColors.primaryColor,
       ),
@@ -205,38 +209,6 @@ class _BookingPageState extends State<BookingPage> {
           ),
         ],
       ),
-    );
-  }
-}
-
-class SelectionContainer extends StatelessWidget {
-  final Widget child;
-  final Color? backgroundColor;
-
-  const SelectionContainer({
-    super.key,
-    required this.child,
-    this.backgroundColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24.0),
-      decoration: BoxDecoration(
-        color:
-            backgroundColor ?? Theme.of(context).primaryColor.withOpacity(0.9),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: child,
     );
   }
 }

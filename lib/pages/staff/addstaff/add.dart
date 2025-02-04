@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:senior/const/app_colors.dart';
-import 'package:senior/functions/auth/checkauthfield.dart';
-import 'package:senior/pages/widgets/textfieldwidgets/cprfield.dart';
-import 'package:senior/pages/widgets/textfieldwidgets/dobfield.dart';
-import 'package:senior/pages/widgets/textfieldwidgets/emailfield.dart';
-import 'package:senior/pages/widgets/textfieldwidgets/fullnamefield.dart';
-import 'package:senior/pages/widgets/textfieldwidgets/genderfield.dart';
-import 'package:senior/pages/widgets/textfieldwidgets/phonefield.dart';
-import 'package:senior/pages/widgets/textfieldwidgets/rolefield.dart';
+import '../../../const/app_colors.dart';
+import '../../../functions/auth/checkauthfield.dart';
+import '../../../utils/data.dart';
+import '../../widgets/textfieldwidgets/cprfield.dart';
+import '../../widgets/textfieldwidgets/dobfield.dart';
+import '../../widgets/textfieldwidgets/emailfield.dart';
+import '../../widgets/textfieldwidgets/fullnamefield.dart';
+import '../../widgets/textfieldwidgets/genderfield.dart';
+import '../../widgets/textfieldwidgets/phonefield.dart';
+import '../../widgets/textfieldwidgets/rolefield.dart';
 
 class Add extends StatefulWidget {
   final String title;
@@ -28,6 +29,12 @@ class _AddState extends State<Add> {
   final TextEditingController phoneTextController = TextEditingController();
   String selectedGender = 'Male';
   String selectedRole = 'Admin';
+
+  @override
+  void initState() {
+    Data.checkUserAndNavigate(context);
+    super.initState();
+  }
 
   @override
   void dispose() {

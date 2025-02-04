@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:senior/pages/widgets/static/facilitypage.dart';
 import '../../functions/dashboard/getrole.dart';
+import '../../utils/data.dart';
 import '../widgets/static/dentistlist.dart';
 import '../widgets/static/today_appointment.dart';
 
@@ -17,6 +18,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
+    Data.checkUserAndNavigate(context);
     getRole().then((roles) {
       if (roles != null) {
         setState(() {

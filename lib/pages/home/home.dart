@@ -63,14 +63,12 @@ class _HomePageState extends State<HomePage> {
   Widget _buildAppBarTitle(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return Row(
-      children: <Widget>[
-        Image.asset(
-          'assets/images/logoh.png',
-          width: width * 0.08,
-          height: height * 0.08,
-        ),
-      ],
+    return ListTile(
+      leading: Image.asset(
+        'assets/images/logoh.png',
+        width: width * 0.08,
+        height: height * 0.08,
+      ),
     );
   }
 }

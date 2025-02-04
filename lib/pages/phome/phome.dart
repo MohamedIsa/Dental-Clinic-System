@@ -28,13 +28,15 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   void initState() {
     super.initState();
+    Data.checkUserAndNavigate(context);
     final patientId = Data.currentID;
     isSeenFuture = isMessageSeen(
-        FirebaseFirestore.instance
-            .collection('users')
-            .doc(patientId)
-            .collection('chat'),
-        Data.currentID);
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(patientId)
+          .collection('chat'),
+      Data.currentID!,
+    );
   }
 
   @override

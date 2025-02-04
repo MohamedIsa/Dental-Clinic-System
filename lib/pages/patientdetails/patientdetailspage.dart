@@ -33,7 +33,7 @@ class PatientDetailsPage extends StatelessWidget {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
             return ChatPage(
               patientId: patient.id,
-              senderId: Data.currentID,
+              senderId: Data.currentID!,
             );
           }));
         },

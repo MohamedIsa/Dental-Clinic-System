@@ -14,31 +14,8 @@ Future<void> login(
   String password = passwordTextController.text;
 
   try {
-    List<String> errors = [];
-    if (email.isEmpty) {
-      errors.add('Please enter your email');
-    }
-    if (password.isEmpty) {
-      errors.add('Please enter your password');
-    }
-    if (errors.isNotEmpty) {
-      showErrorDialog(context, errors.join('\n'));
-      return;
-    }
-
-    QuerySnapshot emailCheck = await FirebaseFirestore.instance
-        .collection('users')
-        .where('email', isEqualTo: email)
-        .get();
-
-    if (emailCheck.docs.isEmpty) {
-      showErrorDialog(context, 'Email not found. Please check and try again.');
-      return;
-    }
-
     UserCredential userCredential = await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password);
-
     if (userCredential.user != null) {
       await persistUser(userCredential.user!.uid);
       await navigateBasedOnUserRole(context, userCredential.user!.uid);

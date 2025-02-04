@@ -12,6 +12,7 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailTextController = TextEditingController();
   final TextEditingController _passwordTextController = TextEditingController();
 
@@ -19,8 +20,17 @@ class _LoginFormState extends State<LoginForm> {
   void dispose() {
     _emailTextController.dispose();
     _passwordTextController.dispose();
-
     super.dispose();
+  }
+
+  void _submitForm() {
+    if (_formKey.currentState!.validate()) {
+      login(
+        context,
+        _emailTextController,
+        _passwordTextController,
+      );
+    }
   }
 
   @override
@@ -28,29 +38,31 @@ class _LoginFormState extends State<LoginForm> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        EmailField(
-          emailTextController: _emailTextController,
-          onFieldSubmitted: (_) =>
-              login(context, _emailTextController, _passwordTextController),
-        ),
-        const SizedBox(height: 20),
-        PasswordField(
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          EmailField(
+            emailTextController: _emailTextController,
+            onFieldSubmitted: (_) => _submitForm(),
+          ),
+          const SizedBox(height: 20),
+          PasswordField(
             passwordTextController: _passwordTextController,
             title: 'Password',
             hint: 'Enter password',
-            onFieldSubmitted: (_) =>
-                login(context, _emailTextController, _passwordTextController)),
-        SizedBox(height: height * 0.03),
-        ButtonForm(
+            onFieldSubmitted: (_) => _submitForm(),
+            isSignUp: false,
+          ),
+          SizedBox(height: height * 0.03),
+          ButtonForm(
             width: width,
             title: 'Sign In',
-            onTap: () {
-              login(context, _emailTextController, _passwordTextController);
-            }),
-      ],
+            onTap: _submitForm,
+          ),
+        ],
+      ),
     );
   }
 }

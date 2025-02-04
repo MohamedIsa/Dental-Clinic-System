@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../const/app_colors.dart';
 import '../../../functions/auth/googlesignin.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class Googlelog extends StatelessWidget {
   const Googlelog({super.key});
@@ -18,7 +19,10 @@ class Googlelog extends StatelessWidget {
         ),
         child: IconButton(
           onPressed: () => signInWithGoogle(context),
-          icon: const Icon(Icons.g_mobiledata, color: AppColors.whiteColor),
+          icon: SvgPicture.asset(
+            'assets/svgs/g_logo.svg',
+            color: Colors.white,
+          ),
         ),
       ),
     );

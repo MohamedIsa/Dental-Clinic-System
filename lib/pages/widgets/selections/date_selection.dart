@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:senior/const/app_colors.dart';
 import 'package:senior/functions/booking/getdates.dart';
 
-class DateSelection extends StatelessWidget {
+class DateSelection extends StatefulWidget {
   final String selectedDentistId;
   final Function(DateTime) onDateSelected;
 
@@ -15,9 +15,16 @@ class DateSelection extends StatelessWidget {
   });
 
   @override
+  _DateSelectionState createState() => _DateSelectionState();
+}
+
+class _DateSelectionState extends State<DateSelection> {
+  DateTime? selectedDate;
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<DateTime>>(
-      future: getAvailableDates(context, selectedDentistId),
+      future: getAvailableDates(context, widget.selectedDentistId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -28,7 +35,16 @@ class DateSelection extends StatelessWidget {
           );
         }
 
-        final dates = snapshot.data ?? [];
+        final dates = snapshot.data?.where((date) {
+              final now = DateTime.now();
+              return date.isAfter(now) ||
+                  (date.year == now.year &&
+                      date.month == now.month &&
+                      date.day == now.day &&
+                      now.hour < 17);
+            }).toList() ??
+            [];
+
         if (dates.isEmpty) {
           return _buildEmptyWidget();
         }
@@ -43,14 +59,14 @@ class DateSelection extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: crossAxisCount,
-                childAspectRatio: 5.0, // Adjusted aspect ratio
+                childAspectRatio: 5.0,
                 crossAxisSpacing: 4,
                 mainAxisSpacing: 8,
               ),
               itemCount: dates.length,
               itemBuilder: (context, index) {
                 final date = dates[index];
-                return _buildDateCard(context, date);
+                return _buildDateCard(context, date, index);
               },
             );
           },
@@ -59,23 +75,39 @@ class DateSelection extends StatelessWidget {
     );
   }
 
-  Widget _buildDateCard(BuildContext context, DateTime date) {
+  Widget _buildDateCard(BuildContext context, DateTime date, int index) {
+    final isSelected = selectedDate != null &&
+        selectedDate!.year == date.year &&
+        selectedDate!.month == date.month &&
+        selectedDate!.day == date.day;
+
     return Card(
+      key: ValueKey(index),
       elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
       child: InkWell(
-        onTap: () => onDateSelected(date),
+        onTap: () {
+          setState(() {
+            selectedDate = date;
+          });
+          widget.onDateSelected(date);
+        },
         borderRadius: BorderRadius.circular(12),
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             gradient: LinearGradient(
-              colors: [
-                AppColors.primaryColor,
-                AppColors.primaryColor.withOpacity(0.8)
-              ],
+              colors: isSelected
+                  ? [
+                      Colors.green.withOpacity(0.7),
+                      Colors.green.withOpacity(0.9)
+                    ]
+                  : [
+                      AppColors.primaryColor,
+                      AppColors.primaryColor.withOpacity(0.8)
+                    ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -88,14 +120,17 @@ class DateSelection extends StatelessWidget {
                 Text(
                   DateFormat('EEE').format(date),
                   style: TextStyle(
-                    color: Theme.of(context).primaryColor,
+                    color: isSelected
+                        ? Colors.white
+                        : Theme.of(context).primaryColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(width: 8),
                 Text(
                   DateFormat('MMM d').format(date),
-                  style: const TextStyle(
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : Colors.black,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),

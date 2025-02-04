@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import '../../models/appointments.dart';
-import 'package:logger/logger.dart';
 
 Future<String> getUpcomingAppointment(String patientId) async {
   final DateTime now = DateTime.now();
-  final Logger logger = Logger();
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   try {
@@ -15,8 +13,6 @@ Future<String> getUpcomingAppointment(String patientId) async {
         .collection('appointments')
         .get();
 
-    logger.i('Number of appointments fetched: ${snapshot.docs.length}');
-
     if (snapshot.docs.isEmpty) {
       return 'No upcoming appointments';
     }
@@ -25,12 +21,8 @@ Future<String> getUpcomingAppointment(String patientId) async {
     DateTime? earliestDateTime;
 
     for (QueryDocumentSnapshot doc in snapshot.docs) {
-      logger.d('Raw appointment data: ${doc.data()}');
-
       final Appointments appointment = Appointments.fromFirestore(
           doc.id, doc.data() as Map<String, dynamic>);
-      logger.d(
-          'Parsed Appointment: Date - ${appointment.date}, Time - ${appointment.time}');
 
       try {
         final DateTime appointmentDate =
@@ -44,12 +36,7 @@ Future<String> getUpcomingAppointment(String patientId) async {
           appointmentTime,
         );
 
-        logger.d('Parsed DateTime: $appointmentDateTime');
-        logger.d('Current DateTime: $now');
-
         if (appointmentDateTime.isAfter(now)) {
-          logger.i('Upcoming appointment found: $appointmentDateTime');
-
           if (earliestDateTime == null ||
               appointmentDateTime.isBefore(earliestDateTime)) {
             earliestDateTime = appointmentDateTime;
@@ -76,10 +63,7 @@ Future<String> getUpcomingAppointment(String patientId) async {
                 'Upcoming Appointment\nDate: ${appointment.date}\nTime: $formattedTime\nDentist: $dentistName';
           }
         }
-      } catch (e) {
-        logger.e(
-            'Error parsing appointment: ${appointment.date}, ${appointment.time} - $e');
-      }
+      } catch (e) {}
     }
 
     if (upcomingAppointment != null) {
@@ -88,7 +72,6 @@ Future<String> getUpcomingAppointment(String patientId) async {
       return 'No upcoming appointments';
     }
   } catch (e) {
-    logger.e('Error: $e');
-    return 'Error retrieving appointments';
+    return 'Error fetching upcoming appointment';
   }
 }
