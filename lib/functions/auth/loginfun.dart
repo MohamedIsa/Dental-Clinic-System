@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:senior/utils/popups.dart';
 import 'checkuserloggedin.dart';
+import 'exists.dart';
 
 Future<void> login(
   BuildContext context,
@@ -14,6 +15,10 @@ Future<void> login(
   String password = passwordTextController.text;
 
   try {
+    if (await emailExists(email) == false) {
+      showErrorDialog(context, 'Email not found. Please check and try again.');
+      return;
+    }
     UserCredential userCredential = await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password);
     if (userCredential.user != null) {
@@ -21,7 +26,7 @@ Future<void> login(
       await navigateBasedOnUserRole(context, userCredential.user!.uid);
     }
   } catch (e) {
-    showErrorDialog(context, 'Invalid password. Please try again.');
+    showErrorDialog(context, '${e.toString()})');
   }
 }
 

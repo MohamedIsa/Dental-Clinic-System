@@ -8,7 +8,7 @@ Future<void> sendMessage(TextEditingController controller,
   final text = controller.text.trim();
   if (text.isEmpty) return;
 
-  final newMessage = Chat(
+  Chat newMessage = Chat(
     senderId: Data.currentID!,
     text: text,
     timestamp: DateTime.now(),

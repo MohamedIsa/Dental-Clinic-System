@@ -4,12 +4,14 @@ import 'const/loading.dart';
 import 'pages/auth/AuthScreen.dart';
 import 'pages/booking/bookingpage.dart';
 import 'pages/facultyhome/dashboard.dart';
+import 'pages/history/appointments_history.dart';
 import 'pages/home/home.dart';
 import 'pages/patients/patient_list.dart';
 import 'pages/phome/phome.dart';
 import 'pages/settings/settings_screen.dart';
 import 'pages/staff/addstaff/add.dart';
 import 'pages/updateaccount/updateacount.dart';
+import 'pages/updateappointment/update_appointments.dart';
 
 class Routes extends StatelessWidget {
   Routes({super.key});
@@ -93,7 +95,18 @@ class Routes extends StatelessWidget {
       ),
       GoRoute(
         path: '/booking',
-        builder: (context, state) => BookingPage(),
+        builder: (context, state) => BookingPage(
+          title: 'Book Appointment',
+          buttonText: 'Confirm Booking',
+        ),
+      ),
+      GoRoute(
+        path: '/updateappointment',
+        builder: (context, state) => UpdateAppointments(),
+      ),
+      GoRoute(
+        path: '/appointmenthistory',
+        builder: (context, state) => AppointmentsHistory(),
       ),
     ],
   );

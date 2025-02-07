@@ -37,7 +37,7 @@ class ReusableTextField extends StatefulWidget {
 
 class ReusableTextFieldState extends State<ReusableTextField> {
   late bool _obscureText;
-  bool hasError = false; // Track error state
+  bool hasError = false;
 
   @override
   void initState() {
@@ -45,12 +45,10 @@ class ReusableTextFieldState extends State<ReusableTextField> {
     _obscureText = widget.isPassword;
   }
 
-  // Handle text changes to reset error state
   void _handleChange(String value) {
     final error = widget.validator(value);
     setState(() {
-      hasError = error != null &&
-          error.isNotEmpty; // Set error state based on validation
+      hasError = error != null && error.isNotEmpty;
     });
     widget.onChanged?.call(value);
   }
@@ -161,7 +159,6 @@ class ReusableTextFieldState extends State<ReusableTextField> {
                 });
                 return error;
               },
-              onChanged: _handleChange,
             )),
       ],
     );

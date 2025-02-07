@@ -43,7 +43,9 @@ class _TimeSelectionState extends State<TimeSelection> {
         }
 
         final timeSlots = snapshot.data ?? [];
-        if (timeSlots.isEmpty) {
+        final filteredTimeSlots = _filterTimeSlots(timeSlots);
+
+        if (filteredTimeSlots.isEmpty) {
           return _buildEmptyWidget();
         }
 
@@ -61,15 +63,23 @@ class _TimeSelectionState extends State<TimeSelection> {
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
               ),
-              itemCount: timeSlots.length,
+              itemCount: filteredTimeSlots.length,
               itemBuilder: (context, index) {
-                return _buildTimeCard(context, timeSlots[index]);
+                return _buildTimeCard(context, filteredTimeSlots[index]);
               },
             );
           },
         );
       },
     );
+  }
+
+  List<int> _filterTimeSlots(List<int> timeSlots) {
+    if (widget.selectedDate.isAtSameMomentAs(DateTime.now())) {
+      final currentHour = DateTime.now().hour;
+      return timeSlots.where((hour) => hour > currentHour).toList();
+    }
+    return timeSlots;
   }
 
   int _calculateCrossAxisCount(double width) {

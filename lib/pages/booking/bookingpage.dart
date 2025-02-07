@@ -9,7 +9,9 @@ import '../widgets/selections/time_selection.dart';
 import '../widgets/selections/bookingdetails.dart';
 
 class BookingPage extends StatefulWidget {
-  const BookingPage({super.key});
+  final String title;
+  final String buttonText;
+  const BookingPage({super.key, required this.title, required this.buttonText});
 
   @override
   State<BookingPage> createState() => _BookingPageState();
@@ -74,9 +76,9 @@ class _BookingPageState extends State<BookingPage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: const Text(
-          'Book Appointment',
-          style: TextStyle(
+        title: Text(
+          widget.title,
+          style: const TextStyle(
               fontWeight: FontWeight.bold, fontSize: 24, color: Colors.white),
         ),
         backgroundColor: AppColors.primaryColor,
@@ -157,9 +159,9 @@ class _BookingPageState extends State<BookingPage> {
                       ),
                       elevation: 4,
                     ),
-                    child: const Text(
-                      'Confirm Booking',
-                      style: TextStyle(
+                    child: Text(
+                      widget.buttonText,
+                      style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.white),

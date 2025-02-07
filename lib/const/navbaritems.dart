@@ -26,7 +26,7 @@ final List<NavBarItem> navItemsp = [
   NavBarItem(
     icon: Icons.edit,
     label: 'Edit Appointment',
-    route: '/editappointment',
+    route: '/updateappointment',
   ),
 ];
 
