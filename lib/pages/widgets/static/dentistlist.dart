@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../const/app_colors.dart';
 
 class DentistsDataTable extends StatefulWidget {
   const DentistsDataTable({super.key, this.uid});
-
   final String? uid;
 
   @override
@@ -13,113 +13,138 @@ class DentistsDataTable extends StatefulWidget {
 class _DentistsDataTableState extends State<DentistsDataTable> {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('dentist').snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        }
-
-        final dentistDocs = snapshot.data?.docs;
-
-        if (dentistDocs == null || dentistDocs.isEmpty) {
-          return Text('No dentist data found');
-        }
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Colors.blue.shade50, Colors.white],
+        ),
+      ),
+      child: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('users')
+            .where('role', isEqualTo: 'dentist')
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(
               child: Text(
-                'Table of Dentists',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
+                'Error: ${snapshot.error}',
+                style: TextStyle(color: Colors.red.shade400),
+              ),
+            );
+          }
+
+          final dentistDocs = snapshot.data?.docs;
+
+          if (dentistDocs == null || dentistDocs.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.person_off, size: 48, color: Colors.grey),
+                  SizedBox(height: 16),
+                  Text(
+                    'No dentists found',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.grey.shade700,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(
+                  'Dentists Directory',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryColor,
+                  ),
                 ),
               ),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: DataTable(
-                  columns: [
-                    DataColumn(label: Text('Full Name')),
-                    DataColumn(label: Text('Email')),
-                  ],
-                  rows: dentistDocs.map((dentistDoc) {
-                    final dentistUID = dentistDoc[
-                        'uid']; // Assuming UID is stored in the dentist document
-                    return DataRow(cells: [
-                      DataCell(
-                        FutureBuilder<DocumentSnapshot>(
-                          future: FirebaseFirestore.instance
-                              .collection('user')
-                              .doc(dentistUID)
-                              .get(),
-                          builder: (context, userSnapshot) {
-                            if (userSnapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return CircularProgressIndicator();
-                            } else if (userSnapshot.hasError) {
-                              return Text('Error: ${userSnapshot.error}');
-                            }
+              Expanded(
+                child: ListView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: dentistDocs.length,
+                  itemBuilder: (context, index) {
+                    final dentistUID = dentistDocs[index]['id'];
+                    return FutureBuilder<DocumentSnapshot>(
+                      future: FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(dentistUID)
+                          .get(),
+                      builder: (context, userSnapshot) {
+                        if (!userSnapshot.hasData) {
+                          return SizedBox.shrink();
+                        }
 
-                            // Explicitly cast userData to Map<String, dynamic>
-                            final Map<String, dynamic>? userData =
-                                userSnapshot.data?.data()
-                                    as Map<String, dynamic>?;
+                        final userData =
+                            userSnapshot.data!.data() as Map<String, dynamic>?;
+                        if (userData == null) return SizedBox.shrink();
 
-                            if (userData == null) {
-                              return Text('User data not found');
-                            }
+                        final fullName = userData['name'] ?? 'No Name';
+                        final email = userData['email'] ?? 'No Email';
 
-                            // Access fields using null-aware operators
-                            final fullName =
-                                userData['FullName'] ?? 'No Full Name';
-                            return Text(fullName);
-                          },
-                        ),
-                      ),
-                      DataCell(
-                        FutureBuilder<DocumentSnapshot>(
-                          future: FirebaseFirestore.instance
-                              .collection('user')
-                              .doc(dentistUID)
-                              .get(),
-                          builder: (context, userSnapshot) {
-                            if (userSnapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return CircularProgressIndicator();
-                            } else if (userSnapshot.hasError) {
-                              return Text('Error: ${userSnapshot.error}');
-                            }
-
-                            // Explicitly cast userData to Map<String, dynamic>
-                            final Map<String, dynamic>? userData =
-                                userSnapshot.data?.data()
-                                    as Map<String, dynamic>?;
-
-                            if (userData == null) {
-                              return Text('User data not found');
-                            }
-
-                            // Access fields using null-aware operators
-                            final email = userData['Email'] ?? 'No Email';
-                            return Text(email);
-                          },
-                        ),
-                      ),
-                    ]);
-                  }).toList(),
+                        return Card(
+                          margin: EdgeInsets.only(bottom: 16),
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: ListTile(
+                            contentPadding: EdgeInsets.all(16),
+                            leading: CircleAvatar(
+                              backgroundColor: AppColors.primaryColor,
+                              child: Text(
+                                fullName[0].toUpperCase(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            title: Text(
+                              'Dr. $fullName',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: Colors.blue.shade900,
+                              ),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(height: 4),
+                                Text(
+                                  email,
+                                  style: TextStyle(
+                                    color: Colors.grey.shade600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
                 ),
               ),
-            ),
-          ],
-        );
-      },
+            ],
+          );
+        },
+      ),
     );
   }
 }

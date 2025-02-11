@@ -51,10 +51,10 @@ Future<void> navigateBasedOnUserRole(
             context.go('/dashboard');
             return;
           case 'receptionist':
-            context.go('/receptionist');
+            context.go('/dashboard');
             return;
           case 'dentist':
-            context.go('/dentist');
+            context.go('/dashboard');
             return;
         }
       }

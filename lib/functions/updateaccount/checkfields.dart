@@ -8,7 +8,7 @@ void checkFields(
     TextEditingController nameController,
     TextEditingController cprController,
     TextEditingController dobController,
-    TextEditingController selectedGender,
+    String selectedGender,
     TextEditingController phoneController) {
   if (cprExists(cprController.text) as bool == true) {
     showErrorDialog(context, 'CPR already exists');

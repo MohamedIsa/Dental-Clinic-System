@@ -76,7 +76,7 @@ class _SignUpFormState extends State<SignUpForm> {
             onFieldSubmitted: (_) => submitForm(),
           ),
           const SizedBox(height: 20),
-          Phonefield(
+          PhoneField(
             phoneTextController: _phoneTextController,
             width: width,
             onFieldSubmitted: (_) => submitForm(),

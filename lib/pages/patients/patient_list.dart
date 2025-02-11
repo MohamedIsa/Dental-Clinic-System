@@ -1,22 +1,36 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:senior/pages/patientdetails/patientdetailspage.dart';
 import '../../functions/chat/seenmessage.dart';
 import '../../models/users.dart';
-import '../widgets/static/facilitypage.dart';
-import 'patientbutton.dart';
+import '../../utils/data.dart';
 
-class PatientScreen extends StatefulWidget {
-  const PatientScreen({super.key});
+class PatientListPage extends StatefulWidget {
+  const PatientListPage({super.key});
 
   @override
-  State<PatientScreen> createState() => _PatientScreenState();
+  State<PatientListPage> createState() => _PatientListPageState();
 }
 
-class _PatientScreenState extends State<PatientScreen> {
+class _PatientListPageState extends State<PatientListPage> {
   final TextEditingController searchTextController = TextEditingController();
   final ValueNotifier<String> searchQueryNotifier = ValueNotifier('');
   late CollectionReference chatCollection;
+  String? currentRole;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCurrentRole();
+  }
+
+  Future<void> _loadCurrentRole() async {
+    final role = await Data.currentRole();
+    setState(() {
+      currentRole = role;
+    });
+  }
 
   @override
   void dispose() {
@@ -25,25 +39,102 @@ class _PatientScreenState extends State<PatientScreen> {
     super.dispose();
   }
 
+  Users _createUserFromDoc(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return Users(
+      id: doc.id,
+      name: data['name'] ?? '',
+      cpr: data['cpr'] ?? '',
+      dob: data['dob'] ?? '',
+      role: data['role'] ?? '',
+      gender: data['gender'] ?? '',
+      phone: data['phone'] ?? '',
+      email: data['email'] ?? '',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return FacilityPage(
-      widget: Expanded(
-        flex: 9,
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.blue.shade100, Colors.white],
+            stops: [0.0, 0.8],
+          ),
+        ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 30),
-              child: PatientButtonsWidget(),
+            Container(
+              padding: EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade500,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 4,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Patients",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  if (currentRole == 'admin' || currentRole == 'receptionist')
+                    ElevatedButton.icon(
+                      icon: Icon(Icons.add, color: Colors.blue.shade500),
+                      label: Text(
+                        'Add New',
+                        style: TextStyle(color: Colors.blue.shade500),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        elevation: 2,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      onPressed: () => context.go('/addpatient'),
+                    ),
+                ],
+              ),
             ),
             Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(16.0),
               child: TextField(
                 controller: searchTextController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Search by CPR',
-                  border: OutlineInputBorder(),
-                  suffixIcon: Icon(Icons.search),
+                  labelStyle: TextStyle(color: Colors.blue.shade700),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.blue.shade200),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.blue.shade200),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide:
+                        BorderSide(color: Colors.blue.shade500, width: 2),
+                  ),
+                  suffixIcon: Icon(Icons.search, color: Colors.blue.shade400),
+                  filled: true,
+                  fillColor: Colors.white,
                 ),
                 keyboardType: TextInputType.number,
                 maxLength: 9,
@@ -66,23 +157,21 @@ class _PatientScreenState extends State<PatientScreen> {
                         return const Center(child: CircularProgressIndicator());
                       }
                       if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                        print('No documents found: ${snapshot.data?.docs}');
                         return const Center(
                             child: Text('No patient data found.'));
                       }
 
-                      // Filter patients based on the search query
                       var filteredDocs = snapshot.data!.docs.where((doc) {
+                        final data = doc.data() as Map<String, dynamic>;
                         String name =
-                            (doc['name'] ?? '').toString().toLowerCase();
+                            (data['name'] ?? '').toString().toLowerCase();
                         String cpr =
-                            (doc['cpr'] ?? '').toString().toLowerCase();
+                            (data['cpr'] ?? '').toString().toLowerCase();
                         return name.contains(searchQuery.toLowerCase()) ||
                             cpr.contains(searchQuery.toLowerCase());
                       }).toList();
 
                       if (filteredDocs.isEmpty) {
-                        print('No matching documents found: $searchQuery');
                         return const Center(
                             child: Text('No matching patients found.'));
                       }
@@ -90,25 +179,22 @@ class _PatientScreenState extends State<PatientScreen> {
                       return FutureBuilder<List<Map<String, dynamic>>>(
                         future: Future.wait(filteredDocs.map((doc) async {
                           try {
-                            // Use `doc.id` instead of `doc['id']` to get the document ID
-                            var chatCollection = FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(doc.id)
-                                .collection('chat');
+                            CollectionReference chatCollection =
+                                FirebaseFirestore.instance
+                                    .collection('users')
+                                    .doc(doc.id)
+                                    .collection('chat');
 
                             bool isSeen =
                                 await isMessageSeen(chatCollection, 'patient');
                             return {
-                              'doc': doc,
+                              'doc': _createUserFromDoc(doc),
                               'isSeen': isSeen,
                             };
                           } catch (e) {
-                            print(
-                                'Error in isMessageSeen for doc ${doc.id}: $e');
                             return {
-                              'doc': doc,
-                              'isSeen':
-                                  false, // Default to false if an error occurs
+                              'doc': _createUserFromDoc(doc),
+                              'isSeen': false,
                             };
                           }
                         }).toList()),
@@ -121,57 +207,105 @@ class _PatientScreenState extends State<PatientScreen> {
 
                           if (!futureSnapshot.hasData ||
                               futureSnapshot.data!.isEmpty) {
-                            print(
-                                'No data in FutureBuilder: ${futureSnapshot.data}');
                             return const Center(
                                 child: Text('No matching patients found.'));
                           }
 
                           var sortedDocs = futureSnapshot.data!;
-
-                          // Sort documents based on the `isSeen` status
                           sortedDocs.sort((a, b) {
-                            if (a['isSeen'] && !b['isSeen']) {
-                              return -1;
-                            } else if (!a['isSeen'] && b['isSeen']) {
-                              return 1;
-                            }
+                            if (a['isSeen'] && !b['isSeen']) return -1;
+                            if (!a['isSeen'] && b['isSeen']) return 1;
                             return 0;
                           });
 
                           return ListView.builder(
+                            padding: EdgeInsets.all(16),
                             itemCount: sortedDocs.length,
                             itemBuilder: (context, index) {
-                              var patientDoc = sortedDocs[index]['doc'];
-                              var patientData = Users(
-                                id: patientDoc.id, // Use `doc.id` for the ID
-                                name: patientDoc['name'] ?? '',
-                                cpr: patientDoc['cpr'] ?? '',
-                                dob: patientDoc['dob'] ?? '',
-                                role: patientDoc['role'] ?? '',
-                                gender: patientDoc['gender'] ?? '',
-                                phone: patientDoc['phone'] ?? '',
-                                email: patientDoc['email'] ?? '',
-                              );
+                              final Users patientData =
+                                  sortedDocs[index]['doc'];
 
-                              return ListTile(
-                                title: Text(patientData.name),
-                                subtitle: Text(patientData.cpr),
-                                trailing: sortedDocs[index]['isSeen']
-                                    ? const Icon(Icons.circle,
-                                        color: Colors.red)
-                                    : const Icon(Icons.circle,
-                                        color: Colors.green),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => PatientDetailsPage(
-                                        patient: patientData,
+                              return Card(
+                                elevation: 3,
+                                margin: EdgeInsets.only(bottom: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            PatientDetailsPage(
+                                          patient: patientData,
+                                        ),
                                       ),
+                                    );
+                                  },
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Container(
+                                    padding: EdgeInsets.all(16),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        CircleAvatar(
+                                          radius: 30,
+                                          backgroundColor: Colors.blue.shade100,
+                                          child: Text(
+                                            patientData.name[0].toUpperCase(),
+                                            style: TextStyle(
+                                              fontSize: 24,
+                                              color: Colors.blue.shade700,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(width: 16),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                patientData.name,
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.blue.shade700,
+                                                ),
+                                              ),
+                                              SizedBox(height: 4),
+                                              Text(
+                                                'CPR: ${patientData.cpr}',
+                                                style: TextStyle(
+                                                  color: Colors.grey.shade600,
+                                                ),
+                                              ),
+                                              Text(
+                                                'Phone: ${patientData.phone}',
+                                                style: TextStyle(
+                                                  color: Colors.grey.shade600,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        if (currentRole == 'dentist' ||
+                                            currentRole == 'patient')
+                                          Container()
+                                        else
+                                          Icon(
+                                            Icons.circle,
+                                            color: sortedDocs[index]['isSeen']
+                                                ? Colors.red
+                                                : Colors.green,
+                                          ),
+                                      ],
                                     ),
-                                  );
-                                },
+                                  ),
+                                ),
                               );
                             },
                           );
@@ -181,11 +315,10 @@ class _PatientScreenState extends State<PatientScreen> {
                   );
                 },
               ),
-            )
+            ),
           ],
         ),
       ),
-      widget1: null,
     );
   }
 }

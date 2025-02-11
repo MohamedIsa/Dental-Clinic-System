@@ -8,7 +8,6 @@ Future<bool> emailExists(String email) async {
         .get();
     return querySnapshot.docs.isNotEmpty;
   } catch (e) {
-    print('Firestore query error: $e');
     return false;
   }
 }
@@ -21,7 +20,6 @@ Future<bool> cprExists(String cpr) async {
         .get();
     return querySnapshot.docs.isNotEmpty;
   } catch (e) {
-    print('Firestore query error: $e');
     return false;
   }
 }

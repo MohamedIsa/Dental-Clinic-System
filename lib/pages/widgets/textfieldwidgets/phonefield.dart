@@ -3,11 +3,11 @@ import '../../../const/app_colors.dart';
 import '../../../functions/auth/patterns.dart';
 import '../../../utils/reuseabletextfield.dart';
 
-class Phonefield extends StatelessWidget {
+class PhoneField extends StatelessWidget {
   final TextEditingController phoneTextController;
   final double width;
   final Function(String)? onFieldSubmitted;
-  const Phonefield(
+  const PhoneField(
       {super.key,
       required this.phoneTextController,
       required this.width,

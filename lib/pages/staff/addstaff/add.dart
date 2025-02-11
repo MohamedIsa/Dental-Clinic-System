@@ -1,4 +1,6 @@
+import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../const/app_colors.dart';
 import '../../../functions/auth/checkauthfield.dart';
 import '../../../utils/data.dart';
@@ -14,8 +16,12 @@ class Add extends StatefulWidget {
   final String title;
   final bool show;
   final String add;
-  const Add(
-      {super.key, required this.title, required this.show, required this.add});
+  const Add({
+    super.key,
+    required this.title,
+    required this.show,
+    required this.add,
+  });
 
   @override
   State<Add> createState() => _AddState();
@@ -29,6 +35,7 @@ class _AddState extends State<Add> {
   final TextEditingController phoneTextController = TextEditingController();
   String selectedGender = 'Male';
   String selectedRole = 'Admin';
+  Color selectedColor = Colors.blue;
 
   @override
   void initState() {
@@ -49,109 +56,205 @@ class _AddState extends State<Add> {
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
+    final isSmallScreen = width < 600;
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(138, 202, 200, 200),
       appBar: AppBar(
+        title: Text(widget.title,
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            )),
         backgroundColor: AppColors.primaryColor,
-        title: Text(
-          widget.title,
-          style: TextStyle(
-            color: AppColors.whiteColor,
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [AppColors.primaryColor, Colors.white],
           ),
         ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Container(
-          padding: EdgeInsets.all(30),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              EmailField(
-                emailTextController: emailTextController,
-                onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
-              ),
-              const SizedBox(height: 20),
-              NameField(
-                fullNameTextController: fullNameTextController,
-                width: width,
-                onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
-              ),
-              const SizedBox(height: 20),
-              CprField(
-                cprTextController: cprTextController,
-                width: width,
-                onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
-              ),
-              const SizedBox(height: 20),
-              Phonefield(
-                phoneTextController: phoneTextController,
-                width: width,
-                onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
-              ),
-              const SizedBox(height: 20),
-              DobField(
-                dobTextController: dobTextController,
-                width: width,
-                onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
-              ),
-              const SizedBox(height: 20),
-              GenderField(
-                width: width,
-                selectedGender: selectedGender,
-                onGenderChanged: (newGender) {
-                  setState(() {
-                    selectedGender = newGender;
-                  });
-                },
-              ),
-              const SizedBox(height: 20),
-              widget.show
-                  ? Column(
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isSmallScreen ? 16.0 : width * 0.1,
+                  vertical: 24.0,
+                ),
+                child: Card(
+                  elevation: 8,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.all(24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        RoleField(
-                          selectedRole: selectedRole,
+                        Text(
+                          widget.show
+                              ? 'Staff Information'
+                              : 'User Information',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primaryColor,
+                          ),
+                        ),
+                        SizedBox(height: 24),
+                        EmailField(
+                          emailTextController: emailTextController,
+                          onFieldSubmitted: (_) =>
+                              FocusScope.of(context).nextFocus(),
+                        ),
+                        SizedBox(height: 16),
+                        NameField(
+                          fullNameTextController: fullNameTextController,
                           width: width,
-                          onRoleChanged: (newRole) {
+                          onFieldSubmitted: (_) =>
+                              FocusScope.of(context).nextFocus(),
+                        ),
+                        SizedBox(height: 16),
+                        CprField(
+                          cprTextController: cprTextController,
+                          width: width,
+                          onFieldSubmitted: (_) =>
+                              FocusScope.of(context).nextFocus(),
+                        ),
+                        SizedBox(height: 16),
+                        PhoneField(
+                          phoneTextController: phoneTextController,
+                          width: width,
+                          onFieldSubmitted: (_) =>
+                              FocusScope.of(context).nextFocus(),
+                        ),
+                        SizedBox(height: 16),
+                        DobField(
+                          dobTextController: dobTextController,
+                          width: width,
+                          onFieldSubmitted: (_) =>
+                              FocusScope.of(context).nextFocus(),
+                        ),
+                        SizedBox(height: 16),
+                        GenderField(
+                          width: width,
+                          selectedGender: selectedGender,
+                          onGenderChanged: (newGender) {
                             setState(() {
-                              selectedRole = newRole;
+                              selectedGender = newGender;
                             });
                           },
                         ),
-                        const SizedBox(height: 20),
+                        if (widget.show) ...[
+                          SizedBox(height: 24),
+                          Text(
+                            'Role Settings',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primaryColor,
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          RoleField(
+                            selectedRole: selectedRole,
+                            width: width,
+                            onRoleChanged: (newRole) {
+                              setState(() {
+                                selectedRole = newRole;
+                              });
+                            },
+                          ),
+                          if (selectedRole == 'Dentist') ...[
+                            SizedBox(height: 24),
+                            Text(
+                              'Dentist Color',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primaryColor,
+                              ),
+                            ),
+                            SizedBox(height: 16),
+                            ColorPicker(
+                              borderColor: AppColors.primaryColor,
+                              onColorChanged: (color) {
+                                setState(() {
+                                  selectedColor = color;
+                                });
+                              },
+                            ),
+                          ],
+                        ],
+                        SizedBox(height: 32),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            OutlinedButton(
+                              onPressed: () => context.go('/dashboard'),
+                              style: OutlinedButton.styleFrom(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 32,
+                                  vertical: 16,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                side: BorderSide(color: AppColors.primaryColor),
+                              ),
+                              child: Text(
+                                'Cancel',
+                                style: TextStyle(
+                                  color: AppColors.primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 16),
+                            ElevatedButton(
+                              onPressed: () {
+                                check(
+                                  context: context,
+                                  emailTextController: emailTextController,
+                                  fullNameTextController:
+                                      fullNameTextController,
+                                  cprTextController: cprTextController,
+                                  phoneTextController: phoneTextController,
+                                  selectedGender: selectedGender,
+                                  dobTextController: dobTextController,
+                                  selectedrole: selectedRole,
+                                  selectedColor: selectedColor,
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primaryColor,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 32,
+                                  vertical: 16,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                              child: Text(
+                                widget.add,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
-                    )
-                  : Container(),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text('Cancel'),
+                    ),
                   ),
-                  const SizedBox(width: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      check(
-                        context: context,
-                        emailTextController: emailTextController,
-                        fullNameTextController: fullNameTextController,
-                        cprTextController: cprTextController,
-                        phoneTextController: phoneTextController,
-                        selectedGender: selectedGender,
-                        dobTextController: dobTextController,
-                        selectedrole: selectedRole,
-                      );
-                    },
-                    child: Text(widget.add),
-                  ),
-                ],
-              )
-            ],
-          ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

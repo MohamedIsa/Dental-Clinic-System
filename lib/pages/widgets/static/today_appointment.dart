@@ -1,142 +1,188 @@
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../const/app_colors.dart';
+import 'package:logger/logger.dart';
 
 class TodayAppointmentPage extends StatelessWidget {
-  const TodayAppointmentPage({super.key});
+  TodayAppointmentPage({super.key});
+
+  final logger = Logger();
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Text(
-                'Today Appointments',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-              ),
-            ),
-            Expanded(
-              child: SizedBox(
-                height: 400,
-                child: StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection('appointments')
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                    if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    }
-                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                      return Center(child: Text('No appointments available'));
-                    }
-                    return FutureBuilder<List<Appointment>>(
-                      future: _fetchAppointments(snapshot.data!.docs),
-                      builder: (context, appointmentSnapshot) {
-                        if (appointmentSnapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Center(child: CircularProgressIndicator());
-                        }
-                        if (appointmentSnapshot.hasError) {
-                          return Center(
-                              child:
-                                  Text('Error: ${appointmentSnapshot.error}'));
-                        }
-                        return SfCalendar(
-                          view: CalendarView.timelineDay,
-                          timeSlotViewSettings: TimeSlotViewSettings(
-                            startHour: 9,
-                            endHour: 18,
-                            timeIntervalWidth: 100,
-                          ),
-                          dataSource:
-                              AppointmentDataSource(appointmentSnapshot.data!),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-            ),
-          ],
+    logger.d('Building TodayAppointmentPage');
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Colors.blue.shade50, Colors.white],
         ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(24),
+            child: Text(
+              'Today\'s Schedule',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: AppColors.primaryColor,
+              ),
+            ),
+          ),
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('appointments')
+                  .where('date',
+                      isEqualTo: DateTime.now().toString().split(' ')[0])
+                  .orderBy('time', descending: false)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  logger.d('Loading appointments...');
+                  return Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  logger.e('Error loading appointments: ${snapshot.error}');
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.error_outline, size: 48, color: Colors.red),
+                        SizedBox(height: 16),
+                        Text(
+                          'Error loading appointments',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  logger.i('No appointments found for today');
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.event_available,
+                          size: 48,
+                          color: Colors.grey,
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          'No appointments scheduled for today',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                logger.i(
+                    'Found ${snapshot.data!.docs.length} appointments for today');
+                return Card(
+                  margin: EdgeInsets.all(16),
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: ListView.separated(
+                    padding: EdgeInsets.all(16),
+                    itemCount: snapshot.data!.docs.length,
+                    separatorBuilder: (context, index) => Divider(height: 1),
+                    itemBuilder: (context, index) {
+                      final appointment = snapshot.data!.docs[index];
+                      final data = appointment.data() as Map<String, dynamic>;
+                      logger.d(
+                          'Building appointment item for time: ${data['time']}');
+                      return FutureBuilder<DocumentSnapshot>(
+                        future: FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(data['patientId'])
+                            .get(),
+                        builder: (context, patientSnapshot) {
+                          if (!patientSnapshot.hasData) {
+                            logger.w(
+                                'Patient data not found for ID: ${data['patientId']}');
+                            return SizedBox.shrink();
+                          }
+
+                          final patientData = patientSnapshot.data!.data()
+                              as Map<String, dynamic>;
+                          final patientName =
+                              patientData['name'] ?? 'Unknown Patient';
+                          logger.d('Retrieved patient name: $patientName');
+
+                          return Container(
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            child: ListTile(
+                              contentPadding:
+                                  EdgeInsets.symmetric(horizontal: 16),
+                              leading: CircleAvatar(
+                                backgroundColor: AppColors.primaryColor,
+                                child: Text(
+                                  '${data['time']}',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              title: Text(
+                                patientName,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: Colors.blue.shade900,
+                                ),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(height: 4),
+                                  Text(
+                                    'Time: ${data['time']}:00',
+                                    style: TextStyle(
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              trailing: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue.shade50,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  'Scheduled',
+                                  style: TextStyle(
+                                    color: AppColors.primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
-
-  Future<List<Appointment>> _fetchAppointments(
-      List<DocumentSnapshot> documents) async {
-    final List<Appointment> appointments = [];
-
-    for (final doc in documents) {
-      final data = doc.data() as Map<String, dynamic>;
-      final DateTime date = data['date'].toDate();
-      final int hour = data['hour'];
-      final DateTime startTime =
-          DateTime(date.year, date.month, date.day, hour);
-      DateTime endTime;
-
-      if (data['end'] != null) {
-        endTime = DateTime(date.year, date.month, date.day, data['end']);
-      } else {
-        endTime = startTime.add(Duration(minutes: 30));
-      }
-
-      final String patientId = data['uid'];
-      final String dentistId = data['did'];
-      QuerySnapshot dentistDoc = await FirebaseFirestore.instance
-          .collection('dentist')
-          .where('uid', isEqualTo: dentistId)
-          .get();
-      String dentistColor =
-          (dentistDoc.docs[0].data() as Map<String, dynamic>)['color'];
-      String hexColor = decimalToHex(int.parse(dentistColor));
-      final String patientName = await getPatientName(patientId);
-
-      appointments.add(Appointment(
-        startTime: startTime,
-        endTime: endTime,
-        subject: 'Appointment with $patientName',
-        color: Color(int.parse(hexColor)),
-      ));
-    }
-    return appointments;
-  }
-
-  Future<String> getPatientName(String patientId) async {
-    String patientName = 'Unknown Patient';
-    final patientDoc = await FirebaseFirestore.instance
-        .collection('user')
-        .doc(patientId)
-        .get();
-    if (patientDoc.exists) {
-      final fullName = patientDoc.data()?['FullName'] ?? 'Unknown Patient';
-      final List<String> names = fullName.split(' ');
-      if (names.length >= 2) {
-        patientName = '${names[0]} ${names[1]}';
-      } else {
-        patientName = fullName;
-      }
-    }
-    return patientName;
-  }
-}
-
-class AppointmentDataSource extends CalendarDataSource {
-  AppointmentDataSource(List<Appointment> source) {
-    appointments = source;
-  }
-}
-
-String decimalToHex(int decimalColor) {
-  return '0x${decimalColor.toRadixString(16).toUpperCase()}';
 }

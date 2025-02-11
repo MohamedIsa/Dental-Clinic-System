@@ -20,7 +20,6 @@ class SideMenuData {
       final userDoc =
           await FirebaseFirestore.instance.collection('users').doc(uid).get();
       final role = userDoc['role'];
-
       if (role == 'admin' || role == 'receptionist' || role == 'dentist') {
         menu.add(MenuModel(
             icon: Icons.home, title: 'Dashboard', routeName: '/dashboard'));
@@ -29,7 +28,9 @@ class SideMenuData {
         menu.add(MenuModel(
             icon: Icons.calendar_month,
             title: 'Appointment',
-            routeName: '/appointment'));
+            routeName: '/facilitybooking'));
+      }
+      if (role == 'admin' || role == 'receptionist' || role == 'dentist') {
         menu.add(MenuModel(
             icon: Icons.group, title: 'Patients', routeName: '/patients'));
       }
@@ -42,10 +43,6 @@ class SideMenuData {
             icon: Icons.receipt_rounded,
             title: 'Treatment Records',
             routeName: '/treatment'));
-        menu.add(MenuModel(
-            icon: Icons.group,
-            title: 'Patients',
-            routeName: '/patients_dentist'));
       }
     } catch (e) {
       showErrorDialog(context, "An error occurred: $e");

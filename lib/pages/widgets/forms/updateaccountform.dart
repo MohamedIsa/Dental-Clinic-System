@@ -11,16 +11,18 @@ class UpdateAccountForm extends StatefulWidget {
   final TextEditingController nameController;
   final TextEditingController cprController;
   final TextEditingController dobController;
-  final TextEditingController selectedGender;
+  final String selectedGender;
   final TextEditingController phoneController;
+  final ValueChanged<String> onGenderChanged;
 
-  const UpdateAccountForm({
+  UpdateAccountForm({
     super.key,
     required this.nameController,
     required this.cprController,
     required this.dobController,
     required this.selectedGender,
     required this.phoneController,
+    required this.onGenderChanged,
   });
 
   @override
@@ -28,9 +30,28 @@ class UpdateAccountForm extends StatefulWidget {
 }
 
 class _UpdateAccountFormState extends State<UpdateAccountForm> {
+  late String _selectedGender;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedGender = widget.selectedGender;
+  }
+
+  @override
+  void didUpdateWidget(UpdateAccountForm oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.selectedGender != widget.selectedGender) {
+      setState(() {
+        _selectedGender = widget.selectedGender;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+
     return Column(
       children: [
         Card(
@@ -59,12 +80,16 @@ class _UpdateAccountFormState extends State<UpdateAccountForm> {
                 const SizedBox(height: 24),
                 GenderField(
                   width: width,
-                  selectedGender: widget.selectedGender.text,
-                  onGenderChanged: (newGender) =>
-                      widget.selectedGender.text = newGender,
+                  selectedGender: _selectedGender,
+                  onGenderChanged: (newGender) {
+                    setState(() {
+                      _selectedGender = newGender;
+                    });
+                    widget.onGenderChanged(newGender);
+                  },
                 ),
                 const SizedBox(height: 24),
-                Phonefield(
+                PhoneField(
                   phoneTextController: widget.phoneController,
                   width: width,
                 ),
@@ -74,7 +99,6 @@ class _UpdateAccountFormState extends State<UpdateAccountForm> {
         ),
         const SizedBox(height: 32),
         SizedBox(
-          width: width,
           height: 56,
           child: ElevatedButton(
             onPressed: () => checkFields(
@@ -82,7 +106,7 @@ class _UpdateAccountFormState extends State<UpdateAccountForm> {
               widget.nameController,
               widget.cprController,
               widget.dobController,
-              widget.selectedGender,
+              _selectedGender, // Use the updated selected gender
               widget.phoneController,
             ),
             style: ElevatedButton.styleFrom(

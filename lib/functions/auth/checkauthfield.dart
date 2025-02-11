@@ -15,6 +15,7 @@ Future<void> check({
   required String selectedGender,
   required TextEditingController dobTextController,
   String? selectedrole,
+  Color? selectedColor,
 }) async {
   if (uid == null && selectedrole == null) {
     await signUp(
@@ -40,6 +41,7 @@ Future<void> check({
       selectedGender,
       dobTextController,
       selectedrole,
+      selectedColor,
     );
   }
 

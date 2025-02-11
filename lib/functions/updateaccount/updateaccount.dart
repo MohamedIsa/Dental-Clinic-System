@@ -8,7 +8,7 @@ void updateUser(
     TextEditingController nameController,
     TextEditingController cprController,
     TextEditingController dobController,
-    TextEditingController selectedGender,
+    String selectedGender,
     TextEditingController phoneController) async {
   User? user = FirebaseAuth.instance.currentUser;
   if (user != null) {
@@ -16,7 +16,7 @@ void updateUser(
       'name': nameController.text,
       'cpr': cprController.text,
       'dob': dobController.text,
-      'gender': selectedGender.text,
+      'gender': selectedGender,
       'phone': phoneController.text,
     });
     context.go('/patientDashboard');

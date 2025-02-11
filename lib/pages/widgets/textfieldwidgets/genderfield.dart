@@ -19,6 +19,24 @@ class GenderField extends StatefulWidget {
 }
 
 class _GenderFieldState extends State<GenderField> {
+  late String _selectedGender;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedGender = widget.selectedGender;
+  }
+
+  @override
+  void didUpdateWidget(GenderField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.selectedGender != widget.selectedGender) {
+      setState(() {
+        _selectedGender = widget.selectedGender;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -36,9 +54,12 @@ class _GenderFieldState extends State<GenderField> {
           children: [
             Radio(
               value: 'Male',
-              groupValue: widget.selectedGender,
+              groupValue: _selectedGender,
               activeColor: AppColors.primaryColor,
               onChanged: (value) {
+                setState(() {
+                  _selectedGender = value.toString();
+                });
                 widget.onGenderChanged(value.toString());
               },
             ),
@@ -48,9 +69,12 @@ class _GenderFieldState extends State<GenderField> {
             ),
             Radio(
               value: 'Female',
-              groupValue: widget.selectedGender,
+              groupValue: _selectedGender,
               activeColor: AppColors.primaryColor,
               onChanged: (value) {
+                setState(() {
+                  _selectedGender = value.toString();
+                });
                 widget.onGenderChanged(value.toString());
               },
             ),
