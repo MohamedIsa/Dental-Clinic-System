@@ -45,14 +45,6 @@ class ReusableTextFieldState extends State<ReusableTextField> {
     _obscureText = widget.isPassword;
   }
 
-  void _handleChange(String value) {
-    final error = widget.validator(value);
-    setState(() {
-      hasError = error != null && error.isNotEmpty;
-    });
-    widget.onChanged?.call(value);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
