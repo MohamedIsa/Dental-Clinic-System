@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class Users {
   String id;
   String name;
@@ -7,6 +9,7 @@ class Users {
   String cpr;
   String gender;
   String dob;
+  Color? color;
   Users(
       {required this.id,
       required this.name,
@@ -15,7 +18,8 @@ class Users {
       required this.phone,
       required this.cpr,
       required this.dob,
-      required this.gender});
+      required this.gender,
+      this.color});
 
   factory Users.fromFirestore(Map<String, dynamic> data, String id) {
     return Users(
@@ -27,6 +31,7 @@ class Users {
       cpr: data['cpr'],
       gender: data['gender'],
       dob: data['dob'],
+      color: data['color'],
     );
   }
 
@@ -40,6 +45,7 @@ class Users {
       'cpr': cpr,
       'gender': gender,
       'dob': dob,
+      'color': color,
     };
   }
 }

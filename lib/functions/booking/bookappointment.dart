@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:senior/utils/popups.dart';
+import '../../models/appointments.dart';
+import '../../utils/popups.dart';
 
-Future<void> bookAppointment(BuildContext context, String dentistId,
-    DateTime date, int hour, String patientId) async {
+Future<void> bookAppointment(BuildContext context, bool isFacility,
+    String dentistId, DateTime date, int hour, String patientId) async {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   final String dateStr = DateFormat('yyyy-MM-dd').format(date);
@@ -34,34 +36,40 @@ Future<void> bookAppointment(BuildContext context, String dentistId,
         .get();
 
     if (existingAppointment.docs.isEmpty) {
-      await firestore.runTransaction((transaction) async {
-        final dentistAppointmentRef = firestore
-            .collection('users')
-            .doc(dentistId)
-            .collection('appointments')
-            .doc();
-        print('Dentist appointment path: ${dentistAppointmentRef.path}');
-        transaction.set(dentistAppointmentRef, {
-          'patientId': patientId,
-          'dentistId': dentistId,
-          'date': dateStr,
-          'time': hour,
-        });
+      final batch = firestore.batch();
 
-        final patientAppointmentRef = firestore
-            .collection('users')
-            .doc(patientId)
-            .collection('appointments')
-            .doc();
-        transaction.set(patientAppointmentRef, {
-          'patientId': patientId,
-          'dentistId': dentistId,
-          'date': dateStr,
-          'time': hour,
-        });
-      });
+      final String appointmentId =
+          firestore.collection('appointments').doc().id;
 
-      Navigator.pushReplacementNamed(context, '/patientDashboard');
+      final mainAppointmentRef =
+          firestore.collection('appointments').doc(appointmentId);
+      final appointmentData = Appointments(
+        id: appointmentId,
+        patientId: patientId,
+        dentistId: dentistId,
+        date: dateStr,
+        time: hour,
+      ).toFirestore();
+
+      batch.set(mainAppointmentRef, appointmentData);
+
+      final dentistAppointmentRef = firestore
+          .collection('users')
+          .doc(dentistId)
+          .collection('appointments')
+          .doc(appointmentId);
+      batch.set(dentistAppointmentRef, appointmentData);
+
+      final patientAppointmentRef = firestore
+          .collection('users')
+          .doc(patientId)
+          .collection('appointments')
+          .doc(appointmentId);
+      batch.set(patientAppointmentRef, appointmentData);
+
+      await batch.commit();
+
+      isFacility ? context.go('/dashboard') : context.go('/patientDashboard');
       showMessagealert(context, 'Appointment booked successfully.');
     } else {
       showErrorDialog(context, 'This time slot is already booked.');

@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:senior/utils/popups.dart';
 import 'checkuserloggedin.dart';
+import 'exists.dart';
 
 Future<void> login(
   BuildContext context,
@@ -13,37 +15,18 @@ Future<void> login(
   String password = passwordTextController.text;
 
   try {
-    List<String> errors = [];
-    if (email.isEmpty) {
-      errors.add('Please enter your email');
-    }
-    if (password.isEmpty) {
-      errors.add('Please enter your password');
-    }
-    if (errors.isNotEmpty) {
-      showErrorDialog(context, errors.join('\n'));
-      return;
-    }
-
-    QuerySnapshot emailCheck = await FirebaseFirestore.instance
-        .collection('users')
-        .where('email', isEqualTo: email)
-        .get();
-
-    if (emailCheck.docs.isEmpty) {
+    if (await emailExists(email) == false) {
       showErrorDialog(context, 'Email not found. Please check and try again.');
       return;
     }
-
     UserCredential userCredential = await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password);
-
     if (userCredential.user != null) {
       await persistUser(userCredential.user!.uid);
       await navigateBasedOnUserRole(context, userCredential.user!.uid);
     }
   } catch (e) {
-    showErrorDialog(context, 'Invalid password. Please try again.');
+    showErrorDialog(context, '${e.toString()})');
   }
 }
 
@@ -62,16 +45,16 @@ Future<void> navigateBasedOnUserRole(
       if (snapshot.exists && snapshot['role'] == role) {
         switch (role) {
           case 'patient':
-            Navigator.pushReplacementNamed(context, '/patientDashboard');
+            context.go('/patientDashboard');
             return;
           case 'admin':
-            Navigator.pushReplacementNamed(context, '/dashboard');
+            context.go('/dashboard');
             return;
           case 'receptionist':
-            Navigator.pushReplacementNamed(context, '/receptionist');
+            context.go('/dashboard');
             return;
           case 'dentist':
-            Navigator.pushReplacementNamed(context, '/dentist');
+            context.go('/dashboard');
             return;
         }
       }

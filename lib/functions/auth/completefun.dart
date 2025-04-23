@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../utils/popups.dart';
 import '../../models/users.dart';
+import 'exists.dart';
 
 Future<void> completeRegistration(
     BuildContext context,
@@ -19,6 +21,10 @@ Future<void> completeRegistration(
   String dob = dobTextController.text;
 
   try {
+    if (await cprExists(cpr) == true) {
+      showErrorDialog(context, 'CPR already exists');
+      return;
+    }
     User? currentUser = FirebaseAuth.instance.currentUser;
 
     if (currentUser != null) {
@@ -32,18 +38,12 @@ Future<void> completeRegistration(
         dob: dob,
         gender: selectedGender,
       );
-      await firestore.collection('users').doc(currentUser.uid).set({
-        'id': user.id,
-        'name': user.name,
-        'email': user.email,
-        'role': user.role,
-        'phone': user.phone,
-        'cpr': user.cpr,
-        'gender': user.gender,
-        'dob': user.dob,
-      });
+      await firestore
+          .collection('users')
+          .doc(currentUser.uid)
+          .set(user.toFirestore());
 
-      Navigator.pushReplacementNamed(context, '/patientDashboard');
+      context.go('/patientDashboard');
     }
   } catch (e) {
     if (context.mounted) {

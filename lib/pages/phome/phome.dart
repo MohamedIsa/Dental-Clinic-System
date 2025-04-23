@@ -8,14 +8,16 @@ import 'package:senior/pages/widgets/static/patientappbar.dart';
 import 'package:senior/pages/widgets/static/patienthomebody.dart';
 import 'package:senior/const/topnavbar.dart';
 import 'package:senior/utils/data.dart';
-import '../../../../const/app_colors.dart';
-import '../../../../functions/chat/seenmessage.dart';
-import '../../../../providers/patient_navbar.dart';
-import '../../../../utils/responsive_widget.dart';
-import '../../../../functions/phome/getusername.dart';
+import '../../const/app_colors.dart';
+import '../../functions/chat/seenmessage.dart';
+import '../../providers/patient_navbar.dart';
+import '../../utils/responsive_widget.dart';
+import '../../functions/phome/getusername.dart';
 import '../chat/chatpage.dart';
 
 class WelcomePage extends StatefulWidget {
+  const WelcomePage({super.key});
+
   @override
   _WelcomePageState createState() => _WelcomePageState();
 }
@@ -26,13 +28,15 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   void initState() {
     super.initState();
+    Data.checkUserAndNavigate(context);
     final patientId = Data.currentID;
     isSeenFuture = isMessageSeen(
-        FirebaseFirestore.instance
-            .collection('users')
-            .doc(patientId)
-            .collection('chat'),
-        Data.currentID);
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(patientId)
+          .collection('chat'),
+      Data.currentID!,
+    );
   }
 
   @override
@@ -112,12 +116,12 @@ class _WelcomePageState extends State<WelcomePage> {
               backgroundColor: AppColors.primaryColor,
               child: isSeen
                   ? Badge(
-                      child: const Icon(Icons.chat),
                       label: const Icon(
                         Icons.circle,
                         color: Colors.red,
                         size: 2.0,
                       ),
+                      child: const Icon(Icons.chat),
                     )
                   : const Icon(Icons.chat),
             );

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:senior/pages/widgets/static/facilitypage.dart';
-import '../../../../functions/dashboard/getrole.dart';
-import '../../../widgets/static/dentistlist.dart';
-import '../../../widgets/static/today_appointment.dart';
+import '../../functions/dashboard/getrole.dart';
+import '../../utils/data.dart';
+import '../widgets/static/dentistlist.dart';
+import '../widgets/static/facilitypage.dart';
+import '../widgets/static/today_appointment.dart';
+// import '../widgets/static/today_appointment.dart';
 
 class Dashboard extends StatefulWidget {
-  Dashboard({super.key});
+  const Dashboard({super.key});
 
   @override
   _DashboardState createState() => _DashboardState();
@@ -17,6 +19,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
+    Data.checkUserAndNavigate(context);
     getRole().then((roles) {
       if (roles != null) {
         setState(() {

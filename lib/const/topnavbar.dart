@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../models/navbaritem.dart';
 import 'app_colors.dart';
@@ -52,7 +53,7 @@ class TopNavBar<T extends NavBarProvider> extends StatelessWidget {
     final currentRoute = ModalRoute.of(context)?.settings.name;
 
     if (currentRoute != routeName) {
-      Navigator.pushNamed(context, routeName);
+      context.go(routeName);
     }
   }
 }

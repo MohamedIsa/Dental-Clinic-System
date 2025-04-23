@@ -3,6 +3,8 @@ import 'package:senior/const/app_colors.dart';
 import 'package:senior/functions/editmessage/editmessag.dart';
 
 class EditMessageScreen extends StatefulWidget {
+  const EditMessageScreen({super.key});
+
   @override
   _EditWelcomeMessageScreenState createState() =>
       _EditWelcomeMessageScreenState();

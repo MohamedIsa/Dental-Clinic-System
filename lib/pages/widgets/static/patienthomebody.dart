@@ -19,7 +19,7 @@ class _PatientHomeBodyState extends State<PatientHomeBody> {
     final isMobile = screenWidth <= 600;
     return Body(children: <Widget>[
       MessageContainer(
-        futureMessage: getUpcomingAppointment(Data.currentID),
+        futureMessage: getUpcomingAppointment(Data.currentID!),
         containerWidth: isMobile ? null : 430,
         containerHeight: isMobile ? 130 : 200,
         margin: const EdgeInsets.only(top: 100, bottom: 800),

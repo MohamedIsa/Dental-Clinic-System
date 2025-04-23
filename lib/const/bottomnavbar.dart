@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../models/navbaritem.dart';
 import 'app_colors.dart';
@@ -6,7 +7,7 @@ import '../providers/navbar_provider.dart';
 
 class BottomNavBar<T extends NavBarProvider> extends StatelessWidget {
   final List<NavBarItem> navItems;
-  BottomNavBar({super.key, required this.navItems});
+  const BottomNavBar({super.key, required this.navItems});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,7 @@ class BottomNavBar<T extends NavBarProvider> extends StatelessWidget {
 
     if (currentRoute != routeName) {
       Provider.of<T>(context, listen: false).updateIndex(index, routeName);
-      Navigator.pushNamed(context, routeName);
+      context.go(routeName);
     }
   }
 }

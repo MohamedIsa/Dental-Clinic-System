@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:senior/functions/auth/checkauthfield.dart';
-import 'package:senior/pages/widgets/static/buttonform.dart';
-import 'package:senior/pages/widgets/textfieldwidgets/cprfield.dart';
-import 'package:senior/pages/widgets/textfieldwidgets/dobfield.dart';
-import 'package:senior/pages/widgets/textfieldwidgets/emailfield.dart';
-import 'package:senior/pages/widgets/textfieldwidgets/fullnamefield.dart';
-import 'package:senior/pages/widgets/textfieldwidgets/genderfield.dart';
-import 'package:senior/pages/widgets/textfieldwidgets/passwordfield.dart';
-import 'package:senior/pages/widgets/textfieldwidgets/phonefield.dart';
+import '../../../functions/auth/checkauthfield.dart';
+import '../static/buttonform.dart';
+import '../textfieldwidgets/cprfield.dart';
+import '../textfieldwidgets/dobfield.dart';
+import '../textfieldwidgets/emailfield.dart';
+import '../textfieldwidgets/fullnamefield.dart';
+import '../textfieldwidgets/genderfield.dart';
+import '../textfieldwidgets/passwordfield.dart';
+import '../textfieldwidgets/phonefield.dart';
 
 class SignUpForm extends StatefulWidget {
   const SignUpForm({super.key});
@@ -17,11 +17,12 @@ class SignUpForm extends StatefulWidget {
 }
 
 class _SignUpFormState extends State<SignUpForm> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordTextController = TextEditingController();
   final TextEditingController _emailTextController = TextEditingController();
-  final TextEditingController _FullnameTextController = TextEditingController();
+  final TextEditingController _fullnameTextController = TextEditingController();
   final TextEditingController _cprTextController = TextEditingController();
-  final TextEditingController _PhoneTextController = TextEditingController();
+  final TextEditingController _phoneTextController = TextEditingController();
   final TextEditingController _confirmPasswordTextController =
       TextEditingController();
   final TextEditingController _dobTextController = TextEditingController();
@@ -31,9 +32,9 @@ class _SignUpFormState extends State<SignUpForm> {
     _emailTextController.dispose();
     _passwordTextController.dispose();
     _confirmPasswordTextController.dispose();
-    _FullnameTextController.dispose();
+    _fullnameTextController.dispose();
     _cprTextController.dispose();
-    _PhoneTextController.dispose();
+    _phoneTextController.dispose();
     _dobTextController.dispose();
     super.dispose();
   }
@@ -42,75 +43,89 @@ class _SignUpFormState extends State<SignUpForm> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    void _submitForm() {
-      check(
-          context: context,
-          fullNameTextController: _FullnameTextController,
-          cprTextController: _cprTextController,
-          phoneTextController: _PhoneTextController,
-          selectedGender: _selectedGender,
-          dobTextController: _dobTextController);
+
+    void submitForm() {
+      if (_formKey.currentState!.validate()) {
+        check(
+            context: context,
+            emailTextController: _emailTextController,
+            passwordTextController: _passwordTextController,
+            confirmPasswordTextController: _confirmPasswordTextController,
+            fullNameTextController: _fullnameTextController,
+            cprTextController: _cprTextController,
+            phoneTextController: _phoneTextController,
+            selectedGender: _selectedGender,
+            dobTextController: _dobTextController);
+      }
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        EmailField(
-          emailTextController: _emailTextController,
-          onFieldSubmitted: (_) => _submitForm(),
-        ),
-        const SizedBox(height: 20),
-        NameField(
-          fullNameTextController: _FullnameTextController,
-          width: width,
-          onFieldSubmitted: (_) => _submitForm(),
-        ),
-        const SizedBox(height: 20),
-        Phonefield(
-          phoneTextController: _PhoneTextController,
-          width: width,
-          onFieldSubmitted: (_) => _submitForm(),
-        ),
-        const SizedBox(height: 20),
-        GenderField(
-          width: width,
-          selectedGender: _selectedGender,
-          onGenderChanged: (newGender) {
-            setState(() {
-              _selectedGender = newGender;
-            });
-          },
-        ),
-        const SizedBox(height: 20),
-        DobField(
-          dobTextController: _dobTextController,
-          width: width,
-          onFieldSubmitted: (_) => _submitForm(),
-        ),
-        const SizedBox(height: 20),
-        CprField(
-          cprTextController: _cprTextController,
-          width: width,
-          onFieldSubmitted: (_) => _submitForm(),
-        ),
-        const SizedBox(height: 20),
-        PasswordField(
-          passwordTextController: _passwordTextController,
-          title: 'Password',
-          hint: 'Enter your password',
-          onFieldSubmitted: (_) => _submitForm(),
-        ),
-        const SizedBox(height: 20),
-        PasswordField(
-          passwordTextController: _confirmPasswordTextController,
-          title: 'Confirm Password',
-          hint: 'Re-enter your password',
-          onFieldSubmitted: (_) => _submitForm(),
-        ),
-        const SizedBox(height: 20),
-        SizedBox(height: height * 0.03),
-        ButtonForm(width: width, title: 'Sign Up', onTap: () => _submitForm()),
-      ],
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          EmailField(
+            emailTextController: _emailTextController,
+            onFieldSubmitted: (_) => submitForm(),
+            isSignUp: true,
+          ),
+          const SizedBox(height: 20),
+          NameField(
+            fullNameTextController: _fullnameTextController,
+            width: width,
+            onFieldSubmitted: (_) => submitForm(),
+          ),
+          const SizedBox(height: 20),
+          PhoneField(
+            phoneTextController: _phoneTextController,
+            width: width,
+            onFieldSubmitted: (_) => submitForm(),
+          ),
+          const SizedBox(height: 20),
+          GenderField(
+            width: width,
+            selectedGender: _selectedGender,
+            onGenderChanged: (newGender) {
+              setState(
+                () => _selectedGender = newGender,
+              );
+            },
+          ),
+          const SizedBox(height: 20),
+          DobField(
+            dobTextController: _dobTextController,
+            width: width,
+            onFieldSubmitted: (_) => submitForm(),
+          ),
+          const SizedBox(height: 20),
+          CprField(
+            cprTextController: _cprTextController,
+            width: width,
+            onFieldSubmitted: (_) => submitForm(),
+          ),
+          const SizedBox(height: 20),
+          PasswordField(
+            passwordTextController: _passwordTextController,
+            title: 'Password',
+            hint: 'Enter your password',
+            onFieldSubmitted: (_) => submitForm(),
+            isSignUp: true,
+          ),
+          const SizedBox(height: 20),
+          PasswordField(
+            passwordTextController: _confirmPasswordTextController,
+            confirmPasswordTextController: _passwordTextController,
+            title: 'Confirm Password',
+            hint: 'Re-enter your password',
+            onFieldSubmitted: (_) => submitForm(),
+            isSignUp: true,
+            isConfirm: true,
+          ),
+          const SizedBox(height: 20),
+          SizedBox(height: height * 0.03),
+          ButtonForm(width: width, title: 'Sign Up', onTap: () => submitForm()),
+        ],
+      ),
     );
   }
 }

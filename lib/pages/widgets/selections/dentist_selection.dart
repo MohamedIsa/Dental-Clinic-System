@@ -4,10 +4,17 @@ import 'package:senior/functions/booking/getdentist.dart';
 
 import '../../../const/app_colors.dart';
 
-class DentistSelection extends StatelessWidget {
+class DentistSelection extends StatefulWidget {
   final Function(String, String) onDentistSelected;
 
   const DentistSelection({super.key, required this.onDentistSelected});
+
+  @override
+  _DentistSelectionState createState() => _DentistSelectionState();
+}
+
+class _DentistSelectionState extends State<DentistSelection> {
+  String? selectedDentistId;
 
   @override
   Widget build(BuildContext context) {
@@ -71,21 +78,33 @@ class DentistSelection extends StatelessWidget {
     BuildContext context,
     Map<String, dynamic> dentist,
   ) {
+    final isSelected = selectedDentistId == dentist['id'];
+
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
       child: InkWell(
-        onTap: () => onDentistSelected(dentist['id'], dentist['Name']),
+        onTap: () {
+          setState(() {
+            selectedDentistId = dentist['id'];
+          });
+          widget.onDentistSelected(dentist['id'], dentist['Name']);
+        },
         borderRadius: BorderRadius.circular(12),
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                AppColors.primaryColor,
-                AppColors.primaryColor.withOpacity(0.8)
-              ],
+              colors: isSelected
+                  ? [
+                      Colors.green.withOpacity(0.7),
+                      Colors.green.withOpacity(0.9)
+                    ]
+                  : [
+                      AppColors.primaryColor,
+                      AppColors.primaryColor.withOpacity(0.8)
+                    ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -99,7 +118,9 @@ class DentistSelection extends StatelessWidget {
                 child: Text(
                   dentist['Name'][0],
                   style: TextStyle(
-                    color: Theme.of(context).primaryColor,
+                    color: isSelected
+                        ? Colors.green
+                        : Theme.of(context).primaryColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -108,17 +129,18 @@ class DentistSelection extends StatelessWidget {
               Expanded(
                 child: Text(
                   'Dr. ${dentist['Name']}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
-                    color: AppColors.whiteColor,
+                    color: isSelected ? Colors.white : AppColors.whiteColor,
                   ),
                 ),
               ),
               Icon(
                 Icons.arrow_forward_ios,
                 size: 16,
-                color: Theme.of(context).primaryColor,
+                color:
+                    isSelected ? Colors.white : Theme.of(context).primaryColor,
               ),
             ],
           ),

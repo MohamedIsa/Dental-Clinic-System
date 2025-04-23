@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:senior/const/app_styles.dart';
 import '../../../const/app_colors.dart';
 import '../../../functions/auth/exists.dart';
 import '../../../functions/auth/patterns.dart';
-import '../../../utils/reuseable_widget.dart';
+import '../../../utils/reuseabletextfield.dart';
 
-class CprField extends StatelessWidget {
+class CprField extends StatefulWidget {
   final TextEditingController cprTextController;
   final double width;
   final Function(String)? onFieldSubmitted;
@@ -16,51 +15,53 @@ class CprField extends StatelessWidget {
       this.onFieldSubmitted});
 
   @override
+  State<CprField> createState() => _CprFieldState();
+}
+
+class _CprFieldState extends State<CprField> {
+  String? asyncError;
+
+  Future<void> validateCpr(String cpr) async {
+    final result = await cprValidator(cpr);
+    setState(() {
+      asyncError = result.isNotEmpty ? result : null;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child: Text(
-            'CPR Number',
-            style: ralewayStyle.copyWith(
-              fontSize: 12.0,
-              color: AppColors.blueDarkColor,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
-        const SizedBox(height: 6.0),
-        Container(
-          height: 50.0,
-          width: width,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16.0),
-            color: AppColors.whiteColor,
-          ),
-          child: ReusableTextField(
-            hintText: 'Enter Your CPR number',
-            icon: Icons.credit_card,
-            isPassword: false,
-            color: AppColors.greyColor,
-            controller: cprTextController,
-            isNumeric: true,
-            onFieldSubmitted: onFieldSubmitted,
-          ),
-        ),
-      ],
+    return ReusableTextField(
+      title: 'CPR Number',
+      hintText: 'Enter Your CPR number',
+      icon: Icons.credit_card,
+      isPassword: false,
+      color: AppColors.greyColor,
+      controller: widget.cprTextController,
+      isNumeric: true,
+      onFieldSubmitted: (value) {
+        validateCpr(value);
+        widget.onFieldSubmitted?.call(value);
+      },
+      validator: (value) => cprValidatorSync(value!),
     );
   }
 }
 
-Future<String> cprValidator(String cpr) async {
+String? cprValidatorSync(String cpr) {
   if (cpr.isEmpty) {
     return 'Please enter your CPR number';
   } else if (cpr.length != 9) {
     return 'CPR number must be 9 digits';
-  } else if (cpr.isNotEmpty && !RegExp(Patterns.cprPattern).hasMatch(cpr)) {
+  } else if (!RegExp(Patterns.cprPattern).hasMatch(cpr)) {
     return 'Invalid CPR format.';
+  }
+  return null;
+}
+
+Future<String> cprValidator(String cpr) async {
+  String? result = cprValidatorSync(cpr);
+  if (result != null) {
+    return result;
   } else if (await cprExists(cpr)) {
     return 'CPR already exists.';
   }

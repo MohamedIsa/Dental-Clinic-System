@@ -1,12 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:senior/const/app_colors.dart';
-import 'package:senior/pages/home/auth/facultyhome/settings/staff/staff_managment.dart';
-import 'dentistcolor/dentist_color.dart';
-import 'editmessage/edit_message.dart';
+import 'package:senior/pages/staff/staff_managment.dart';
+import '../../utils/data.dart';
+// import '../dentistcolor/dentist_color.dart';
+import '../dentistcolor/dentist_color.dart';
+import '../editmessage/edit_message.dart';
 import 'settings_page.dart';
 
-class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  _SettingsScreenState createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  @override
+  void initState() {
+    Data.checkUserAndNavigate(context);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

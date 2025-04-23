@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:go_router/go_router.dart';
 import 'package:senior/const/app_colors.dart';
-import '../../../../../../functions/createfaculty/deleteuser.dart';
-import '../../../../../../functions/createfaculty/hideuser.dart';
-import '../../../../../../functions/createfaculty/restoreuser.dart';
-import '../../../../../../functions/createfaculty/userrole.dart';
+import '../../functions/createfaculty/deleteuser.dart';
+import '../../functions/createfaculty/hideuser.dart';
+import '../../functions/createfaculty/restoreuser.dart';
+import '../../functions/createfaculty/userrole.dart';
 
 class StaffManagementScreen extends StatefulWidget {
   const StaffManagementScreen({super.key});
@@ -92,24 +93,24 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          IconButton(
-                            icon: Icon(Icons.hide_image,
-                                color: AppColors.whiteColor),
+                          TextButton(
                             onPressed: () =>
                                 hideUser(context, userDoc.id, role),
+                            child: Text('Hide',
+                                style: TextStyle(color: AppColors.whiteColor)),
                           ),
                           SizedBox(width: 20),
-                          IconButton(
-                            icon: Icon(Icons.restore,
-                                color: AppColors.whiteColor),
+                          TextButton(
                             onPressed: () => restoreUser(context, userDoc.id),
+                            child: Text('Restore',
+                                style: TextStyle(color: AppColors.whiteColor)),
                           ),
                           SizedBox(width: 20),
-                          IconButton(
-                            icon:
-                                Icon(Icons.delete, color: AppColors.whiteColor),
+                          TextButton(
                             onPressed: () =>
                                 deleteUser(context, userDoc.id, role),
+                            child: Text('Delete',
+                                style: TextStyle(color: AppColors.whiteColor)),
                           ),
                         ],
                       ),
@@ -123,7 +124,7 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () => Navigator.pushNamed(context, "/addstaff"),
+        onPressed: () => context.go('/addstaff'),
       ),
     );
   }

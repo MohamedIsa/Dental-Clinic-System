@@ -24,7 +24,7 @@ class Header extends StatelessWidget {
                 ),
               ),
               TextSpan(
-                text: ' ${headerName} 👇',
+                text: ' $headerName 👇',
                 style: ralewayStyle.copyWith(
                   fontWeight: FontWeight.w800,
                   color: AppColors.blueDarkColor,

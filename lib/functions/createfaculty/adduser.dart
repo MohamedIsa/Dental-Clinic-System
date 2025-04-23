@@ -17,6 +17,7 @@ Future<void> adduser(
   String selectedGender,
   TextEditingController birthdayController,
   String selectedRole,
+  Color? selectedColor,
 ) async {
   try {
     String api = await Data.apiUrl();
@@ -42,6 +43,7 @@ Future<void> adduser(
         cpr: cprController.text,
         dob: birthdayController.text,
         gender: selectedGender,
+        color: selectedColor,
       );
 
       await FirebaseFirestore.instance

@@ -63,7 +63,7 @@ Future<void> deleteUser(
               .update({'did': newDentistId});
         } else {
           throw Exception(
-              'No available dentist found for appointment on ${appointmentDate}');
+              'No available dentist found for appointment on $appointmentDate');
         }
       }
 

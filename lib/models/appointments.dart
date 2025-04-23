@@ -22,4 +22,13 @@ class Appointments {
       dentistId: data['dentistId'],
     );
   }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      'date': date,
+      'time': time,
+      'patientId': patientId,
+      'dentistId': dentistId,
+    };
+  }
 }

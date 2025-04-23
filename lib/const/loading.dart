@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:go_router/go_router.dart';
 import 'package:senior/const/app_colors.dart';
 
 class Loading extends StatefulWidget {
@@ -14,7 +15,7 @@ class _LoadingState extends State<Loading> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacementNamed(context, '/home');
+      context.go('/home');
     });
   }
 
