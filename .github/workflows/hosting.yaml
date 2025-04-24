@@ -40,7 +40,14 @@ jobs:
     - name: Install Firebase CLI
       run: npm install -g firebase-tools
 
-    - name: Deploy to Firebase Hosting
+    - name: Set up Firebase service account
+      run: |
+        echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_BASE64 }}" | base64 -d > ${{ github.workspace }}/firebase-key.json
       env:
-        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-      run: firebase deploy --token "$FIREBASE_TOKEN"
+        FIREBASE_SERVICE_ACCOUNT_BASE64: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_BASE64 }}
+
+    - name: Deploy to Firebase Hosting
+      run: firebase deploy --only hosting
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/firebase-key.json
+

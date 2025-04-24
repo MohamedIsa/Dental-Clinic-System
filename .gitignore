@@ -49,3 +49,4 @@ node_modules/
 
 .env
 /web/web.json
+firebase-adminsdk.json
