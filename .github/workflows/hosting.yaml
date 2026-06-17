@@ -31,6 +31,13 @@ jobs:
         env:
           WEB_JSON: ${{ secrets.WEB_JSON }}
 
+      - name: Generate Firebase options file
+        run: |
+          test -n "$FIREBASE_OPTIONS_DART"
+          printf '%s' "$FIREBASE_OPTIONS_DART" > lib/firebase_options.dart
+        env:
+          FIREBASE_OPTIONS_DART: ${{ secrets.FIREBASE_OPTIONS_DART }}
+
       - name: Export Firebase build defines
         run: |
           {

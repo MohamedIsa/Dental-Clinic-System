@@ -25,9 +25,11 @@ Future<void> signInWithGoogle(BuildContext context) async {
     final GoogleSignIn googleSignIn = GoogleSignIn.instance;
     if (!_isGoogleSignInInitialized) {
       await googleSignIn.initialize(
-        clientId: DefaultFirebaseOptions.iosClientId.isEmpty
+        clientId:
+            DefaultFirebaseOptions.currentPlatform.iosClientId == null ||
+                DefaultFirebaseOptions.currentPlatform.iosClientId!.isEmpty
             ? null
-            : DefaultFirebaseOptions.iosClientId,
+            : DefaultFirebaseOptions.currentPlatform.iosClientId,
       );
       _isGoogleSignInInitialized = true;
     }
