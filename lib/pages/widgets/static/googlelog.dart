@@ -19,10 +19,7 @@ class Googlelog extends StatelessWidget {
         ),
         child: IconButton(
           onPressed: () => signInWithGoogle(context),
-          icon: SvgPicture.asset(
-            'assets/svgs/g_logo.svg',
-            color: Colors.white,
-          ),
+          icon: SvgPicture.asset('assets/svgs/g_logo.svg', color: Colors.white),
         ),
       ),
     );

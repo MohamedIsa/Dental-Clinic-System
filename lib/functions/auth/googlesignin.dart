@@ -7,39 +7,50 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:senior/utils/popups.dart';
 import '../../firebase_options.dart';
 
+bool _isGoogleSignInInitialized = false;
+
 Future<void> signInWithGoogle(BuildContext context) async {
   try {
-    final GoogleSignIn googleSignIn = GoogleSignIn(
-      clientId: DefaultFirebaseOptions.currentPlatform.iosClientId ??
-          OauthCredential.clientId,
-    );
-
-    GoogleSignInAccount? googleUser;
-
     if (kIsWeb) {
-      googleUser = await googleSignIn.signIn();
-    } else {
-      await googleSignIn.signOut();
-      googleUser = await googleSignIn.signIn();
-    }
+      final userCredential = await FirebaseAuth.instance.signInWithPopup(
+        GoogleAuthProvider(),
+      );
 
-    if (googleUser == null) {
       if (context.mounted) {
-        showErrorDialog(context, 'Google Sign-In cancelled');
+        await handleFirebaseSignInResult(context, userCredential);
       }
       return;
     }
 
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
+    final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+    if (!_isGoogleSignInInitialized) {
+      await googleSignIn.initialize(
+        clientId: DefaultFirebaseOptions.iosClientId.isEmpty
+            ? null
+            : DefaultFirebaseOptions.iosClientId,
+      );
+      _isGoogleSignInInitialized = true;
+    }
+
+    await googleSignIn.signOut();
+    if (!googleSignIn.supportsAuthenticate()) {
+      showErrorDialog(context, 'Google Sign-In is not supported here');
+      return;
+    }
+
+    final GoogleSignInAccount googleUser = await googleSignIn.authenticate();
+    final GoogleSignInAuthentication googleAuth = googleUser.authentication;
 
     final AuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
 
     if (context.mounted) {
       await handleFirebaseSignIn(context, credential);
+    }
+  } on GoogleSignInException catch (e) {
+    if (e.code != GoogleSignInExceptionCode.canceled && context.mounted) {
+      showErrorDialog(context, 'Google Sign-In failed: ${e.description}');
     }
   } catch (e) {
     if (e is FirebaseAuthException &&
@@ -51,28 +62,14 @@ Future<void> signInWithGoogle(BuildContext context) async {
 }
 
 Future<void> handleFirebaseSignIn(
-    BuildContext context, AuthCredential credential) async {
+  BuildContext context,
+  AuthCredential credential,
+) async {
   try {
-    final UserCredential userCredential =
-        await FirebaseAuth.instance.signInWithCredential(credential);
+    final UserCredential userCredential = await FirebaseAuth.instance
+        .signInWithCredential(credential);
 
-    final User? firebaseUser = userCredential.user;
-
-    if (firebaseUser != null) {
-      bool userExists = await checkIfUserExistsInDatabase(firebaseUser.uid);
-
-      if (context.mounted) {
-        if (userExists) {
-          context.go('/patientDashboard');
-        } else {
-          context.go('/complete');
-        }
-      }
-    } else {
-      if (context.mounted) {
-        showErrorDialog(context, 'Authentication failed');
-      }
-    }
+    await handleFirebaseSignInResult(context, userCredential);
   } on FirebaseAuthException catch (e) {
     String errorMessage = 'Authentication error';
     switch (e.code) {
@@ -92,10 +89,35 @@ Future<void> handleFirebaseSignIn(
   }
 }
 
+Future<void> handleFirebaseSignInResult(
+  BuildContext context,
+  UserCredential userCredential,
+) async {
+  final User? firebaseUser = userCredential.user;
+
+  if (firebaseUser != null) {
+    bool userExists = await checkIfUserExistsInDatabase(firebaseUser.uid);
+
+    if (context.mounted) {
+      if (userExists) {
+        context.go('/patientDashboard');
+      } else {
+        context.go('/complete');
+      }
+    }
+  } else {
+    if (context.mounted) {
+      showErrorDialog(context, 'Authentication failed');
+    }
+  }
+}
+
 Future<bool> checkIfUserExistsInDatabase(String uid) async {
   try {
-    DocumentSnapshot userSnapshot =
-        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .get();
 
     if (userSnapshot.exists) {
       Map<String, dynamic>? userData =

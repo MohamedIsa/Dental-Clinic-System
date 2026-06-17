@@ -4,7 +4,11 @@ import 'package:intl/intl.dart';
 import 'package:senior/utils/popups.dart';
 
 Future<bool> checkAvailability(
-    BuildContext context, String dentistId, DateTime date, int time) async {
+  BuildContext context,
+  String dentistId,
+  DateTime date,
+  int time,
+) async {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final String dateStr = DateFormat('yyyy-MM-dd').format(date);
 

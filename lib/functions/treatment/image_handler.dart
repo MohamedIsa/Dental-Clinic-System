@@ -51,10 +51,7 @@ class ImageHandler {
       );
 
       // Upload as blob
-      final uploadTask = ref.putBlob(
-        _selectedFile!,
-        metadata,
-      );
+      final uploadTask = ref.putBlob(_selectedFile!, metadata);
 
       // Wait for upload to complete
       await uploadTask;

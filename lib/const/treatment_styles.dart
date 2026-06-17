@@ -6,11 +6,7 @@ class TreatmentStyles {
     color: Colors.white,
     borderRadius: BorderRadius.all(Radius.circular(10)),
     boxShadow: [
-      BoxShadow(
-        color: Colors.black12,
-        blurRadius: 5,
-        offset: Offset(0, 2),
-      ),
+      BoxShadow(color: Colors.black12, blurRadius: 5, offset: Offset(0, 2)),
     ],
   );
 
@@ -48,8 +44,6 @@ class TreatmentStyles {
     backgroundColor: AppColors.primaryColor,
     foregroundColor: Colors.white,
     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(8),
-    ),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
   );
 }

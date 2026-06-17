@@ -24,7 +24,10 @@ class TopNavBar<T extends NavBarProvider> extends StatelessWidget {
                 children: navItems.map((item) {
                   return _buildNavButton(context, item.label, () {
                     onMenuItemClick(
-                        context, item.route, navItems.indexOf(item));
+                      context,
+                      item.route,
+                      navItems.indexOf(item),
+                    );
                   });
                 }).toList(),
               ),
@@ -36,15 +39,15 @@ class TopNavBar<T extends NavBarProvider> extends StatelessWidget {
   }
 
   TextButton _buildNavButton(
-      BuildContext context, String text, VoidCallback onPressed) {
+    BuildContext context,
+    String text,
+    VoidCallback onPressed,
+  ) {
     return TextButton(
       onPressed: onPressed,
       child: Text(
         text,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-        ),
+        style: const TextStyle(color: Colors.white, fontSize: 20),
       ),
     );
   }

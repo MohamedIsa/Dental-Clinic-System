@@ -5,6 +5,9 @@ class MenuModel {
   final String title;
   final String routeName;
 
-  const MenuModel(
-      {required this.icon, required this.title, required this.routeName});
+  const MenuModel({
+    required this.icon,
+    required this.title,
+    required this.routeName,
+  });
 }

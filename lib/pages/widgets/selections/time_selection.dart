@@ -27,14 +27,14 @@ class _TimeSelectionState extends State<TimeSelection> {
   Widget build(BuildContext context) {
     return FutureBuilder<List<int>>(
       future: getAvailableTimeSlots(
-          context, widget.selectedDentistId, widget.selectedDate),
+        context,
+        widget.selectedDentistId,
+        widget.selectedDate,
+      ),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
-            child: SpinKitPulse(
-              color: Colors.blue,
-              size: 40.0,
-            ),
+            child: SpinKitPulse(color: Colors.blue, size: 40.0),
           );
         }
 
@@ -51,8 +51,9 @@ class _TimeSelectionState extends State<TimeSelection> {
 
         return LayoutBuilder(
           builder: (context, constraints) {
-            final crossAxisCount =
-                _calculateCrossAxisCount(constraints.maxWidth);
+            final crossAxisCount = _calculateCrossAxisCount(
+              constraints.maxWidth,
+            );
 
             return GridView.builder(
               shrinkWrap: true,
@@ -97,9 +98,7 @@ class _TimeSelectionState extends State<TimeSelection> {
 
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: () {
           setState(() {
@@ -115,11 +114,11 @@ class _TimeSelectionState extends State<TimeSelection> {
               colors: isSelected
                   ? [
                       Colors.green.withOpacity(0.7),
-                      Colors.green.withOpacity(0.9)
+                      Colors.green.withOpacity(0.9),
                     ]
                   : [
                       AppColors.primaryColor.withOpacity(0.7),
-                      AppColors.primaryColor.withOpacity(0.9)
+                      AppColors.primaryColor.withOpacity(0.9),
                     ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -163,19 +162,12 @@ class _TimeSelectionState extends State<TimeSelection> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              Icons.error_outline,
-              color: Colors.red,
-              size: 48,
-            ),
+            const Icon(Icons.error_outline, color: Colors.red, size: 48),
             const SizedBox(height: 16),
             Text(
               'Error loading time slots: $error',
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.red,
-                fontSize: 16,
-              ),
+              style: const TextStyle(color: Colors.red, fontSize: 16),
             ),
           ],
         ),
@@ -190,11 +182,7 @@ class _TimeSelectionState extends State<TimeSelection> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.access_time,
-              color: Colors.grey[400],
-              size: 48,
-            ),
+            Icon(Icons.access_time, color: Colors.grey[400], size: 48),
             const SizedBox(height: 16),
             Text(
               'No available time slots for ${DateFormat('MMMM d').format(widget.selectedDate)}',
@@ -208,10 +196,7 @@ class _TimeSelectionState extends State<TimeSelection> {
             const SizedBox(height: 8),
             Text(
               'Please select a different date',
-              style: TextStyle(
-                color: Colors.grey[500],
-                fontSize: 14,
-              ),
+              style: TextStyle(color: Colors.grey[500], fontSize: 14),
             ),
           ],
         ),

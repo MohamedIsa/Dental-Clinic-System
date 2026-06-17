@@ -9,8 +9,10 @@ Future<void> checkUserLoggedIn(BuildContext context) async {
   final String? userId = prefs.getString('userId');
 
   if (userId != null) {
-    DocumentSnapshot snapshot =
-        await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    DocumentSnapshot snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .get();
 
     if (snapshot.exists) {
       String? role = snapshot.get('role');

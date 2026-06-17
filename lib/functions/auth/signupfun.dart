@@ -29,11 +29,11 @@ Future<void> signUp(
       return;
     }
 
-    UserCredential userCredential =
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: emailTextController.text,
-      password: passwordTextController.text,
-    );
+    UserCredential userCredential = await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(
+          email: emailTextController.text,
+          password: passwordTextController.text,
+        );
 
     if (userCredential.user != null) {
       final SharedPreferences prefs = await SharedPreferences.getInstance();

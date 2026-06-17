@@ -26,10 +26,7 @@ class PatientDetailsPage extends StatelessWidget {
           Expanded(
             child: Text(
               value,
-              style: TextStyle(
-                color: Colors.grey.shade700,
-                fontSize: 16,
-              ),
+              style: TextStyle(color: Colors.grey.shade700, fontSize: 16),
             ),
           ),
         ],
@@ -41,10 +38,7 @@ class PatientDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Patient Details',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: Text('Patient Details', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.blue.shade500,
         elevation: 0,
       ),
@@ -134,10 +128,7 @@ class PatientDetailsPage extends StatelessWidget {
               },
               backgroundColor: Colors.blue.shade500,
               icon: Icon(Icons.chat, color: Colors.white),
-              label: Text(
-                'Chat',
-                style: TextStyle(color: Colors.white),
-              ),
+              label: Text('Chat', style: TextStyle(color: Colors.white)),
             );
           }
           return SizedBox.shrink();

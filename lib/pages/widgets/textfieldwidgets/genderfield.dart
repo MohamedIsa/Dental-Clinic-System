@@ -64,9 +64,7 @@ class _GenderFieldState extends State<GenderField> {
               },
             ),
             Text('Male'),
-            SizedBox(
-              width: widget.width * 0.014,
-            ),
+            SizedBox(width: widget.width * 0.014),
             Radio(
               value: 'Female',
               groupValue: _selectedGender,

@@ -7,8 +7,9 @@ import 'package:go_router/go_router.dart';
 
 class Data {
   static Future<String> apiUrl() async {
-    QuerySnapshot querySnapshot =
-        await FirebaseFirestore.instance.collection('api').get();
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('api')
+        .get();
     String api = querySnapshot.docs.first.get('api');
     return api;
   }
@@ -32,7 +33,7 @@ class Data {
     }
   }
 
-  static generateRandomID() {
+  static int generateRandomID() {
     return Random().nextInt(1000000);
   }
 }

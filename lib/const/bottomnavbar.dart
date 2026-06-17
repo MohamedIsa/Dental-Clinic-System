@@ -21,10 +21,12 @@ class BottomNavBar<T extends NavBarProvider> extends StatelessWidget {
           showUnselectedLabels: true,
           currentIndex: navBarProvider.selectedIndex,
           items: navItems
-              .map((item) => BottomNavigationBarItem(
-                    icon: Icon(item.icon),
-                    label: item.label,
-                  ))
+              .map(
+                (item) => BottomNavigationBarItem(
+                  icon: Icon(item.icon),
+                  label: item.label,
+                ),
+              )
               .toList(),
           onTap: (index) {
             onMenuItemClick(context, navItems[index].route, index);

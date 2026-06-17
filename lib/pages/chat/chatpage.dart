@@ -53,10 +53,7 @@ class _ChatPageState extends State<ChatPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              AppColors.primaryColor,
-              Colors.white,
-            ],
+            colors: [AppColors.primaryColor, Colors.white],
           ),
         ),
         child: Column(
@@ -66,19 +63,14 @@ class _ChatPageState extends State<ChatPage> {
                 stream: getMessages(chatCollection),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
+                    return const Center(child: CircularProgressIndicator());
                   }
 
                   if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return const Center(
                       child: Text(
                         'No messages yet.',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                        ),
+                        style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                     );
                   }
@@ -154,10 +146,7 @@ class _ChatPageState extends State<ChatPage> {
                     },
                     backgroundColor: AppColors.primaryColor,
                     elevation: 2,
-                    child: const Icon(
-                      Icons.send,
-                      color: Colors.white,
-                    ),
+                    child: const Icon(Icons.send, color: Colors.white),
                   ),
                 ],
               ),

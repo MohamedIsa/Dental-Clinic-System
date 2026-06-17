@@ -25,11 +25,7 @@ class _LoginFormState extends State<LoginForm> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      login(
-        context,
-        _emailTextController,
-        _passwordTextController,
-      );
+      login(context, _emailTextController, _passwordTextController);
     }
   }
 
@@ -56,11 +52,7 @@ class _LoginFormState extends State<LoginForm> {
             isSignUp: false,
           ),
           SizedBox(height: height * 0.03),
-          ButtonForm(
-            width: width,
-            title: 'Sign In',
-            onTap: _submitForm,
-          ),
+          ButtonForm(width: width, title: 'Sign In', onTap: _submitForm),
         ],
       ),
     );

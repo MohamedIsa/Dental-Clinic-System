@@ -5,7 +5,10 @@ import 'package:senior/functions/booking/checkavailability.dart';
 import 'package:senior/utils/popups.dart';
 
 Future<bool> checkAllTimesPassed(
-    BuildContext context, String dentistId, DateTime date) async {
+  BuildContext context,
+  String dentistId,
+  DateTime date,
+) async {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final String dateStr = DateFormat('yyyy-MM-dd').format(date);
 
@@ -23,11 +26,13 @@ Future<bool> checkAllTimesPassed(
         .toList();
     List<int> allSlots = generateTimeSlots();
 
-    List<int> remainingSlots =
-        allSlots.where((slot) => !bookedSlots.contains(slot)).toList();
+    List<int> remainingSlots = allSlots
+        .where((slot) => !bookedSlots.contains(slot))
+        .toList();
 
     return remainingSlots.every(
-        (slot) => now.isAfter(DateTime(date.year, date.month, date.day, slot)));
+      (slot) => now.isAfter(DateTime(date.year, date.month, date.day, slot)),
+    );
   } catch (e) {
     showErrorDialog(context, 'Error: $e');
     return false;

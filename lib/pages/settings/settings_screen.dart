@@ -25,10 +25,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Settings',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: Text('Settings', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.blue,
         iconTheme: IconThemeData(color: AppColors.whiteColor),
       ),
@@ -46,22 +43,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => StaffManagementScreen()),
+                            builder: (context) => StaffManagementScreen(),
+                          ),
                         );
                         break;
                       case 'Dentist Color':
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  DentistColorSettingsScreen()),
+                            builder: (context) => DentistColorSettingsScreen(),
+                          ),
                         );
                         break;
                       case 'Edit Message':
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => EditMessageScreen()),
+                            builder: (context) => EditMessageScreen(),
+                          ),
                         );
                         break;
                       default:

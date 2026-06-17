@@ -8,11 +8,12 @@ class CprField extends StatefulWidget {
   final TextEditingController cprTextController;
   final double width;
   final Function(String)? onFieldSubmitted;
-  const CprField(
-      {super.key,
-      required this.cprTextController,
-      required this.width,
-      this.onFieldSubmitted});
+  const CprField({
+    super.key,
+    required this.cprTextController,
+    required this.width,
+    this.onFieldSubmitted,
+  });
 
   @override
   State<CprField> createState() => _CprFieldState();

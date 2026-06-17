@@ -55,25 +55,18 @@ class _AppointmentsHistoryState extends State<AppointmentsHistory> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              AppColors.primaryColor,
-              Colors.white,
-            ],
+            colors: [AppColors.primaryColor, Colors.white],
           ),
         ),
         child: StreamBuilder<QuerySnapshot>(
           stream: _appointmentsStream,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return const Center(
-                child: Text('Something went wrong'),
-              );
+              return const Center(child: Text('Something went wrong'));
             }
 
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return const Center(child: CircularProgressIndicator());
             }
 
             if (snapshot.data!.docs.isEmpty) {
@@ -104,10 +97,7 @@ class _AppointmentsHistoryState extends State<AppointmentsHistory> {
                         ConnectionState.waiting) {
                       return Card(
                         child: Center(
-                          child: SpinKitPulse(
-                            color: Colors.blue,
-                            size: 40.0,
-                          ),
+                          child: SpinKitPulse(color: Colors.blue, size: 40.0),
                         ),
                       );
                     }

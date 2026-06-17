@@ -23,10 +23,7 @@ class _DentistSelectionState extends State<DentistSelection> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
-            child: SpinKitPulse(
-              color: Colors.blue,
-              size: 40.0,
-            ),
+            child: SpinKitPulse(color: Colors.blue, size: 40.0),
           );
         }
 
@@ -41,8 +38,9 @@ class _DentistSelectionState extends State<DentistSelection> {
 
         return LayoutBuilder(
           builder: (context, constraints) {
-            final crossAxisCount =
-                _calculateCrossAxisCount(constraints.maxWidth);
+            final crossAxisCount = _calculateCrossAxisCount(
+              constraints.maxWidth,
+            );
 
             return GridView.builder(
               shrinkWrap: true,
@@ -55,10 +53,7 @@ class _DentistSelectionState extends State<DentistSelection> {
               ),
               itemCount: dentists.length,
               itemBuilder: (context, index) {
-                return _buildDentistCard(
-                  context,
-                  dentists[index],
-                );
+                return _buildDentistCard(context, dentists[index]);
               },
             );
           },
@@ -74,17 +69,12 @@ class _DentistSelectionState extends State<DentistSelection> {
     return 1;
   }
 
-  Widget _buildDentistCard(
-    BuildContext context,
-    Map<String, dynamic> dentist,
-  ) {
+  Widget _buildDentistCard(BuildContext context, Map<String, dynamic> dentist) {
     final isSelected = selectedDentistId == dentist['id'];
 
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: () {
           setState(() {
@@ -99,11 +89,11 @@ class _DentistSelectionState extends State<DentistSelection> {
               colors: isSelected
                   ? [
                       Colors.green.withOpacity(0.7),
-                      Colors.green.withOpacity(0.9)
+                      Colors.green.withOpacity(0.9),
                     ]
                   : [
                       AppColors.primaryColor,
-                      AppColors.primaryColor.withOpacity(0.8)
+                      AppColors.primaryColor.withOpacity(0.8),
                     ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -139,8 +129,9 @@ class _DentistSelectionState extends State<DentistSelection> {
               Icon(
                 Icons.arrow_forward_ios,
                 size: 16,
-                color:
-                    isSelected ? Colors.white : Theme.of(context).primaryColor,
+                color: isSelected
+                    ? Colors.white
+                    : Theme.of(context).primaryColor,
               ),
             ],
           ),
@@ -154,11 +145,7 @@ class _DentistSelectionState extends State<DentistSelection> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
-            Icons.error_outline,
-            color: Colors.red,
-            size: 48,
-          ),
+          const Icon(Icons.error_outline, color: Colors.red, size: 48),
           const SizedBox(height: 16),
           Text(
             'Error loading dentists: $error',
@@ -175,11 +162,7 @@ class _DentistSelectionState extends State<DentistSelection> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.person_off,
-            color: Colors.grey,
-            size: 48,
-          ),
+          Icon(Icons.person_off, color: Colors.grey, size: 48),
           SizedBox(height: 16),
           Text(
             'No dentists available at the moment',

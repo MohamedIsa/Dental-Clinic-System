@@ -16,11 +16,7 @@ class Body extends StatelessWidget {
           fit: BoxFit.cover,
         ),
       ),
-      child: Stack(
-        children: [
-          ...children,
-        ],
-      ),
+      child: Stack(children: [...children]),
     );
   }
 }

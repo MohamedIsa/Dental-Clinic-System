@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import '../../const/app_colors.dart';
 import '../../utils/data.dart';
 import '../widgets/forms/updateaccountform.dart';
@@ -88,10 +87,7 @@ class _UpdateAccountPageState extends State<UpdateAccountPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              AppColors.primaryColor,
-              Colors.white,
-            ],
+            colors: [AppColors.primaryColor, Colors.white],
           ),
         ),
         child: SingleChildScrollView(

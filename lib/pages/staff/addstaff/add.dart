@@ -60,11 +60,10 @@ class _AddState extends State<Add> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title,
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            )),
+        title: Text(
+          widget.title,
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: AppColors.primaryColor,
       ),
       body: Container(

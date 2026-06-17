@@ -49,10 +49,7 @@ class _DentistsDataTableState extends State<DentistsDataTable> {
                   SizedBox(height: 16),
                   Text(
                     'No dentists found',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.grey.shade700,
-                    ),
+                    style: TextStyle(fontSize: 18, color: Colors.grey.shade700),
                   ),
                 ],
               ),
@@ -128,9 +125,7 @@ class _DentistsDataTableState extends State<DentistsDataTable> {
                                 SizedBox(height: 4),
                                 Text(
                                   email,
-                                  style: TextStyle(
-                                    color: Colors.grey.shade600,
-                                  ),
+                                  style: TextStyle(color: Colors.grey.shade600),
                                 ),
                               ],
                             ),

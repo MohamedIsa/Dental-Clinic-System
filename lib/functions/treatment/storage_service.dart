@@ -8,7 +8,9 @@ class StorageService {
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
   Future<String?> uploadTreatmentImage(
-      BuildContext context, html.File file) async {
+    BuildContext context,
+    html.File file,
+  ) async {
     try {
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final extension = file.type.split('/').last;

@@ -77,25 +77,18 @@ class _UpdateAppointmentsState extends State<UpdateAppointments> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              AppColors.primaryColor,
-              Colors.white,
-            ],
+            colors: [AppColors.primaryColor, Colors.white],
           ),
         ),
         child: StreamBuilder<QuerySnapshot>(
           stream: _appointmentsStream,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return const Center(
-                child: Text('Something went wrong'),
-              );
+              return const Center(child: Text('Something went wrong'));
             }
 
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return const Center(child: CircularProgressIndicator());
             }
 
             if (snapshot.data!.docs.isEmpty) {
@@ -125,9 +118,7 @@ class _UpdateAppointmentsState extends State<UpdateAppointments> {
                     if (dentistSnapshot.connectionState ==
                         ConnectionState.waiting) {
                       return const Card(
-                        child: ListTile(
-                          title: Text('Loading...'),
-                        ),
+                        child: ListTile(title: Text('Loading...')),
                       );
                     }
 

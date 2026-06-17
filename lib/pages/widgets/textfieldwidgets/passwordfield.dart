@@ -31,11 +31,14 @@ class _PasswordFieldState extends State<PasswordField> {
   String? asyncError;
 
   void handleValidation(String value) {
-    final passwordError =
-        widget.isConfirm ? null : passwordValidator(value, widget.isSignUp);
+    final passwordError = widget.isConfirm
+        ? null
+        : passwordValidator(value, widget.isSignUp);
     final confirmError = widget.isConfirm
-        ? confirmPasswordValidator(widget.confirmPasswordTextController!.text,
-            widget.passwordTextController.text)
+        ? confirmPasswordValidator(
+            widget.confirmPasswordTextController!.text,
+            widget.passwordTextController.text,
+          )
         : null;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -44,8 +47,8 @@ class _PasswordFieldState extends State<PasswordField> {
           asyncError = passwordError?.isNotEmpty == true
               ? passwordError
               : confirmError?.isNotEmpty == true
-                  ? confirmError
-                  : null;
+              ? confirmError
+              : null;
         });
       }
     });

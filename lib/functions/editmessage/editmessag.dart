@@ -4,8 +4,10 @@ import 'package:senior/utils/popups.dart';
 
 Future<String?> getMessage() async {
   try {
-    QuerySnapshot querySnapshot =
-        await FirebaseFirestore.instance.collection('messages').limit(1).get();
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('messages')
+        .limit(1)
+        .get();
 
     if (querySnapshot.docs.isNotEmpty) {
       return querySnapshot.docs.first['message'];
@@ -17,13 +19,12 @@ Future<String?> getMessage() async {
   }
 }
 
-Future<void> updateMessage(
-  BuildContext context,
-  String message,
-) async {
+Future<void> updateMessage(BuildContext context, String message) async {
   try {
-    QuerySnapshot querySnapshot =
-        await FirebaseFirestore.instance.collection('messages').limit(1).get();
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('messages')
+        .limit(1)
+        .get();
 
     if (querySnapshot.docs.isNotEmpty) {
       await querySnapshot.docs.first.reference.update({'message': message});

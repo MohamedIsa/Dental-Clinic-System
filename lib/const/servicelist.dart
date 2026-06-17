@@ -4,7 +4,7 @@ class ServiceList {
       'title': 'Dental Implants',
       'imagePath': 'assets/cards/implant.png',
       'description':
-          'Dental implants are titanium tooth roots placed into the jawbone to support replacement teeth. They offer a durable and natural-looking solution for missing teeth, enhancing chewing, speech, and overall oral health'
+          'Dental implants are titanium tooth roots placed into the jawbone to support replacement teeth. They offer a durable and natural-looking solution for missing teeth, enhancing chewing, speech, and overall oral health',
     },
     {
       'title': 'Orthodontics',

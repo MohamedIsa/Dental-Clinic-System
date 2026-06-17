@@ -101,8 +101,10 @@ class _PatientListPageState extends State<PatientListPage> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         elevation: 2,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -129,8 +131,10 @@ class _PatientListPageState extends State<PatientListPage> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide:
-                        BorderSide(color: Colors.blue.shade500, width: 2),
+                    borderSide: BorderSide(
+                      color: Colors.blue.shade500,
+                      width: 2,
+                    ),
                   ),
                   suffixIcon: Icon(Icons.search, color: Colors.blue.shade400),
                   filled: true,
@@ -158,57 +162,67 @@ class _PatientListPageState extends State<PatientListPage> {
                       }
                       if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                         return const Center(
-                            child: Text('No patient data found.'));
+                          child: Text('No patient data found.'),
+                        );
                       }
 
                       var filteredDocs = snapshot.data!.docs.where((doc) {
                         final data = doc.data() as Map<String, dynamic>;
-                        String name =
-                            (data['name'] ?? '').toString().toLowerCase();
-                        String cpr =
-                            (data['cpr'] ?? '').toString().toLowerCase();
+                        String name = (data['name'] ?? '')
+                            .toString()
+                            .toLowerCase();
+                        String cpr = (data['cpr'] ?? '')
+                            .toString()
+                            .toLowerCase();
                         return name.contains(searchQuery.toLowerCase()) ||
                             cpr.contains(searchQuery.toLowerCase());
                       }).toList();
 
                       if (filteredDocs.isEmpty) {
                         return const Center(
-                            child: Text('No matching patients found.'));
+                          child: Text('No matching patients found.'),
+                        );
                       }
 
                       return FutureBuilder<List<Map<String, dynamic>>>(
-                        future: Future.wait(filteredDocs.map((doc) async {
-                          try {
-                            CollectionReference chatCollection =
-                                FirebaseFirestore.instance
-                                    .collection('users')
-                                    .doc(doc.id)
-                                    .collection('chat');
+                        future: Future.wait(
+                          filteredDocs.map((doc) async {
+                            try {
+                              CollectionReference chatCollection =
+                                  FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(doc.id)
+                                      .collection('chat');
 
-                            bool isSeen =
-                                await isMessageSeen(chatCollection, 'patient');
-                            return {
-                              'doc': _createUserFromDoc(doc),
-                              'isSeen': isSeen,
-                            };
-                          } catch (e) {
-                            return {
-                              'doc': _createUserFromDoc(doc),
-                              'isSeen': false,
-                            };
-                          }
-                        }).toList()),
+                              bool isSeen = await isMessageSeen(
+                                chatCollection,
+                                'patient',
+                              );
+                              return {
+                                'doc': _createUserFromDoc(doc),
+                                'isSeen': isSeen,
+                              };
+                            } catch (e) {
+                              return {
+                                'doc': _createUserFromDoc(doc),
+                                'isSeen': false,
+                              };
+                            }
+                          }).toList(),
+                        ),
                         builder: (context, futureSnapshot) {
                           if (futureSnapshot.connectionState ==
                               ConnectionState.waiting) {
                             return const Center(
-                                child: CircularProgressIndicator());
+                              child: CircularProgressIndicator(),
+                            );
                           }
 
                           if (!futureSnapshot.hasData ||
                               futureSnapshot.data!.isEmpty) {
                             return const Center(
-                                child: Text('No matching patients found.'));
+                              child: Text('No matching patients found.'),
+                            );
                           }
 
                           var sortedDocs = futureSnapshot.data!;
@@ -238,8 +252,8 @@ class _PatientListPageState extends State<PatientListPage> {
                                       MaterialPageRoute(
                                         builder: (context) =>
                                             PatientDetailsPage(
-                                          patient: patientData,
-                                        ),
+                                              patient: patientData,
+                                            ),
                                       ),
                                     );
                                   },

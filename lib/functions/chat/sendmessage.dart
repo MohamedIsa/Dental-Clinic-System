@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import '../../models/chat.dart';
 import '../../utils/data.dart';
 
-Future<void> sendMessage(TextEditingController controller,
-    CollectionReference chatCollection, String role) async {
+Future<void> sendMessage(
+  TextEditingController controller,
+  CollectionReference chatCollection,
+  String role,
+) async {
   final text = controller.text.trim();
   if (text.isEmpty) return;
 

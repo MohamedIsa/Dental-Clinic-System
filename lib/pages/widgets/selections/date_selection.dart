@@ -28,14 +28,12 @@ class _DateSelectionState extends State<DateSelection> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
-            child: SpinKitPulse(
-              color: Colors.blue,
-              size: 40.0,
-            ),
+            child: SpinKitPulse(color: Colors.blue, size: 40.0),
           );
         }
 
-        final dates = snapshot.data?.where((date) {
+        final dates =
+            snapshot.data?.where((date) {
               final now = DateTime.now();
               return date.isAfter(now) ||
                   (date.year == now.year &&
@@ -51,8 +49,9 @@ class _DateSelectionState extends State<DateSelection> {
 
         return LayoutBuilder(
           builder: (context, constraints) {
-            final crossAxisCount =
-                _calculateCrossAxisCount(constraints.maxWidth);
+            final crossAxisCount = _calculateCrossAxisCount(
+              constraints.maxWidth,
+            );
 
             return GridView.builder(
               shrinkWrap: true,
@@ -76,7 +75,8 @@ class _DateSelectionState extends State<DateSelection> {
   }
 
   Widget _buildDateCard(BuildContext context, DateTime date, int index) {
-    final isSelected = selectedDate != null &&
+    final isSelected =
+        selectedDate != null &&
         selectedDate!.year == date.year &&
         selectedDate!.month == date.month &&
         selectedDate!.day == date.day;
@@ -84,9 +84,7 @@ class _DateSelectionState extends State<DateSelection> {
     return Card(
       key: ValueKey(index),
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: () {
           setState(() {
@@ -102,11 +100,11 @@ class _DateSelectionState extends State<DateSelection> {
               colors: isSelected
                   ? [
                       Colors.green.withOpacity(0.7),
-                      Colors.green.withOpacity(0.9)
+                      Colors.green.withOpacity(0.9),
                     ]
                   : [
                       AppColors.primaryColor,
-                      AppColors.primaryColor.withOpacity(0.8)
+                      AppColors.primaryColor.withOpacity(0.8),
                     ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -147,10 +145,7 @@ class _DateSelectionState extends State<DateSelection> {
     return const Center(
       child: Text(
         'No available dates for selected dentist.',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20.0,
-        ),
+        style: TextStyle(color: Colors.white, fontSize: 20.0),
       ),
     );
   }

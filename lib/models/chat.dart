@@ -5,12 +5,13 @@ class Chat {
   bool seen;
   String role;
 
-  Chat(
-      {required this.senderId,
-      required this.text,
-      required this.timestamp,
-      this.seen = false,
-      required this.role});
+  Chat({
+    required this.senderId,
+    required this.text,
+    required this.timestamp,
+    this.seen = false,
+    required this.role,
+  });
 
   Map<String, dynamic> toMap() {
     return {

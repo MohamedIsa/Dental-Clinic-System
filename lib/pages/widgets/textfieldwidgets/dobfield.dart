@@ -7,11 +7,12 @@ class DobField extends StatelessWidget {
   final TextEditingController dobTextController;
   final double width;
   final Function(String)? onFieldSubmitted;
-  const DobField(
-      {super.key,
-      required this.dobTextController,
-      required this.width,
-      this.onFieldSubmitted});
+  const DobField({
+    super.key,
+    required this.dobTextController,
+    required this.width,
+    this.onFieldSubmitted,
+  });
 
   @override
   Widget build(BuildContext context) {

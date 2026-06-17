@@ -20,8 +20,10 @@ class FacilityPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sideMenuProvider =
-        Provider.of<SideMenuProvider>(context, listen: false);
+    final sideMenuProvider = Provider.of<SideMenuProvider>(
+      context,
+      listen: false,
+    );
 
     final uid = FirebaseAuth.instance.currentUser?.uid;
     FirebaseFirestore.instance.collection('users').doc(uid).get();
@@ -32,15 +34,10 @@ class FacilityPage extends StatelessWidget {
       future: sideMenuProvider.loadMenu(context),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return SpinKitFadingCube(
-            size: 30,
-            color: Colors.blue,
-          );
+          return SpinKitFadingCube(size: 30, color: Colors.blue);
         } else if (snapshot.hasError) {
           return Scaffold(
-            body: Center(
-              child: Text('Error: ${snapshot.error}'),
-            ),
+            body: Center(child: Text('Error: ${snapshot.error}')),
           );
         } else {
           return isWeb
@@ -64,12 +61,9 @@ class FacilityPage extends StatelessWidget {
                                 flex: 7,
                                 child: Row(
                                   children: [
-                                    Expanded(
-                                      flex: 2,
-                                      child: SideMenuWidget(),
-                                    ),
+                                    Expanded(flex: 2, child: SideMenuWidget()),
                                     widget ?? SizedBox.shrink(),
-                                    widget1 ?? SizedBox.shrink()
+                                    widget1 ?? SizedBox.shrink(),
                                   ],
                                 ),
                               ),
@@ -80,10 +74,7 @@ class FacilityPage extends StatelessWidget {
                     } else if (snapshot.hasError) {
                       return Text('Error: ${snapshot.error}');
                     } else {
-                      return SpinKitFadingCube(
-                        size: 30,
-                        color: Colors.blue,
-                      );
+                      return SpinKitFadingCube(size: 30, color: Colors.blue);
                     }
                   },
                 )

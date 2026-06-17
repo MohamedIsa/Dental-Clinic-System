@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 void updateUser(
-    BuildContext context,
-    TextEditingController nameController,
-    TextEditingController cprController,
-    TextEditingController dobController,
-    String selectedGender,
-    TextEditingController phoneController) async {
+  BuildContext context,
+  TextEditingController nameController,
+  TextEditingController cprController,
+  TextEditingController dobController,
+  String selectedGender,
+  TextEditingController phoneController,
+) async {
   User? user = FirebaseAuth.instance.currentUser;
   if (user != null) {
     await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
@@ -20,8 +21,8 @@ void updateUser(
       'phone': phoneController.text,
     });
     context.go('/patientDashboard');
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('User updated successfully'),
-    ));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('User updated successfully')));
   }
 }

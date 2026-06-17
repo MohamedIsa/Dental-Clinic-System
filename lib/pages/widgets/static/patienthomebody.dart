@@ -17,14 +17,16 @@ class _PatientHomeBodyState extends State<PatientHomeBody> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth <= 600;
-    return Body(children: <Widget>[
-      MessageContainer(
-        futureMessage: getUpcomingAppointment(Data.currentID!),
-        containerWidth: isMobile ? null : 430,
-        containerHeight: isMobile ? 130 : 200,
-        margin: const EdgeInsets.only(top: 100, bottom: 800),
-        backgroundColor: AppColors.primaryColor,
-      ),
-    ]);
+    return Body(
+      children: <Widget>[
+        MessageContainer(
+          futureMessage: getUpcomingAppointment(Data.currentID!),
+          containerWidth: isMobile ? null : 430,
+          containerHeight: isMobile ? 130 : 200,
+          margin: const EdgeInsets.only(top: 100, bottom: 800),
+          backgroundColor: AppColors.primaryColor,
+        ),
+      ],
+    );
   }
 }

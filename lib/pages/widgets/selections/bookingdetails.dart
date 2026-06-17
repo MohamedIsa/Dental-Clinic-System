@@ -31,9 +31,7 @@ class AppointmentDetails extends StatelessWidget {
 
     return Card(
       elevation: 8,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(24),
@@ -138,11 +136,7 @@ class AppointmentDetails extends StatelessWidget {
   }) {
     return Row(
       children: [
-        Icon(
-          icon,
-          color: Colors.white.withOpacity(0.7),
-          size: 20,
-        ),
+        Icon(icon, color: Colors.white.withOpacity(0.7), size: 20),
         const SizedBox(width: 12),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,

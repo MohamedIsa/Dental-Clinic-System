@@ -4,7 +4,9 @@ import 'package:intl/intl.dart';
 import 'package:senior/utils/popups.dart';
 
 Future<List<DateTime>> getAvailableDates(
-    BuildContext context, String dentistId) async {
+  BuildContext context,
+  String dentistId,
+) async {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   DateTime now = DateTime.now();
   List<DateTime> dates = [];

@@ -10,16 +10,17 @@ class Users {
   String gender;
   String dob;
   Color? color;
-  Users(
-      {required this.id,
-      required this.name,
-      required this.email,
-      required this.role,
-      required this.phone,
-      required this.cpr,
-      required this.dob,
-      required this.gender,
-      this.color});
+  Users({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.role,
+    required this.phone,
+    required this.cpr,
+    required this.dob,
+    required this.gender,
+    this.color,
+  });
 
   factory Users.fromFirestore(Map<String, dynamic> data, String id) {
     return Users(

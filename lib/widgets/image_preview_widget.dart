@@ -9,12 +9,12 @@ class ImagePreviewWidget extends StatelessWidget {
   final double height;
 
   const ImagePreviewWidget({
-    Key? key,
+    super.key,
     this.imageUrl,
     this.imageFile,
     this.width = 200,
     this.height = 200,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -49,9 +49,7 @@ class ImagePreviewWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         child: imageFile != null || imageUrl != null
             ? HtmlElementView(viewType: imageId)
-            : Center(
-                child: Icon(Icons.image, color: Colors.grey),
-              ),
+            : Center(child: Icon(Icons.image, color: Colors.grey)),
       ),
     );
   }

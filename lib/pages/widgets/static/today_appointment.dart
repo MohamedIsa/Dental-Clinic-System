@@ -37,8 +37,10 @@ class TodayAppointmentPage extends StatelessWidget {
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('appointments')
-                  .where('date',
-                      isEqualTo: DateTime.now().toString().split(' ')[0])
+                  .where(
+                    'date',
+                    isEqualTo: DateTime.now().toString().split(' ')[0],
+                  )
                   .orderBy('time', descending: false)
                   .snapshots(),
               builder: (context, snapshot) {
@@ -87,7 +89,8 @@ class TodayAppointmentPage extends StatelessWidget {
                 }
 
                 logger.i(
-                    'Found ${snapshot.data!.docs.length} appointments for today');
+                  'Found ${snapshot.data!.docs.length} appointments for today',
+                );
                 return Card(
                   margin: EdgeInsets.all(16),
                   elevation: 4,
@@ -102,7 +105,8 @@ class TodayAppointmentPage extends StatelessWidget {
                       final appointment = snapshot.data!.docs[index];
                       final data = appointment.data() as Map<String, dynamic>;
                       logger.d(
-                          'Building appointment item for time: ${data['time']}');
+                        'Building appointment item for time: ${data['time']}',
+                      );
                       return FutureBuilder<DocumentSnapshot>(
                         future: FirebaseFirestore.instance
                             .collection('users')
@@ -111,12 +115,14 @@ class TodayAppointmentPage extends StatelessWidget {
                         builder: (context, patientSnapshot) {
                           if (!patientSnapshot.hasData) {
                             logger.w(
-                                'Patient data not found for ID: ${data['patientId']}');
+                              'Patient data not found for ID: ${data['patientId']}',
+                            );
                             return SizedBox.shrink();
                           }
 
-                          final patientData = patientSnapshot.data!.data()
-                              as Map<String, dynamic>;
+                          final patientData =
+                              patientSnapshot.data!.data()
+                                  as Map<String, dynamic>;
                           final patientName =
                               patientData['name'] ?? 'Unknown Patient';
                           logger.d('Retrieved patient name: $patientName');
@@ -124,8 +130,9 @@ class TodayAppointmentPage extends StatelessWidget {
                           return Container(
                             padding: EdgeInsets.symmetric(vertical: 12),
                             child: ListTile(
-                              contentPadding:
-                                  EdgeInsets.symmetric(horizontal: 16),
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
                               leading: CircleAvatar(
                                 backgroundColor: AppColors.primaryColor,
                                 child: Text(
@@ -158,7 +165,9 @@ class TodayAppointmentPage extends StatelessWidget {
                               ),
                               trailing: Container(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 6),
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
                                 decoration: BoxDecoration(
                                   color: Colors.blue.shade50,
                                   borderRadius: BorderRadius.circular(20),

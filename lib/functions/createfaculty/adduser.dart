@@ -28,11 +28,11 @@ Future<void> adduser(
     } else {
       String randomPassword = generateRandomPassword();
 
-      UserCredential userCredential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: emailController.text,
-        password: randomPassword,
-      );
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: emailController.text,
+            password: randomPassword,
+          );
 
       Users newUser = Users(
         id: userCredential.user!.uid,
@@ -53,9 +53,7 @@ Future<void> adduser(
 
       final response = await http.post(
         Uri.parse(api),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'recipientEmail': emailController.text,
           'subject': 'Your Account Details',
@@ -68,7 +66,9 @@ Future<void> adduser(
         showMessagealert(context, 'User added and email sent successfully');
       } else {
         showErrorDialog(
-            context, 'User added, but failed to send the email. Please retry.');
+          context,
+          'User added, but failed to send the email. Please retry.',
+        );
       }
 
       Navigator.of(context).pop();

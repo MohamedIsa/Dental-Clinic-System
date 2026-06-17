@@ -24,20 +24,10 @@ class SettingsPage extends StatelessWidget {
   Widget _buildListTile(BuildContext context, String title) {
     return Container(
       decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.white,
-            width: 1.0,
-          ),
-        ),
+        border: Border(bottom: BorderSide(color: Colors.white, width: 1.0)),
       ),
       child: ListTile(
-        title: Text(
-          title,
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
+        title: Text(title, style: TextStyle(color: Colors.white)),
         tileColor: const Color.fromARGB(255, 38, 99, 148),
         onTap: () {
           navigateToSettings(title);

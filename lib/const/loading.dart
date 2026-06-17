@@ -24,10 +24,7 @@ class _LoadingState extends State<Loading> {
     return Scaffold(
       backgroundColor: AppColors.primaryColor,
       body: const Center(
-        child: SpinKitSquareCircle(
-          color: AppColors.backColor,
-          size: 50.0,
-        ),
+        child: SpinKitSquareCircle(color: AppColors.backColor, size: 50.0),
       ),
     );
   }

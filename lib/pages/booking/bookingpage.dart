@@ -170,8 +170,9 @@ class _BookingPageState extends State<BookingPage> {
                   _buildBookingStep(
                     context,
                     isSmallScreen,
-                    title:
-                        widget.isFacility ? '3. Select Date' : '2. Select Date',
+                    title: widget.isFacility
+                        ? '3. Select Date'
+                        : '2. Select Date',
                     content: DateSelection(
                       selectedDentistId: selectedDentistId,
                       onDateSelected: onDateSelected,
@@ -181,8 +182,9 @@ class _BookingPageState extends State<BookingPage> {
                   _buildBookingStep(
                     context,
                     isSmallScreen,
-                    title:
-                        widget.isFacility ? '4. Select Time' : '3. Select Time',
+                    title: widget.isFacility
+                        ? '4. Select Time'
+                        : '3. Select Time',
                     content: TimeSelection(
                       selectedDentistId: selectedDentistId,
                       selectedDate: selectedDate,

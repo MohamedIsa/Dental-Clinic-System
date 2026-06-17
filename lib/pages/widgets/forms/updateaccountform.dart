@@ -15,7 +15,7 @@ class UpdateAccountForm extends StatefulWidget {
   final TextEditingController phoneController;
   final ValueChanged<String> onGenderChanged;
 
-  UpdateAccountForm({
+  const UpdateAccountForm({
     super.key,
     required this.nameController,
     required this.cprController,
@@ -68,15 +68,9 @@ class _UpdateAccountFormState extends State<UpdateAccountForm> {
                   width: width,
                 ),
                 const SizedBox(height: 24),
-                CprField(
-                  cprTextController: widget.cprController,
-                  width: width,
-                ),
+                CprField(cprTextController: widget.cprController, width: width),
                 const SizedBox(height: 24),
-                DobField(
-                  dobTextController: widget.dobController,
-                  width: width,
-                ),
+                DobField(dobTextController: widget.dobController, width: width),
                 const SizedBox(height: 24),
                 GenderField(
                   width: width,

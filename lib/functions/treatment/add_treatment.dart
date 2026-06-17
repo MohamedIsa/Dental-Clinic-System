@@ -10,44 +10,44 @@ import 'image_handler.dart';
 
 Future<void> handleSave(
   BuildContext context,
-  TextEditingController _cprController,
-  TextEditingController _treatmentTypeController,
-  TextEditingController _notesController,
-  ImageHandler _imageHandler,
-  TextEditingController _dateController,
-  TextEditingController _timeController,
+  TextEditingController cprController,
+  TextEditingController treatmentTypeController,
+  TextEditingController notesController,
+  ImageHandler imageHandler,
+  TextEditingController dateController,
+  TextEditingController timeController,
 ) async {
   try {
     List<String> requiredFields = [];
 
-    if (_cprController.text.isEmpty) {
+    if (cprController.text.isEmpty) {
       requiredFields.add('CPR');
     }
-    if (_treatmentTypeController.text.isEmpty) {
+    if (treatmentTypeController.text.isEmpty) {
       requiredFields.add('Treatment Type');
     }
-    if (_notesController.text.isEmpty) {
+    if (notesController.text.isEmpty) {
       requiredFields.add('Notes');
     }
     if (requiredFields.isNotEmpty) {
-      showErrorDialog(context,
-          'Please fill in all required fields: ${requiredFields.join('\n')}');
+      showErrorDialog(
+        context,
+        'Please fill in all required fields: ${requiredFields.join('\n')}',
+      );
       return;
     }
 
     String? uploadedImageUrl;
-    if (_imageHandler.hasSelectedFile) {
+    if (imageHandler.hasSelectedFile) {
       showDialog(
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
+          return Center(child: CircularProgressIndicator());
         },
       );
 
-      uploadedImageUrl = await _imageHandler.uploadImageToFirebase(context);
+      uploadedImageUrl = await imageHandler.uploadImageToFirebase(context);
 
       if (context.mounted) {
         Navigator.pop(context);
@@ -61,7 +61,7 @@ Future<void> handleSave(
 
     String patientId;
     try {
-      patientId = await fetchPatientId(_cprController.text);
+      patientId = await fetchPatientId(cprController.text);
     } catch (e) {
       showErrorDialog(context, 'Patient not found');
       return;
@@ -69,13 +69,13 @@ Future<void> handleSave(
 
     final treatmentData = TreatmentRecord(
       treatmentId: Data.generateRandomID().toString(),
-      date: _dateController.text,
-      time: _timeController.text,
+      date: dateController.text,
+      time: timeController.text,
       patientId: patientId,
       dentistId: Data.currentID!,
-      cpr: _cprController.text,
-      treatmentType: _treatmentTypeController.text,
-      notes: _notesController.text,
+      cpr: cprController.text,
+      treatmentType: treatmentTypeController.text,
+      notes: notesController.text,
       attachment: uploadedImageUrl,
     );
 

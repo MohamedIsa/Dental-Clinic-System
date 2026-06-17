@@ -22,8 +22,10 @@ class MessageContainer extends StatelessWidget {
     this.margin = const EdgeInsets.only(top: 100),
     this.isResponsive = false,
     this.backgroundColor = AppColors.primaryColor,
-  }) : assert(staticMessage != null || futureMessage != null,
-            'Either staticMessage or futureMessage must be provided');
+  }) : assert(
+         staticMessage != null || futureMessage != null,
+         'Either staticMessage or futureMessage must be provided',
+       );
 
   Widget _buildMessageContent(BuildContext context, String message) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -44,7 +46,7 @@ class MessageContainer extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
         ),
-        if (actionButton != null) actionButton!,
+        ?actionButton,
       ],
     );
   }
@@ -77,10 +79,7 @@ class MessageContainer extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
-                      child: SpinKitFadingCircle(
-                        color: Colors.white,
-                        size: 20,
-                      ),
+                      child: SpinKitFadingCircle(color: Colors.white, size: 20),
                     );
                   } else if (snapshot.hasError) {
                     return _buildMessageContent(

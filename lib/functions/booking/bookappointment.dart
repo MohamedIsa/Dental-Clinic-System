@@ -5,8 +5,14 @@ import 'package:intl/intl.dart';
 import '../../models/appointments.dart';
 import '../../utils/popups.dart';
 
-Future<void> bookAppointment(BuildContext context, bool isFacility,
-    String dentistId, DateTime date, int hour, String patientId) async {
+Future<void> bookAppointment(
+  BuildContext context,
+  bool isFacility,
+  String dentistId,
+  DateTime date,
+  int hour,
+  String patientId,
+) async {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   final String dateStr = DateFormat('yyyy-MM-dd').format(date);
@@ -38,11 +44,14 @@ Future<void> bookAppointment(BuildContext context, bool isFacility,
     if (existingAppointment.docs.isEmpty) {
       final batch = firestore.batch();
 
-      final String appointmentId =
-          firestore.collection('appointments').doc().id;
+      final String appointmentId = firestore
+          .collection('appointments')
+          .doc()
+          .id;
 
-      final mainAppointmentRef =
-          firestore.collection('appointments').doc(appointmentId);
+      final mainAppointmentRef = firestore
+          .collection('appointments')
+          .doc(appointmentId);
       final appointmentData = Appointments(
         id: appointmentId,
         patientId: patientId,

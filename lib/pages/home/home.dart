@@ -31,9 +31,7 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
       ),
       bottomNavigationBar: MediaQuery.of(context).size.width <= 600
-          ? BottomNavBar<HomeNavBarProvider>(
-              navItems: [...HomeNavItems],
-            )
+          ? BottomNavBar<HomeNavBarProvider>(navItems: [...HomeNavItems])
           : null,
       body: Container(
         height: MediaQuery.of(context).size.height * 1.5,
@@ -42,15 +40,15 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             children: <Widget>[
               if (MediaQuery.of(context).size.width > 600)
-                TopNavBar<HomeNavBarProvider>(
-                  navItems: [...HomeNavItems],
-                ),
+                TopNavBar<HomeNavBarProvider>(navItems: [...HomeNavItems]),
               Body(
                 children: <Widget>[
                   WelcomeSection(
-                      screenWidth: MediaQuery.of(context).size.width),
+                    screenWidth: MediaQuery.of(context).size.width,
+                  ),
                   ServicesSection(
-                      screenWidth: MediaQuery.of(context).size.width),
+                    screenWidth: MediaQuery.of(context).size.width,
+                  ),
                 ],
               ),
             ],

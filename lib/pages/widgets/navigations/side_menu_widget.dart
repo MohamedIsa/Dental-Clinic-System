@@ -16,12 +16,7 @@ class _SideMenuWidgetState extends State<SideMenuWidget> {
     final sideMenuProvider = Provider.of<SideMenuProvider>(context);
     return Container(
       decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(
-            color: Colors.white,
-            width: 2,
-          ),
-        ),
+        border: Border(top: BorderSide(color: Colors.white, width: 2)),
       ),
       child: Center(
         child: Material(
@@ -43,8 +38,12 @@ class _SideMenuWidgetState extends State<SideMenuWidget> {
   }
 
   Widget buildMenuEntry(
-      SideMenuProvider sideMenuProvider, int index, BuildContext context) {
-    final isSelected = sideMenuProvider.menu[index].routeName ==
+    SideMenuProvider sideMenuProvider,
+    int index,
+    BuildContext context,
+  ) {
+    final isSelected =
+        sideMenuProvider.menu[index].routeName ==
         ModalRoute.of(context)?.settings.name;
 
     return GestureDetector(
@@ -85,8 +84,10 @@ class _SideMenuWidgetState extends State<SideMenuWidget> {
     final currentRoute = ModalRoute.of(context)?.settings.name;
 
     if (currentRoute != routeName) {
-      Provider.of<SideMenuProvider>(context, listen: false)
-          .updateIndex(index, routeName);
+      Provider.of<SideMenuProvider>(
+        context,
+        listen: false,
+      ).updateIndex(index, routeName);
       context.go(routeName);
     }
   }

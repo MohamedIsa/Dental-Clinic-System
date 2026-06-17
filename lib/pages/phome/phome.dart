@@ -45,9 +45,7 @@ class _WelcomePageState extends State<WelcomePage> {
       largeScreen: Scaffold(
         appBar: PatientAppBar(),
         bottomNavigationBar: ResponsiveWidget.isSmallScreen(context)
-            ? BottomNavBar<PatientNavBarProvider>(
-                navItems: [...navItemsp],
-              )
+            ? BottomNavBar<PatientNavBarProvider>(navItems: [...navItemsp])
             : null,
         body: FutureBuilder<String>(
           future: getFullName(),
@@ -64,9 +62,7 @@ class _WelcomePageState extends State<WelcomePage> {
             }
             return Container(
               height: MediaQuery.of(context).size.height * 1.5,
-              decoration: const BoxDecoration(
-                color: AppColors.primaryColor,
-              ),
+              decoration: const BoxDecoration(color: AppColors.primaryColor),
               child: SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
@@ -89,9 +85,7 @@ class _WelcomePageState extends State<WelcomePage> {
               return FloatingActionButton(
                 onPressed: null,
                 backgroundColor: AppColors.primaryColor,
-                child: const CircularProgressIndicator(
-                  color: Colors.white,
-                ),
+                child: const CircularProgressIndicator(color: Colors.white),
               );
             }
 
@@ -105,10 +99,8 @@ class _WelcomePageState extends State<WelcomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ChatPage(
-                        senderId: patientId,
-                        patientId: patientId,
-                      ),
+                      builder: (context) =>
+                          ChatPage(senderId: patientId, patientId: patientId),
                     ),
                   );
                 }

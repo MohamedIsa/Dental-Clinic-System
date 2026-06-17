@@ -12,10 +12,7 @@ class MobileView extends StatelessWidget {
         title: Text('Mobile View', style: TextStyle(color: Colors.red)),
         actions: <Widget>[
           IconButton(
-            icon: Icon(
-              Icons.logout,
-              color: Colors.red,
-            ),
+            icon: Icon(Icons.logout, color: Colors.red),
             onPressed: () {
               FirebaseAuth.instance.signOut();
               context.go('/home');

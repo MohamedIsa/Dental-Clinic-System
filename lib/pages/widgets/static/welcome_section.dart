@@ -25,8 +25,11 @@ class WelcomeSection extends StatelessWidget {
     );
   }
 
-  Widget _buildSignUpButton(BuildContext context,
-      {required double fontSize, required double borderRadius}) {
+  Widget _buildSignUpButton(
+    BuildContext context, {
+    required double fontSize,
+    required double borderRadius,
+  }) {
     return ElevatedButton(
       onPressed: () {
         context.go('/signup');

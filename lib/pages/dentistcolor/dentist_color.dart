@@ -52,10 +52,7 @@ class _DentistColorSettingsScreenState
                 child: Center(
                   child: Text(
                     'Table of Dentists',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   ),
                 ),
               ),
@@ -72,120 +69,131 @@ class _DentistColorSettingsScreenState
                       rows: dentistDocs.map((dentistDoc) {
                         final dentistUID =
                             dentistDoc.id; // Assuming UID is the document ID
-                        return DataRow(cells: [
-                          DataCell(
-                            FutureBuilder<DocumentSnapshot>(
-                              future: FirebaseFirestore.instance
-                                  .collection('user')
-                                  .doc(dentistUID)
-                                  .get(),
-                              builder: (context, userSnapshot) {
-                                if (userSnapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return Center(
-                                      child: CircularProgressIndicator());
-                                } else if (userSnapshot.hasError) {
-                                  return Center(
-                                      child:
-                                          Text('Error: ${userSnapshot.error}'));
-                                }
-
-                                final Map<String, dynamic>? userData =
-                                    userSnapshot.data?.data()
-                                        as Map<String, dynamic>?;
-
-                                if (userData == null) {
-                                  return Text('User data not found');
-                                }
-
-                                final fullName =
-                                    userData['FullName'] ?? 'No Full Name';
-                                return Text(fullName);
-                              },
-                            ),
-                          ),
-                          DataCell(
-                            FutureBuilder<DocumentSnapshot>(
-                              future: FirebaseFirestore.instance
-                                  .collection('user')
-                                  .doc(dentistUID)
-                                  .get(),
-                              builder: (context, userSnapshot) {
-                                if (userSnapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return Center(
-                                      child: CircularProgressIndicator());
-                                } else if (userSnapshot.hasError) {
-                                  return Center(
-                                      child:
-                                          Text('Error: ${userSnapshot.error}'));
-                                }
-
-                                final Map<String, dynamic>? userData =
-                                    userSnapshot.data?.data()
-                                        as Map<String, dynamic>?;
-
-                                if (userData == null) {
-                                  return Text('User data not found');
-                                }
-
-                                final email = userData['Email'] ?? 'No Email';
-                                return Text(email);
-                              },
-                            ),
-                          ),
-                          DataCell(
-                            TextButton(
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    Color selectedColor =
-                                        userColors[dentistUID] != null
-                                            ? Color(int.parse(
-                                                userColors[dentistUID]!))
-                                            : Colors.blue; // Default color
-
-                                    return AlertDialog(
-                                      title: Text('Select a color'),
-                                      content: SingleChildScrollView(
-                                        child: ColorPicker(
-                                          borderColor: selectedColor,
-                                          color: selectedColor,
-                                          onColorChanged: (Color color) {
-                                            setState(() {
-                                              selectedColor = color;
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text('Cancel'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              userColors[dentistUID] = selectedColor
-                                                  .value
-                                                  .toString(); // Update color value in userColors map
-                                            });
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text('OK'),
-                                        ),
-                                      ],
+                        return DataRow(
+                          cells: [
+                            DataCell(
+                              FutureBuilder<DocumentSnapshot>(
+                                future: FirebaseFirestore.instance
+                                    .collection('user')
+                                    .doc(dentistUID)
+                                    .get(),
+                                builder: (context, userSnapshot) {
+                                  if (userSnapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Center(
+                                      child: CircularProgressIndicator(),
                                     );
-                                  },
-                                );
-                              },
-                              child: Text('Choose Color'),
+                                  } else if (userSnapshot.hasError) {
+                                    return Center(
+                                      child: Text(
+                                        'Error: ${userSnapshot.error}',
+                                      ),
+                                    );
+                                  }
+
+                                  final Map<String, dynamic>? userData =
+                                      userSnapshot.data?.data()
+                                          as Map<String, dynamic>?;
+
+                                  if (userData == null) {
+                                    return Text('User data not found');
+                                  }
+
+                                  final fullName =
+                                      userData['FullName'] ?? 'No Full Name';
+                                  return Text(fullName);
+                                },
+                              ),
                             ),
-                          ),
-                        ]);
+                            DataCell(
+                              FutureBuilder<DocumentSnapshot>(
+                                future: FirebaseFirestore.instance
+                                    .collection('user')
+                                    .doc(dentistUID)
+                                    .get(),
+                                builder: (context, userSnapshot) {
+                                  if (userSnapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  } else if (userSnapshot.hasError) {
+                                    return Center(
+                                      child: Text(
+                                        'Error: ${userSnapshot.error}',
+                                      ),
+                                    );
+                                  }
+
+                                  final Map<String, dynamic>? userData =
+                                      userSnapshot.data?.data()
+                                          as Map<String, dynamic>?;
+
+                                  if (userData == null) {
+                                    return Text('User data not found');
+                                  }
+
+                                  final email = userData['Email'] ?? 'No Email';
+                                  return Text(email);
+                                },
+                              ),
+                            ),
+                            DataCell(
+                              TextButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      Color selectedColor =
+                                          userColors[dentistUID] != null
+                                          ? Color(
+                                              int.parse(
+                                                userColors[dentistUID]!,
+                                              ),
+                                            )
+                                          : Colors.blue; // Default color
+
+                                      return AlertDialog(
+                                        title: Text('Select a color'),
+                                        content: SingleChildScrollView(
+                                          child: ColorPicker(
+                                            borderColor: selectedColor,
+                                            color: selectedColor,
+                                            onColorChanged: (Color color) {
+                                              setState(() {
+                                                selectedColor = color;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text('Cancel'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                userColors[dentistUID] =
+                                                    selectedColor.value
+                                                        .toString(); // Update color value in userColors map
+                                              });
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text('OK'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                child: Text('Choose Color'),
+                              ),
+                            ),
+                          ],
+                        );
                       }).toList(),
                     ),
                   ),
@@ -206,7 +214,8 @@ class _DentistColorSettingsScreenState
                 decoration: BoxDecoration(
                   color: Colors.blue, // Set background color of the button
                   borderRadius: BorderRadius.circular(
-                      8), // Optional: adjust the border radius
+                    8,
+                  ), // Optional: adjust the border radius
                 ),
                 child: TextButton(
                   onPressed: () {
@@ -215,7 +224,8 @@ class _DentistColorSettingsScreenState
                   child: Text(
                     'Cancel',
                     style: TextStyle(
-                        color: Colors.white), // Set text color to white
+                      color: Colors.white,
+                    ), // Set text color to white
                   ),
                 ),
               ),
@@ -224,7 +234,8 @@ class _DentistColorSettingsScreenState
                 decoration: BoxDecoration(
                   color: Colors.blue, // Set background color of the button
                   borderRadius: BorderRadius.circular(
-                      8), // Optional: adjust the border radius
+                    8,
+                  ), // Optional: adjust the border radius
                 ),
                 child: TextButton(
                   onPressed: () async {
@@ -239,14 +250,17 @@ class _DentistColorSettingsScreenState
                         showMessagealert(context, 'Color Updated Successfully');
                       } catch (e) {
                         showErrorDialog(
-                            context, 'Error updating color for dentist: $e');
+                          context,
+                          'Error updating color for dentist: $e',
+                        );
                       }
                     });
                   },
                   child: Text(
                     'Update',
                     style: TextStyle(
-                        color: Colors.white), // Set text color to white
+                      color: Colors.white,
+                    ), // Set text color to white
                   ),
                 ),
               ),

@@ -14,7 +14,8 @@ class ServicesSection extends StatelessWidget {
       child: Container(
         decoration: const BoxDecoration(
           border: Border.fromBorderSide(
-              BorderSide(color: AppColors.primaryColor, width: 2)),
+            BorderSide(color: AppColors.primaryColor, width: 2),
+          ),
           borderRadius: BorderRadius.all(Radius.circular(40.0)),
         ),
         margin: EdgeInsets.only(top: screenWidth <= 600 ? 350 : 300),
@@ -25,7 +26,9 @@ class ServicesSection extends StatelessWidget {
             Text(
               'Our Services',
               style: TextStyle(
-                  color: Colors.white, fontSize: screenWidth <= 600 ? 20 : 30),
+                color: Colors.white,
+                fontSize: screenWidth <= 600 ? 20 : 30,
+              ),
             ),
             const SizedBox(height: 20),
             _buildServiceRows(context),

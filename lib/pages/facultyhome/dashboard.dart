@@ -36,12 +36,7 @@ class _DashboardState extends State<Dashboard> {
         flex: 9,
         child: Container(
           decoration: BoxDecoration(
-            border: Border(
-              right: BorderSide(
-                color: Colors.grey,
-                width: 1.0,
-              ),
-            ),
+            border: Border(right: BorderSide(color: Colors.grey, width: 1.0)),
           ),
           child: role == 'admin' || role == 'recptionist'
               ? TodayAppointmentPage()

@@ -58,8 +58,9 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         EmailField(
-            emailTextController: _emailController,
-            onFieldSubmitted: (_) => _resetPassword),
+          emailTextController: _emailController,
+          onFieldSubmitted: (_) => _resetPassword,
+        ),
         SizedBox(height: height * 0.04),
         ButtonForm(width: width, title: 'ResetPassword', onTap: _resetPassword),
         SizedBox(height: height * 0.04),

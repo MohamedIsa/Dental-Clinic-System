@@ -15,7 +15,9 @@ Future<void> markMessagesAsSeen(CollectionReference chatCollection) async {
 }
 
 Future<bool> isMessageSeen(
-    CollectionReference chatCollection, String currentRole) async {
+  CollectionReference chatCollection,
+  String currentRole,
+) async {
   final currentUserId = Data.currentID;
 
   Query query = chatCollection

@@ -7,11 +7,12 @@ class PhoneField extends StatelessWidget {
   final TextEditingController phoneTextController;
   final double width;
   final Function(String)? onFieldSubmitted;
-  const PhoneField(
-      {super.key,
-      required this.phoneTextController,
-      required this.width,
-      this.onFieldSubmitted});
+  const PhoneField({
+    super.key,
+    required this.phoneTextController,
+    required this.width,
+    this.onFieldSubmitted,
+  });
 
   @override
   Widget build(BuildContext context) {

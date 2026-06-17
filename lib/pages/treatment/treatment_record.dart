@@ -8,6 +8,8 @@ import 'widgets/treatment_details_dialog.dart';
 import 'widgets/treatment_header.dart';
 
 class TreatmentRecordPage extends StatefulWidget {
+  const TreatmentRecordPage({super.key});
+
   @override
   _TreatmentRecordPageState createState() => _TreatmentRecordPageState();
 }
@@ -25,8 +27,9 @@ class _TreatmentRecordPageState extends State<TreatmentRecordPage> {
 
   void fetchTreatmentRecords() async {
     try {
-      QuerySnapshot querySnapshot =
-          await _firestore.collection('treatment').get();
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('treatment')
+          .get();
 
       setState(() {
         treatmentRecords = querySnapshot.docs.map((doc) {
@@ -98,14 +101,12 @@ class _TreatmentRecordPageState extends State<TreatmentRecordPage> {
 class TreatmentRecordDetailsPage extends StatelessWidget {
   final TreatmentRecord treatmentRecord;
 
-  TreatmentRecordDetailsPage({required this.treatmentRecord});
+  const TreatmentRecordDetailsPage({super.key, required this.treatmentRecord});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Treatment Record Details"),
-      ),
+      appBar: AppBar(title: Text("Treatment Record Details")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

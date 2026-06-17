@@ -73,9 +73,10 @@ class ServiceCard extends StatelessWidget {
             Text(
               title,
               style: TextStyle(
-                  fontSize: isMobile ? 10 : 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white),
+                fontSize: isMobile ? 10 : 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
               textAlign: TextAlign.center,
             ),
           ],

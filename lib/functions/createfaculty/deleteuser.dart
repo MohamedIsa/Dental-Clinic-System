@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import '../../utils/popups.dart';
 
 Future<void> deleteUser(
-    BuildContext context, String userId, String role) async {
+  BuildContext context,
+  String userId,
+  String role,
+) async {
   try {
     await FirebaseFirestore.instance.collection('user').doc(userId).delete();
 
@@ -20,8 +23,10 @@ Future<void> deleteUser(
         int appointmentHour = appointment['hour'];
         int appointmentEnd = appointment['end'];
 
-        QuerySnapshot availableDentistsSnapshot =
-            await FirebaseFirestore.instance.collection('dentist').get();
+        QuerySnapshot availableDentistsSnapshot = await FirebaseFirestore
+            .instance
+            .collection('dentist')
+            .get();
 
         List<QueryDocumentSnapshot> availableDentists =
             availableDentistsSnapshot.docs;
@@ -63,7 +68,8 @@ Future<void> deleteUser(
               .update({'did': newDentistId});
         } else {
           throw Exception(
-              'No available dentist found for appointment on $appointmentDate');
+            'No available dentist found for appointment on $appointmentDate',
+          );
         }
       }
 

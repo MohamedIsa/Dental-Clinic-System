@@ -7,20 +7,14 @@ class TreatmentCard extends StatelessWidget {
   final TreatmentRecord record;
   final VoidCallback onTap;
 
-  const TreatmentCard({
-    super.key,
-    required this.record,
-    required this.onTap,
-  });
+  const TreatmentCard({super.key, required this.record, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 3,
       margin: EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
@@ -60,21 +54,15 @@ class TreatmentCard extends StatelessWidget {
                     SizedBox(height: 4),
                     Text(
                       'Date: ${record.date}',
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                      ),
+                      style: TextStyle(color: Colors.grey.shade600),
                     ),
                     Text(
                       'Time: ${record.time}',
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                      ),
+                      style: TextStyle(color: Colors.grey.shade600),
                     ),
                     Text(
                       'CPR: ${record.cpr}',
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                      ),
+                      style: TextStyle(color: Colors.grey.shade600),
                     ),
                   ],
                 ),

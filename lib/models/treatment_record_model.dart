@@ -37,7 +37,8 @@ class TreatmentRecord {
   }
 
   factory TreatmentRecord.fromFirestore(
-      QueryDocumentSnapshot<Map<String, dynamic>> doc) {
+    QueryDocumentSnapshot<Map<String, dynamic>> doc,
+  ) {
     return TreatmentRecord(
       treatmentId: doc.id,
       date: doc['date'],

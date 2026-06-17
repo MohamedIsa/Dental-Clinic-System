@@ -21,12 +21,13 @@ class AuthScreen extends StatefulWidget {
   final bool isCompleteDetails;
   final bool isForgotPassword;
   final String? uid;
-  const AuthScreen(
-      {super.key,
-      this.uid,
-      required this.isSignUp,
-      required this.isCompleteDetails,
-      required this.isForgotPassword});
+  const AuthScreen({
+    super.key,
+    this.uid,
+    required this.isSignUp,
+    required this.isCompleteDetails,
+    required this.isForgotPassword,
+  });
 
   @override
   State<AuthScreen> createState() => _AuthScreenState();
@@ -55,120 +56,181 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      body: SizedBox(
-        height: height,
-        width: width,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            ResponsiveWidget.isSmallScreen(context)
-                ? const SizedBox()
-                : Expanded(
+      backgroundColor: AppColors.backColor,
+      body: SafeArea(
+        child: SizedBox(
+          height: height,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ResponsiveWidget.isSmallScreen(context)
+                  ? const SizedBox()
+                  : Expanded(
+                      child: Container(
+                        height: height,
+                        padding: const EdgeInsets.all(48),
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              AppColors.blueDarkColor,
+                              AppColors.primaryColor,
+                              AppColors.accentColor,
+                            ],
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Image.asset(
+                              'assets/images/logo.png',
+                              width: 180,
+                              height: 180,
+                              fit: BoxFit.contain,
+                            ),
+                            const Spacer(),
+                            Text(
+                              'Modern dental operations in one workspace',
+                              style: ralewayStyle.copyWith(
+                                color: AppColors.whiteColor,
+                                fontSize: 36,
+                                height: 1.15,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 0.0,
+                              ),
+                            ),
+                            const SizedBox(height: 18),
+                            Text(
+                              'Appointments, patient records, staff access, and treatment history with Firebase-backed sync.',
+                              style: ralewayStyle.copyWith(
+                                color: AppColors.whiteColor.withValues(
+                                  alpha: 0.86,
+                                ),
+                                fontSize: 16,
+                                height: 1.55,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+              Expanded(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 520),
                     child: Container(
                       height: height,
-                      color: Colors.lightBlue,
-                      child: Center(
-                        child: Image.asset(
-                          'assets/images/logo.png',
-                          width: width * 0.4,
-                          height: height * 0.4,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: ResponsiveWidget.isSmallScreen(context)
+                            ? 24
+                            : 40,
+                      ),
+                      child: SingleChildScrollView(
+                        padding: EdgeInsets.only(
+                          top: ResponsiveWidget.isSmallScreen(context)
+                              ? 48
+                              : 88,
+                          bottom: 40.0,
+                        ),
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: AppColors.whiteColor,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: AppColors.borderColor),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.blueDarkColor.withValues(
+                                  alpha: 0.08,
+                                ),
+                                blurRadius: 24,
+                                offset: const Offset(0, 14),
+                              ),
+                            ],
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(
+                              ResponsiveWidget.isSmallScreen(context) ? 24 : 36,
+                            ),
+                            child: _buildFormContent(height),
+                          ),
                         ),
                       ),
                     ),
                   ),
-            Expanded(
-              child: Container(
-                height: height,
-                margin: EdgeInsets.symmetric(
-                  horizontal: ResponsiveWidget.isSmallScreen(context)
-                      ? height * 0.032
-                      : height * 0.12,
-                ),
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.only(bottom: 40.0),
-                  child: _isForgotPassword
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(height: height * 0.2),
-                            const Header(
-                                headerName: 'Reset Password',
-                                message:
-                                    'Hey, Enter your email to change your password'),
-                            SizedBox(height: height * 0.064),
-                            const ForgotPasswordForm(),
-                            InkWell(
-                              onTap: () {},
-                              child: TextButton(
-                                onPressed: () => toggleSignIn(context),
-                                child: Text(
-                                  'Log in',
-                                  style: ralewayStyle.copyWith(
-                                    fontSize: 12.0,
-                                    color: AppColors.mainBlueColor,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        )
-                      : _isCompleteDetails
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                SizedBox(height: height * 0.2),
-                                const Header(
-                                    headerName: 'Complete details',
-                                    message:
-                                        'Hey, Complete Your details to register in to the system.'),
-                                SizedBox(height: height * 0.064),
-                                CompleteForm(
-                                  uid: widget.uid ?? '',
-                                ),
-                              ],
-                            )
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                SizedBox(height: height * 0.2),
-                                _isSignUp!
-                                    ? const Header(
-                                        headerName: 'Sign Up',
-                                        message:
-                                            'Hey, Enter your details to create a new account.')
-                                    : const Header(
-                                        headerName: 'Sign In',
-                                        message:
-                                            'Hey, Enter your details to get sign in \nto your account.'),
-                                SizedBox(height: height * 0.064),
-                                _isSignUp!
-                                    ? const SignUpForm()
-                                    : const LoginForm(),
-                                SizedBox(height: height * 0.02),
-                                _isSignUp! ? SigninPrompt() : SignUpPrompt(),
-                                SizedBox(height: height * 0.02),
-                                _isSignUp!
-                                    ? const SizedBox()
-                                    : ForgotPasswordLink(),
-                                SocialSignUpSection(),
-                                Googlelog(),
-                                SizedBox(height: height * 0.02),
-                              ],
-                            ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildFormContent(double height) {
+    if (_isForgotPassword) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Header(
+            headerName: 'Reset Password',
+            message: 'Enter your email address and we will send reset steps.',
+          ),
+          SizedBox(height: height * 0.046),
+          const ForgotPasswordForm(),
+          TextButton(
+            onPressed: () => toggleSignIn(context),
+            child: Text(
+              'Log in',
+              style: ralewayStyle.copyWith(
+                fontSize: 13.0,
+                color: AppColors.mainBlueColor,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    if (_isCompleteDetails) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Header(
+            headerName: 'Complete Details',
+            message: 'Add the missing profile details to finish registration.',
+          ),
+          SizedBox(height: height * 0.046),
+          CompleteForm(uid: widget.uid ?? ''),
+        ],
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _isSignUp!
+            ? const Header(
+                headerName: 'Sign Up',
+                message: 'Create an account to manage clinic workflows.',
+              )
+            : const Header(
+                headerName: 'Sign In',
+                message: 'Enter your credentials to access your workspace.',
+              ),
+        SizedBox(height: height * 0.046),
+        _isSignUp! ? const SignUpForm() : const LoginForm(),
+        SizedBox(height: height * 0.02),
+        _isSignUp! ? SigninPrompt() : SignUpPrompt(),
+        SizedBox(height: height * 0.02),
+        _isSignUp! ? const SizedBox() : ForgotPasswordLink(),
+        SocialSignUpSection(),
+        Googlelog(),
+      ],
     );
   }
 }

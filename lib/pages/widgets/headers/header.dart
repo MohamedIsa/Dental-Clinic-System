@@ -16,30 +16,34 @@ class Header extends StatelessWidget {
           text: TextSpan(
             children: [
               TextSpan(
-                text: 'Let’s',
+                text: 'Dental Clinic',
                 style: ralewayStyle.copyWith(
-                  fontSize: 25.0,
+                  fontSize: 14.0,
                   color: AppColors.blueDarkColor,
-                  fontWeight: FontWeight.normal,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.0,
                 ),
               ),
               TextSpan(
-                text: ' $headerName 👇',
+                text: '\n$headerName',
                 style: ralewayStyle.copyWith(
                   fontWeight: FontWeight.w800,
                   color: AppColors.blueDarkColor,
-                  fontSize: 25.0,
+                  fontSize: 32.0,
+                  height: 1.2,
+                  letterSpacing: 0.0,
                 ),
               ),
             ],
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 12),
         Text(
           message,
           style: ralewayStyle.copyWith(
-            fontSize: 12.0,
-            fontWeight: FontWeight.w400,
+            fontSize: 14.0,
+            height: 1.5,
+            fontWeight: FontWeight.w500,
             color: AppColors.textColor,
           ),
         ),

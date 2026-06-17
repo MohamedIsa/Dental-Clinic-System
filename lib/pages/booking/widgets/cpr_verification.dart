@@ -6,10 +6,7 @@ import '../../../utils/popups.dart';
 class CPRVerification extends StatefulWidget {
   final Function(String patientId, String patientName) onPatientVerified;
 
-  const CPRVerification({
-    super.key,
-    required this.onPatientVerified,
-  });
+  const CPRVerification({super.key, required this.onPatientVerified});
 
   @override
   State<CPRVerification> createState() => _CPRVerificationState();

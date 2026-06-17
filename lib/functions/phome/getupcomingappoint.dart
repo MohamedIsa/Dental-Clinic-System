@@ -22,11 +22,14 @@ Future<String> getUpcomingAppointment(String patientId) async {
 
     for (QueryDocumentSnapshot doc in snapshot.docs) {
       final Appointments appointment = Appointments.fromFirestore(
-          doc.id, doc.data() as Map<String, dynamic>);
+        doc.id,
+        doc.data() as Map<String, dynamic>,
+      );
 
       try {
-        final DateTime appointmentDate =
-            DateFormat('yyyy-MM-dd').parse(appointment.date);
+        final DateTime appointmentDate = DateFormat(
+          'yyyy-MM-dd',
+        ).parse(appointment.date);
         final int appointmentTime = (appointment.time as num).toInt();
 
         final DateTime appointmentDateTime = DateTime(
@@ -48,8 +51,8 @@ Future<String> getUpcomingAppointment(String patientId) async {
                 .get();
             final String dentistName = docDentist.exists
                 ? (docDentist.data() != null
-                    ? docDentist.data()!['name']
-                    : 'Unknown')
+                      ? docDentist.data()!['name']
+                      : 'Unknown')
                 : 'Unknown';
             String formattedTime;
             if (appointmentTime < 12) {

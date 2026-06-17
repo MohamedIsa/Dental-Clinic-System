@@ -7,13 +7,14 @@ import '../../models/users.dart';
 import 'exists.dart';
 
 Future<void> completeRegistration(
-    BuildContext context,
-    uid,
-    TextEditingController fullNameTextController,
-    TextEditingController cprTextController,
-    TextEditingController phoneTextController,
-    String selectedGender,
-    TextEditingController dobTextController) async {
+  BuildContext context,
+  uid,
+  TextEditingController fullNameTextController,
+  TextEditingController cprTextController,
+  TextEditingController phoneTextController,
+  String selectedGender,
+  TextEditingController dobTextController,
+) async {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   String fullName = fullNameTextController.text;
   String cpr = cprTextController.text;

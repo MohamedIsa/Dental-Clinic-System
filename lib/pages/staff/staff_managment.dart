@@ -21,21 +21,19 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
       backgroundColor: AppColors.primaryColor,
       appBar: AppBar(
         backgroundColor: AppColors.primaryColor,
-        title: Text('Staff Management',
-            style: TextStyle(color: AppColors.whiteColor)),
+        title: Text(
+          'Staff Management',
+          style: TextStyle(color: AppColors.whiteColor),
+        ),
         iconTheme: IconThemeData(color: AppColors.whiteColor),
       ),
       body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: FirebaseFirestore.instance.collection('users').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
+            return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
+            return Center(child: Text('Error: ${snapshot.error}'));
           }
 
           if (!snapshot.hasData ||
@@ -68,26 +66,30 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
                   } else {
                     final role = roleSnapshot.data;
                     if (role == null ||
-                        !['admin', 'dentist', 'receptionist', 'unavailable']
-                            .contains(role.toLowerCase())) {
+                        ![
+                          'admin',
+                          'dentist',
+                          'receptionist',
+                          'unavailable',
+                        ].contains(role.toLowerCase())) {
                       return SizedBox.shrink();
                     }
                     return ListTile(
-                      title: Text(name,
-                          style: TextStyle(
-                            color: AppColors.whiteColor,
-                          )),
+                      title: Text(
+                        name,
+                        style: TextStyle(color: AppColors.whiteColor),
+                      ),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(email,
-                              style: TextStyle(
-                                color: AppColors.whiteColor,
-                              )),
-                          Text(role,
-                              style: TextStyle(
-                                color: AppColors.whiteColor,
-                              )),
+                          Text(
+                            email,
+                            style: TextStyle(color: AppColors.whiteColor),
+                          ),
+                          Text(
+                            role,
+                            style: TextStyle(color: AppColors.whiteColor),
+                          ),
                         ],
                       ),
                       trailing: Row(
@@ -96,21 +98,27 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
                           TextButton(
                             onPressed: () =>
                                 hideUser(context, userDoc.id, role),
-                            child: Text('Hide',
-                                style: TextStyle(color: AppColors.whiteColor)),
+                            child: Text(
+                              'Hide',
+                              style: TextStyle(color: AppColors.whiteColor),
+                            ),
                           ),
                           SizedBox(width: 20),
                           TextButton(
                             onPressed: () => restoreUser(context, userDoc.id),
-                            child: Text('Restore',
-                                style: TextStyle(color: AppColors.whiteColor)),
+                            child: Text(
+                              'Restore',
+                              style: TextStyle(color: AppColors.whiteColor),
+                            ),
                           ),
                           SizedBox(width: 20),
                           TextButton(
                             onPressed: () =>
                                 deleteUser(context, userDoc.id, role),
-                            child: Text('Delete',
-                                style: TextStyle(color: AppColors.whiteColor)),
+                            child: Text(
+                              'Delete',
+                              style: TextStyle(color: AppColors.whiteColor),
+                            ),
                           ),
                         ],
                       ),

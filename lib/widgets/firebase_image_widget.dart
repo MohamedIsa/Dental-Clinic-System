@@ -9,12 +9,12 @@ class FirebaseImageWidget extends StatelessWidget {
   final BoxFit fit;
 
   const FirebaseImageWidget({
-    Key? key,
+    super.key,
     required this.imageUrl,
     this.width = 200,
     this.height = 200,
     this.fit = BoxFit.cover,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +33,7 @@ class FirebaseImageWidget extends StatelessWidget {
     return SizedBox(
       width: width,
       height: height,
-      child: HtmlElementView(
-        viewType: imageId,
-      ),
+      child: HtmlElementView(viewType: imageId),
     );
   }
 }

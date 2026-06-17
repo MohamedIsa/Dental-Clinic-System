@@ -27,8 +27,8 @@ class RoleFieldState extends State<RoleField> {
     super.initState();
     _selectedRole =
         ['Admin', 'Receptionist', 'Dentist'].contains(widget.selectedRole)
-            ? widget.selectedRole
-            : 'Admin';
+        ? widget.selectedRole
+        : 'Admin';
   }
 
   @override
@@ -70,12 +70,9 @@ class RoleFieldState extends State<RoleField> {
               ),
               contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
             ),
-            value: _selectedRole,
+            initialValue: _selectedRole,
             items: ['Admin', 'Receptionist', 'Dentist'].map((role) {
-              return DropdownMenuItem<String>(
-                value: role,
-                child: Text(role),
-              );
+              return DropdownMenuItem<String>(value: role, child: Text(role));
             }).toList(),
             onChanged: (newValue) {
               setState(() {

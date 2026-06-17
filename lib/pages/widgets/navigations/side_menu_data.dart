@@ -17,32 +17,55 @@ class SideMenuData {
         return;
       }
 
-      final userDoc =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .get();
       final role = userDoc['role'];
       if (role == 'admin' || role == 'receptionist' || role == 'dentist') {
-        menu.add(MenuModel(
-            icon: Icons.home, title: 'Dashboard', routeName: '/dashboard'));
+        menu.add(
+          MenuModel(
+            icon: Icons.home,
+            title: 'Dashboard',
+            routeName: '/dashboard',
+          ),
+        );
       }
       if (role == 'admin' || role == 'receptionist') {
-        menu.add(MenuModel(
+        menu.add(
+          MenuModel(
             icon: Icons.calendar_month,
             title: 'Appointment',
-            routeName: '/facilitybooking'));
+            routeName: '/facilitybooking',
+          ),
+        );
       }
       if (role == 'admin' || role == 'receptionist' || role == 'dentist') {
-        menu.add(MenuModel(
-            icon: Icons.group, title: 'Patients', routeName: '/patients'));
+        menu.add(
+          MenuModel(
+            icon: Icons.group,
+            title: 'Patients',
+            routeName: '/patients',
+          ),
+        );
       }
       if (role == 'admin') {
-        menu.add(MenuModel(
-            icon: Icons.settings, title: 'Settings', routeName: '/settings'));
+        menu.add(
+          MenuModel(
+            icon: Icons.settings,
+            title: 'Settings',
+            routeName: '/settings',
+          ),
+        );
       }
       if (role == 'dentist') {
-        menu.add(MenuModel(
+        menu.add(
+          MenuModel(
             icon: Icons.receipt_rounded,
             title: 'Treatment Records',
-            routeName: '/treatment'));
+            routeName: '/treatment',
+          ),
+        );
       }
     } catch (e) {
       showErrorDialog(context, "An error occurred: $e");

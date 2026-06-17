@@ -55,7 +55,7 @@ class ReusableTextFieldState extends State<ReusableTextField> {
           child: Text(
             widget.title,
             style: TextStyle(
-              fontSize: 12.0,
+              fontSize: 13.0,
               color: AppColors.blueDarkColor,
               fontWeight: FontWeight.w700,
             ),
@@ -63,95 +63,102 @@ class ReusableTextFieldState extends State<ReusableTextField> {
         ),
         const SizedBox(height: 6.0),
         Padding(
-            padding: const EdgeInsets.only(bottom: 12.0),
-            child: TextFormField(
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              controller: widget.controller,
-              obscureText: _obscureText,
-              keyboardType: widget.isNumeric || widget.isDob
-                  ? TextInputType.number
-                  : TextInputType.text,
-              inputFormatters: widget.isNumeric || widget.isDob
-                  ? [
-                      FilteringTextInputFormatter.digitsOnly,
-                      if (widget.isDob) ...[
-                        LengthLimitingTextInputFormatter(8),
-                        DateInputFormatter(),
-                      ],
-                    ]
+          padding: const EdgeInsets.only(bottom: 12.0),
+          child: TextFormField(
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            controller: widget.controller,
+            obscureText: _obscureText,
+            keyboardType: widget.isNumeric || widget.isDob
+                ? TextInputType.number
+                : TextInputType.text,
+            inputFormatters: widget.isNumeric || widget.isDob
+                ? [
+                    FilteringTextInputFormatter.digitsOnly,
+                    if (widget.isDob) ...[
+                      LengthLimitingTextInputFormatter(8),
+                      DateInputFormatter(),
+                    ],
+                  ]
+                : null,
+            style: const TextStyle(
+              fontWeight: FontWeight.w400,
+              color: Colors.black,
+              fontSize: 14.0,
+            ),
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide: BorderSide(
+                  color: hasError ? Colors.red : AppColors.borderColor,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide: BorderSide(
+                  color: hasError ? Colors.red : AppColors.borderColor,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide: BorderSide(
+                  color: hasError ? Colors.red : AppColors.mainBlueColor,
+                  width: 1.4,
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide: const BorderSide(color: Colors.red),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide: const BorderSide(color: Colors.red, width: 2),
+              ),
+              filled: true,
+              fillColor: AppColors.whiteColor,
+              prefixIcon: Icon(widget.icon, color: widget.color),
+              suffixIcon: widget.isPassword
+                  ? IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _obscureText = !_obscureText;
+                        });
+                      },
+                      icon: Icon(
+                        _obscureText ? Icons.visibility : Icons.visibility_off,
+                        color: Colors.grey,
+                      ),
+                    )
                   : null,
-              style: const TextStyle(
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 16.0,
+                horizontal: 12.0,
+              ),
+              hintText: widget.hintText,
+              hintStyle: TextStyle(
                 fontWeight: FontWeight.w400,
-                color: Colors.black,
+                color: AppColors.textColor.withValues(alpha: 0.7),
                 fontSize: 14.0,
               ),
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide:
-                      BorderSide(color: hasError ? Colors.red : Colors.blue),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide:
-                      BorderSide(color: hasError ? Colors.red : Colors.blue),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(
-                      color: hasError ? Colors.red : Colors.blue, width: 2),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: const BorderSide(color: Colors.red),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: const BorderSide(color: Colors.red, width: 2),
-                ),
-                prefixIcon: Icon(widget.icon, color: widget.color),
-                suffixIcon: widget.isPassword
-                    ? IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _obscureText = !_obscureText;
-                          });
-                        },
-                        icon: Icon(
-                          _obscureText
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: Colors.grey,
-                        ),
-                      )
-                    : null,
-                contentPadding: const EdgeInsets.symmetric(
-                    vertical: 16.0, horizontal: 12.0),
-                hintText: widget.hintText,
-                hintStyle: TextStyle(
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black.withOpacity(0.5),
-                  fontSize: 14.0,
-                ),
-                errorStyle: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.redAccent,
-                  fontWeight: FontWeight.bold,
-                ),
+              errorStyle: const TextStyle(
+                fontSize: 12,
+                color: Colors.redAccent,
+                fontWeight: FontWeight.bold,
               ),
-              onFieldSubmitted: widget.onFieldSubmitted,
-              validator: (value) {
-                final error = widget.validator(value);
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (mounted) {
-                    setState(() {
-                      hasError = error != null && error.isNotEmpty;
-                    });
-                  }
-                });
-                return error;
-              },
-            )),
+            ),
+            onFieldSubmitted: widget.onFieldSubmitted,
+            validator: (value) {
+              final error = widget.validator(value);
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) {
+                  setState(() {
+                    hasError = error != null && error.isNotEmpty;
+                  });
+                }
+              });
+              return error;
+            },
+          ),
+        ),
       ],
     );
   }

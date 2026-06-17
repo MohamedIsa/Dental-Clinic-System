@@ -13,9 +13,7 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.blue,
-      ),
+      decoration: BoxDecoration(color: Colors.blue),
       child: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -28,11 +26,7 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget {
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: IconButton(
-              icon: const Icon(
-                Icons.logout,
-                color: Colors.white,
-                size: 25,
-              ),
+              icon: const Icon(Icons.logout, color: Colors.white, size: 25),
               onPressed: () {
                 FirebaseAuth.instance.signOut();
                 context.go('/home');

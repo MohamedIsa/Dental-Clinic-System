@@ -11,12 +11,14 @@ class SocialSignInSection extends StatelessWidget {
     return Column(
       children: [
         Center(
-          child: Text('Or Sign In With',
-              style: ralewayStyle.copyWith(
-                fontSize: 12.0,
-                color: AppColors.greyColor,
-                fontWeight: FontWeight.w600,
-              )),
+          child: Text(
+            'Or Sign In With',
+            style: ralewayStyle.copyWith(
+              fontSize: 12.0,
+              color: AppColors.greyColor,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
         const SizedBox(height: 20),
       ],

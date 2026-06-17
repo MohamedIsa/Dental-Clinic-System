@@ -30,9 +30,7 @@ class _EditWelcomeMessageScreenState extends State<EditMessageScreen> {
       appBar: AppBar(
         title: Text(
           'Edit Welcome Message',
-          style: TextStyle(
-            color: Colors.white,
-          ),
+          style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.blue,
         iconTheme: IconThemeData(color: AppColors.whiteColor),
@@ -53,10 +51,8 @@ class _EditWelcomeMessageScreenState extends State<EditMessageScreen> {
             ),
             SizedBox(height: 16.0),
             ElevatedButton(
-              onPressed: () => updateMessage(
-                context,
-                welcomeMessageController.text,
-              ),
+              onPressed: () =>
+                  updateMessage(context, welcomeMessageController.text),
               style: ButtonStyle(
                 backgroundColor: WidgetStateProperty.all(Colors.white),
               ),

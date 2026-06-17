@@ -47,15 +47,16 @@ class _SignUpFormState extends State<SignUpForm> {
     void submitForm() {
       if (_formKey.currentState!.validate()) {
         check(
-            context: context,
-            emailTextController: _emailTextController,
-            passwordTextController: _passwordTextController,
-            confirmPasswordTextController: _confirmPasswordTextController,
-            fullNameTextController: _fullnameTextController,
-            cprTextController: _cprTextController,
-            phoneTextController: _phoneTextController,
-            selectedGender: _selectedGender,
-            dobTextController: _dobTextController);
+          context: context,
+          emailTextController: _emailTextController,
+          passwordTextController: _passwordTextController,
+          confirmPasswordTextController: _confirmPasswordTextController,
+          fullNameTextController: _fullnameTextController,
+          cprTextController: _cprTextController,
+          phoneTextController: _phoneTextController,
+          selectedGender: _selectedGender,
+          dobTextController: _dobTextController,
+        );
       }
     }
 
@@ -86,9 +87,7 @@ class _SignUpFormState extends State<SignUpForm> {
             width: width,
             selectedGender: _selectedGender,
             onGenderChanged: (newGender) {
-              setState(
-                () => _selectedGender = newGender,
-              );
+              setState(() => _selectedGender = newGender);
             },
           ),
           const SizedBox(height: 20),

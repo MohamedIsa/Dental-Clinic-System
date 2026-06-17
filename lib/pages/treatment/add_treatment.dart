@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'widgets/treatment_form_widgets.dart';
 
 class AddTreatmentPage extends StatefulWidget {
+  const AddTreatmentPage({super.key});
+
   @override
   _AddTreatmentPageState createState() => _AddTreatmentPageState();
 }

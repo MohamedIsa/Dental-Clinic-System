@@ -23,32 +23,28 @@ class MessageBubble extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: Column(
-        crossAxisAlignment:
-            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment: isMe
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
         children: [
           if (!isMe)
             Padding(
               padding: const EdgeInsets.only(left: 12, bottom: 4),
               child: Text(
                 sender,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.white70,
-                ),
+                style: const TextStyle(fontSize: 12, color: Colors.white70),
               ),
             ),
           Row(
-            mainAxisAlignment:
-                isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+            mainAxisAlignment: isMe
+                ? MainAxisAlignment.end
+                : MainAxisAlignment.start,
             children: [
               if (!isMe)
                 const CircleAvatar(
                   radius: 16,
                   backgroundColor: Colors.white,
-                  child: Icon(
-                    Icons.person,
-                    color: Colors.grey,
-                  ),
+                  child: Icon(Icons.person, color: Colors.grey),
                 ),
               const SizedBox(width: 8),
               Flexible(
@@ -106,18 +102,11 @@ class MessageBubble extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Icon(
-                    Icons.done_all,
-                    size: 16,
-                    color: AppColors.primaryColor,
-                  ),
+                  Icon(Icons.done_all, size: 16, color: AppColors.primaryColor),
                   const SizedBox(width: 4),
                   const Text(
                     'Seen',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey,
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
                   ),
                 ],
               ),

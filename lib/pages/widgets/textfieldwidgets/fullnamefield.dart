@@ -6,11 +6,12 @@ class NameField extends StatelessWidget {
   final TextEditingController fullNameTextController;
   final double width;
   final Function(String)? onFieldSubmitted;
-  const NameField(
-      {super.key,
-      required this.fullNameTextController,
-      required this.width,
-      this.onFieldSubmitted});
+  const NameField({
+    super.key,
+    required this.fullNameTextController,
+    required this.width,
+    this.onFieldSubmitted,
+  });
 
   @override
   Widget build(BuildContext context) {

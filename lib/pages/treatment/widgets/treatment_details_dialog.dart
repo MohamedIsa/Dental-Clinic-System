@@ -5,17 +5,12 @@ import '../../../widgets/firebase_image_widget.dart';
 class TreatmentDetailsDialog extends StatelessWidget {
   final TreatmentRecord record;
 
-  const TreatmentDetailsDialog({
-    super.key,
-    required this.record,
-  });
+  const TreatmentDetailsDialog({super.key, required this.record});
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: SingleChildScrollView(
         child: Container(
           width: MediaQuery.of(context).size.width * 0.8,
@@ -72,10 +67,7 @@ class TreatmentDetailsDialog extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: Text(
-              value,
-              style: TextStyle(color: Colors.grey.shade700),
-            ),
+            child: Text(value, style: TextStyle(color: Colors.grey.shade700)),
           ),
         ],
       ),
@@ -96,29 +88,31 @@ class TreatmentDetailsDialog extends StatelessWidget {
           ),
         ),
         SizedBox(height: 8),
-        LayoutBuilder(builder: (context, constraints) {
-          double maxWidth = constraints.maxWidth;
-          double imageWidth = maxWidth > 300 ? 300 : maxWidth;
-          double imageHeight = (imageWidth / 3) * 2;
+        LayoutBuilder(
+          builder: (context, constraints) {
+            double maxWidth = constraints.maxWidth;
+            double imageWidth = maxWidth > 300 ? 300 : maxWidth;
+            double imageHeight = (imageWidth / 3) * 2;
 
-          return Container(
-            width: imageWidth,
-            height: imageHeight,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.blue.shade200),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: FirebaseImageWidget(
-                imageUrl: imageUrl,
-                width: imageWidth,
-                height: imageHeight,
-                fit: BoxFit.cover,
+            return Container(
+              width: imageWidth,
+              height: imageHeight,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.blue.shade200),
               ),
-            ),
-          );
-        }),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: FirebaseImageWidget(
+                  imageUrl: imageUrl,
+                  width: imageWidth,
+                  height: imageHeight,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            );
+          },
+        ),
       ],
     );
   }
@@ -137,10 +131,7 @@ class TreatmentDetailsDialog extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
             ),
           ),
-          child: Text(
-            'Close',
-            style: TextStyle(color: Colors.white),
-          ),
+          child: Text('Close', style: TextStyle(color: Colors.white)),
         ),
       ),
     );
