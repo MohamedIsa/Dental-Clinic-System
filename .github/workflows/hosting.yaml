@@ -5,49 +5,72 @@ on:
     branches:
       - main
 
+concurrency:
+  group: firebase-hosting-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      
-    - name: Install Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: "3.29.0"
-        
-    - name: Generate `web.json` file
-      run: echo "$WEB_JSON" > ./web/web.json
-      env:
-        WEB_JSON: ${{ secrets.WEB_JSON }}
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Generate `firebase_options.dart` file
-      run: echo "$FIREBASE_OPTIONS_DART" > ./lib/firebase_options.dart
-      env:
-        FIREBASE_OPTIONS_DART: ${{ secrets.FIREBASE_OPTIONS_DART }}
-        
-    - name: Getting Latest Packages 
-      run: flutter pub outdated
-      
-    - name: upgrading Packages
-      run: flutter pub upgrade
-      
-    - name: Build Flutter web project
-      run: flutter build web
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.41.0"
+          channel: stable
+          cache: true
 
-    - name: Install Firebase CLI
-      run: npm install -g firebase-tools
+      - name: Generate web Firebase config
+        run: |
+          test -n "$WEB_JSON"
+          printf '%s' "$WEB_JSON" > web/web.json
+        env:
+          WEB_JSON: ${{ secrets.WEB_JSON }}
 
-    - name: Set up Firebase service account
-      run: |
-        echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_BASE64 }}" | base64 -d > ${{ github.workspace }}/firebase-key.json
-      env:
-        FIREBASE_SERVICE_ACCOUNT_BASE64: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_BASE64 }}
+      - name: Export Firebase build defines
+        run: |
+          {
+            echo "FIREBASE_API_KEY=$(jq -r '.API_KEY' web/web.json)"
+            echo "FIREBASE_APP_ID=$(jq -r '.APP_ID' web/web.json)"
+            echo "FIREBASE_MESSAGING_SENDER_ID=$(jq -r '.MESSAGING_SENDER_ID' web/web.json)"
+            echo "FIREBASE_PROJECT_ID=$(jq -r '.PROJECT_ID' web/web.json)"
+            echo "FIREBASE_AUTH_DOMAIN=$(jq -r '.AUTH_DOMAIN' web/web.json)"
+            echo "FIREBASE_STORAGE_BUCKET=$(jq -r '.STORAGE_BUCKET' web/web.json)"
+            echo "FIREBASE_MEASUREMENT_ID=$(jq -r '.MEASUREMENT_ID' web/web.json)"
+          } >> "$GITHUB_ENV"
 
-    - name: Deploy to Firebase Hosting
-      run: firebase deploy --only hosting
-      env:
-        GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/firebase-key.json
+      - name: Install Flutter packages
+        run: flutter pub get
 
+      - name: Analyze Flutter project
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+
+      - name: Build Flutter web project
+        run: |
+          flutter build web \
+            --dart-define=FIREBASE_API_KEY="$FIREBASE_API_KEY" \
+            --dart-define=FIREBASE_APP_ID="$FIREBASE_APP_ID" \
+            --dart-define=FIREBASE_MESSAGING_SENDER_ID="$FIREBASE_MESSAGING_SENDER_ID" \
+            --dart-define=FIREBASE_PROJECT_ID="$FIREBASE_PROJECT_ID" \
+            --dart-define=FIREBASE_AUTH_DOMAIN="$FIREBASE_AUTH_DOMAIN" \
+            --dart-define=FIREBASE_STORAGE_BUCKET="$FIREBASE_STORAGE_BUCKET" \
+            --dart-define=FIREBASE_MEASUREMENT_ID="$FIREBASE_MEASUREMENT_ID"
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Set up Firebase service account
+        run: |
+          test -n "$FIREBASE_SERVICE_ACCOUNT_BASE64"
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT_BASE64" | base64 -d > "${{ github.workspace }}/firebase-key.json"
+        env:
+          FIREBASE_SERVICE_ACCOUNT_BASE64: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_BASE64 }}
+
+      - name: Deploy to Firebase Hosting
+        run: firebase deploy --only hosting --project dental-clinic-f6971
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/firebase-key.json
